@@ -1,53 +1,75 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import ReviewSystem from '../components/ReviewSystem';
-import { productos } from '../data/productos';
+import { obtenerProductoPorId, obtenerProductos } from '../services/productoService';
 
 const ProductoDetalle = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const { addToCart } = useCart();
   const [producto, setProducto] = useState(null);
   const [cantidad, setCantidad] = useState(1);
   const [productosRelacionados, setProductosRelacionados] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Buscar producto por ID
-    const productoEncontrado = productos.find(p => p.id === parseInt(id));
-    
-    if (productoEncontrado) {
-      setProducto(productoEncontrado);
-      
-      // Buscar productos relacionados (misma categoría)
-      const relacionados = productos
-        .filter(p => p.categoria === productoEncontrado.categoria && p.id !== productoEncontrado.id)
-        .slice(0, 4);
-      setProductosRelacionados(relacionados);
-    }
+    cargarProducto();
   }, [id]);
+
+  const cargarProducto = async () => {
+    try {
+      setLoading(true);
+      setCantidad(1);
+
+      const data = await obtenerProductoPorId(id);
+      setProducto(data.producto);
+
+      // Cargar productos relacionados de la misma categoría
+      const relacionadosData = await obtenerProductos({
+        categoria: data.producto.categoria,
+        limite: 5,
+      });
+      const relacionados = relacionadosData.productos.filter(
+        p => p._id !== data.producto._id
+      ).slice(0, 4);
+      setProductosRelacionados(relacionados);
+
+      setError(null);
+    } catch (err) {
+      setError('Producto no encontrado');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAgregarAlCarrito = () => {
     if (producto && cantidad > 0) {
       addToCart(producto, cantidad);
-      // Mostrar notificación visual
       alert(`${cantidad} ${cantidad === 1 ? 'unidad' : 'unidades'} de "${producto.nombre}" agregado${cantidad === 1 ? '' : 's'} al carrito`);
     }
   };
 
   const incrementar = () => {
-    if (cantidad < producto.stock) {
-      setCantidad(cantidad + 1);
-    }
+    if (cantidad < producto.stock) setCantidad(cantidad + 1);
   };
 
   const decrementar = () => {
-    if (cantidad > 1) {
-      setCantidad(cantidad - 1);
-    }
+    if (cantidad > 1) setCantidad(cantidad - 1);
   };
 
-  if (!producto) {
+  // Estado: cargando
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-bg flex items-center justify-center">
+        <p className="text-xl text-gray-400">Cargando producto...</p>
+      </div>
+    );
+  }
+
+  // Estado: error o no encontrado
+  if (error || !producto) {
     return (
       <div className="min-h-screen bg-bg flex items-center justify-center">
         <div className="text-center">
@@ -65,7 +87,7 @@ const ProductoDetalle = () => {
     );
   }
 
-  const precioFinal = producto.enOferta 
+  const precioFinal = producto.enOferta
     ? producto.precio - (producto.precio * producto.descuento / 100)
     : producto.precio;
 
@@ -94,27 +116,17 @@ const ProductoDetalle = () => {
 
           {/* Información */}
           <div className="flex flex-col justify-center">
-            {/* Categoría */}
             <div className="inline-block bg-accent-purple/20 text-accent-purple px-3 py-1 rounded-full text-sm font-medium w-fit mb-4">
               {producto.categoria}
             </div>
 
-            {/* Título */}
-            <h1 className="text-4xl font-bold text-white mb-4">
-              {producto.nombre}
-            </h1>
+            <h1 className="text-4xl font-bold text-white mb-4">{producto.nombre}</h1>
 
-            {/* Autor */}
             <p className="text-xl text-gray-300 mb-2">
               Por <span className="text-accent-blue">{producto.autor}</span>
             </p>
+            <p className="text-gray-400 mb-6">{producto.editorial}</p>
 
-            {/* Editorial */}
-            <p className="text-gray-400 mb-6">
-              {producto.editorial}
-            </p>
-
-            {/* Descripción */}
             <p className="text-gray-300 mb-6 leading-relaxed">
               {producto.descripcionCompleta || producto.descripcion}
             </p>
@@ -164,7 +176,6 @@ const ProductoDetalle = () => {
 
             {/* Cantidad y botón agregar */}
             <div className="flex items-center gap-4 mb-6">
-              {/* Selector de cantidad */}
               <div className="flex items-center bg-bg-light rounded-lg overflow-hidden">
                 <button
                   onClick={decrementar}
@@ -185,7 +196,6 @@ const ProductoDetalle = () => {
                 </button>
               </div>
 
-              {/* Botón agregar al carrito */}
               <button
                 onClick={handleAgregarAlCarrito}
                 disabled={producto.stock === 0}
@@ -195,7 +205,6 @@ const ProductoDetalle = () => {
               </button>
             </div>
 
-            {/* Botón continuar comprando */}
             <Link
               to="/catalogo"
               className="inline-block text-center border border-accent-purple text-accent-purple px-8 py-3 rounded-lg font-bold hover:bg-accent-purple hover:text-bg transition-all"
@@ -207,8 +216,8 @@ const ProductoDetalle = () => {
 
         {/* Sistema de reseñas */}
         <div className="mb-16">
-          <ReviewSystem 
-            productoId={producto.id}
+          <ReviewSystem
+            productoId={producto._id}
             resenasIniciales={producto.valoraciones || []}
           />
         </div>
@@ -216,37 +225,33 @@ const ProductoDetalle = () => {
         {/* Productos relacionados */}
         {productosRelacionados.length > 0 && (
           <div>
-            <h2 className="text-3xl font-bold text-white mb-8">
-              Productos Relacionados
-            </h2>
+            <h2 className="text-3xl font-bold text-white mb-8">Productos Relacionados</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {productosRelacionados.map(prod => {
-                const precioRel = prod.enOferta 
+                const precioRel = prod.enOferta
                   ? prod.precio - (prod.precio * prod.descuento / 100)
                   : prod.precio;
-                
+
                 return (
                   <Link
-                    key={prod.id}
-                    to={`/producto/${prod.id}`}
+                    key={prod._id}
+                    to={`/producto/${prod._id}`}
                     className="bg-bg-light rounded-2xl overflow-hidden hover:transform hover:scale-105 transition-all group"
                   >
-                    {prod.enOferta && (
-                      <div className="absolute top-4 right-4 bg-accent-pink text-white px-3 py-1 rounded-full text-sm font-bold z-10">
-                        -{prod.descuento}%
-                      </div>
-                    )}
                     <div className="relative aspect-[3/4] overflow-hidden">
                       <img
                         src={prod.imagen}
                         alt={prod.nombre}
                         className="w-full h-full object-cover"
                       />
+                      {prod.enOferta && (
+                        <div className="absolute top-4 right-4 bg-accent-pink text-white px-3 py-1 rounded-full text-sm font-bold z-10">
+                          -{prod.descuento}%
+                        </div>
+                      )}
                     </div>
                     <div className="p-4">
-                      <h3 className="text-white font-bold mb-1 line-clamp-1">
-                        {prod.nombre}
-                      </h3>
+                      <h3 className="text-white font-bold mb-1 line-clamp-1">{prod.nombre}</h3>
                       <p className="text-gray-400 text-sm mb-2">{prod.autor}</p>
                       <div className="flex items-baseline gap-2">
                         {prod.enOferta ? (

@@ -16,7 +16,6 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Cargar el nombre del usuario si está autenticado
   useEffect(() => {
     if (isAuthenticated && user) {
       setFormData((prev) => ({
@@ -26,7 +25,6 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
     }
   }, [isAuthenticated, user]);
 
-  // Cargar reseñas desde el backend
   const cargarResenas = async () => {
     try {
       setLoading(true);
@@ -41,7 +39,6 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
     }
   };
 
-  // Cargar reseñas cuando cambia el filtro
   useEffect(() => {
     if (productoId) {
       cargarResenas();
@@ -56,8 +53,20 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
     { bg: "bg-red-100", text: "text-red-700" },
   ];
 
-  const getAvatarStyle = (id) => {
-    return avatarColors[(id - 1) % avatarColors.length];
+  // Usa el índice del array en vez del id para evitar undefined
+  const getAvatarStyle = (index) => {
+    return avatarColors[index % avatarColors.length];
+  };
+
+  // Formatear fecha ISO de MongoDB a texto legible
+  const formatearFecha = (fecha) => {
+    if (!fecha) return '';
+    const date = new Date(fecha);
+    return date.toLocaleDateString('es-CO', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
   };
 
   // Calcular estadísticas
@@ -72,7 +81,6 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
 
   const { total, avg, dist } = calcStats();
 
-  // Renderizar estrellas
   const renderStars = (rating) => {
     return [...Array(5)].map((_, i) => (
       <span
@@ -84,13 +92,11 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
     ));
   };
 
-  // Filtrar reseñas
   const filteredReviews =
     activeFilter === 0
       ? reviews
       : reviews.filter((r) => r.puntuacion === activeFilter);
 
-  // Manejar like/útil
   const toggleHelpful = async (valoracionId) => {
     if (!isAuthenticated) {
       alert("Debes iniciar sesión para marcar reseñas como útiles");
@@ -100,18 +106,13 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
     try {
       const data = await marcarResenaUtil(productoId, valoracionId);
 
-      // Actualizar el estado local
+      // Actualizar estado local usando _id
       setReviews(
-        reviews.map((r) => {
-          if (r.id === valoracionId) {
-            return {
-              ...r,
-              helpful: data.helpful,
-              userHelpful: data.userHelpful,
-            };
-          }
-          return r;
-        }),
+        reviews.map((r) =>
+          r._id === valoracionId
+            ? { ...r, helpful: data.helpful, userHelpful: data.userHelpful }
+            : r
+        )
       );
     } catch (err) {
       console.error("Error al marcar como útil:", err);
@@ -119,7 +120,6 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
     }
   };
 
-  // Enviar reseña
   const submitReview = async () => {
     if (!formData.nombre || !formData.comentario || !selectedRating) return;
 
@@ -140,7 +140,6 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
 
       await agregarResena(productoId, datos);
 
-      // Limpiar formulario
       setFormData({
         nombre: isAuthenticated ? `${user.nombre} ${user.apellido}` : "",
         comentario: "",
@@ -149,7 +148,6 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
       setShowSuccess(true);
       setActiveFilter(0);
 
-      // Recargar reseñas
       await cargarResenas();
 
       setTimeout(() => setShowSuccess(false), 3500);
@@ -166,12 +164,10 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
 
   return (
     <div className="max-w-3xl mx-auto py-6">
-      {/* Label de sección */}
       <p className="text-xs text-gray-500 uppercase tracking-wider mb-4">
         Calificaciones y reseñas
       </p>
 
-      {/* Mensaje de error */}
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
           {error}
@@ -180,7 +176,6 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
 
       {/* Tarjeta de resumen */}
       <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6 flex gap-8 items-center">
-        {/* Calificación promedio */}
         <div className="text-center min-w-[90px]">
           <div className="text-5xl font-medium text-gray-900">{avg}</div>
           <div className="flex gap-1 justify-center my-2">
@@ -191,16 +186,12 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
           </div>
         </div>
 
-        {/* Barras de distribución */}
         <div className="flex-1 flex flex-col gap-1.5">
           {[5, 4, 3, 2, 1].map((stars) => {
             const count = dist[stars - 1];
             const pct = total ? Math.round((count / total) * 100) : 0;
             return (
-              <div
-                key={stars}
-                className="flex items-center gap-2 text-xs text-gray-600"
-              >
+              <div key={stars} className="flex items-center gap-2 text-xs text-gray-600">
                 <span className="w-2 text-right">{stars}</span>
                 <span className="text-yellow-400">★</span>
                 <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
@@ -250,74 +241,69 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
           Cargando reseñas...
         </div>
       ) : (
-        <>
-          {/* Lista de reseñas */}
-          <div className="mb-6">
-            {filteredReviews.length === 0 ? (
-              <div className="text-center py-8 text-gray-500 text-sm">
-                <div className="text-2xl mb-2">📭</div>
-                No hay reseñas para este filtro.
-              </div>
-            ) : (
-              filteredReviews.map((review) => {
-                const style = getAvatarStyle(review.id);
-                return (
-                  <div
-                    key={review.id}
-                    className="bg-white border border-gray-200 rounded-2xl p-5 mb-3"
-                  >
-                    {/* Encabezado de la reseña */}
-                    <div className="flex items-center gap-3 mb-3">
-                      <div
-                        className={`w-9 h-9 rounded-full ${style.bg} ${style.text} flex items-center justify-center text-sm font-medium flex-shrink-0`}
-                      >
-                        {review.initials}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-gray-900">
-                            {review.nombre}
+        <div className="mb-6">
+          {filteredReviews.length === 0 ? (
+            <div className="text-center py-8 text-gray-500 text-sm">
+              <div className="text-2xl mb-2">📭</div>
+              No hay reseñas para este filtro.
+            </div>
+          ) : (
+            // ✅ Usa index para el color del avatar y _id para key y acciones
+            filteredReviews.map((review, index) => {
+              const style = getAvatarStyle(index);
+              return (
+                <div
+                  key={review._id}
+                  className="bg-white border border-gray-200 rounded-2xl p-5 mb-3"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div
+                      className={`w-9 h-9 rounded-full ${style.bg} ${style.text} flex items-center justify-center text-sm font-medium flex-shrink-0`}
+                    >
+                      {review.initials}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-gray-900">
+                          {review.nombre}
+                        </span>
+                        {review.verificada && (
+                          <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full">
+                            Compra verificada
                           </span>
-                          {review.verificada && (
-                            <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full">
-                              Compra verificada
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {review.fecha}
-                        </div>
+                        )}
                       </div>
-                      <div className="flex gap-1">
-                        {renderStars(review.puntuacion)}
+                      <div className="text-xs text-gray-500">
+                        {formatearFecha(review.fecha)}
                       </div>
                     </div>
-
-                    {/* Texto de la reseña */}
-                    <div className="text-sm text-gray-700 leading-relaxed mt-2">
-                      {review.comentario}
-                    </div>
-
-                    {/* Útil */}
-                    <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-200">
-                      <span className="text-xs text-gray-500">¿Útil?</span>
-                      <button
-                        onClick={() => toggleHelpful(review.id)}
-                        className={`flex items-center gap-1.5 px-3 py-1 text-xs border rounded-lg transition-all ${
-                          review.userHelpful
-                            ? "border-green-500 text-green-700 bg-green-50"
-                            : "border-gray-300 text-gray-600 hover:bg-gray-50"
-                        }`}
-                      >
-                        <span>👍</span> {review.helpful}
-                      </button>
+                    <div className="flex gap-1">
+                      {renderStars(review.puntuacion)}
                     </div>
                   </div>
-                );
-              })
-            )}
-          </div>
-        </>
+
+                  <div className="text-sm text-gray-700 leading-relaxed mt-2">
+                    {review.comentario}
+                  </div>
+
+                  <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-200">
+                    <span className="text-xs text-gray-500">¿Útil?</span>
+                    <button
+                      onClick={() => toggleHelpful(review._id)}
+                      className={`flex items-center gap-1.5 px-3 py-1 text-xs border rounded-lg transition-all ${
+                        review.userHelpful
+                          ? "border-green-500 text-green-700 bg-green-50"
+                          : "border-gray-300 text-gray-600 hover:bg-gray-50"
+                      }`}
+                    >
+                      <span>👍</span> {review.helpful}
+                    </button>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
       )}
 
       {/* Formulario de nueva reseña */}
@@ -332,7 +318,6 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
           </div>
         )}
 
-        {/* Selector de estrellas */}
         <div className="flex gap-2 mb-4">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
@@ -340,9 +325,7 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
               onClick={() => setSelectedRating(star)}
               disabled={!isAuthenticated}
               className={`text-3xl transition-all ${
-                star <= selectedRating
-                  ? "text-yellow-400 scale-110"
-                  : "text-gray-300"
+                star <= selectedRating ? "text-yellow-400 scale-110" : "text-gray-300"
               } hover:text-yellow-400 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed`}
               aria-label={`${star} estrella${star > 1 ? "s" : ""}`}
             >
@@ -351,33 +334,23 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
           ))}
         </div>
 
-        {/* Campo nombre */}
         <div className="mb-3">
-          <label className="block text-xs text-gray-600 mb-1.5">
-            Tu nombre
-          </label>
+          <label className="block text-xs text-gray-600 mb-1.5">Tu nombre</label>
           <input
             type="text"
             value={formData.nombre}
-            onChange={(e) =>
-              setFormData({ ...formData, nombre: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
             placeholder="Ej. María García"
             disabled={!isAuthenticated}
             className="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-blue focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
           />
         </div>
 
-        {/* Campo comentario */}
         <div className="mb-3">
-          <label className="block text-xs text-gray-600 mb-1.5">
-            Comentario
-          </label>
+          <label className="block text-xs text-gray-600 mb-1.5">Comentario</label>
           <textarea
             value={formData.comentario}
-            onChange={(e) =>
-              setFormData({ ...formData, comentario: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, comentario: e.target.value })}
             placeholder="¿Qué te pareció el producto?"
             rows={3}
             disabled={!isAuthenticated}
@@ -385,7 +358,6 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
           />
         </div>
 
-        {/* Botón enviar */}
         <button
           onClick={submitReview}
           disabled={!isFormValid || loading}
@@ -394,7 +366,6 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
           {loading ? "Publicando..." : "Publicar reseña"}
         </button>
 
-        {/* Mensaje de éxito */}
         {showSuccess && (
           <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 px-4 py-2.5 rounded-lg mt-3 text-sm">
             <span>✓</span> ¡Tu reseña fue publicada exitosamente!

@@ -8,12 +8,12 @@ import {
   actualizarProducto,
   eliminarProducto,
   actualizarStock,
+  subirImagenProducto,
 } from "../controllers/productoController.js";
 import {
   agregarValoracion,
   marcarValoracionUtil,
   obtenerValoraciones,
-  subirImagenProducto,
 } from "../controllers/resenaController.js";
 import { proteger, autorizar } from "../middleware/auth.js";
 import { validarResultados } from "../middleware/validator.js";
@@ -53,37 +53,14 @@ router.get("/:id", obtenerProductoPorId);
 router.get("/:id/valoraciones", obtenerValoraciones);
 
 // Rutas protegidas - Usuario
-router.post(
-  "/:id/valoraciones",
-  proteger,
-  validacionValoracion,
-  agregarValoracion,
-);
-router.put(
-  "/:id/valoraciones/:valoracionId/util",
-  proteger,
-  marcarValoracionUtil,
-);
+router.post("/:id/valoraciones", proteger, validacionValoracion, agregarValoracion);
+router.put("/:id/valoraciones/:valoracionId/util", proteger, marcarValoracionUtil);
 
 // Rutas protegidas - Admin
-router.post(
-  "/",
-  proteger,
-  autorizar("admin"),
-  validacionProducto,
-  crearProducto,
-);
+router.post("/", proteger, autorizar("admin"), validacionProducto, crearProducto);
+router.put("/:id/imagen", proteger, autorizar("admin"), upload.single("imagen"), subirImagenProducto);
+router.put("/:id/stock", proteger, autorizar("admin"), actualizarStock);
 router.put("/:id", proteger, autorizar("admin"), actualizarProducto);
 router.delete("/:id", proteger, autorizar("admin"), eliminarProducto);
-router.put("/:id/stock", proteger, autorizar("admin"), actualizarStock);
-
-// Agregar esta ruta (con las que ya tienes)
-router.put(
-  "/:id/imagen",
-  proteger,
-  autorizar("admin"),
-  upload.single("imagen"),
-  subirImagenProducto,
-);
 
 export default router;

@@ -3,8 +3,8 @@ import { useCart } from '../context/CartContext';
 
 const ProductCard = ({ producto, showAddButton = true }) => {
   const { addToCart } = useCart();
-  
-  const precioFinal = producto.enOferta 
+
+  const precioFinal = producto.enOferta
     ? producto.precio - (producto.precio * producto.descuento / 100)
     : producto.precio;
 
@@ -16,8 +16,8 @@ const ProductCard = ({ producto, showAddButton = true }) => {
   return (
     <div className="bg-white rounded-[22px] shadow-md overflow-hidden transition-all duration-200 hover:shadow-xl hover:-translate-y-2 hover:scale-105">
       {/* Imagen */}
-      <Link to={`/producto/${producto.id}`}>
-        <div 
+      <Link to={`/producto/${producto._id}`}>
+        <div
           className="w-full h-48 bg-cover bg-center bg-no-repeat relative"
           style={{ backgroundImage: `url(${producto.imagen})` }}
         >
@@ -31,12 +31,12 @@ const ProductCard = ({ producto, showAddButton = true }) => {
 
       {/* Info */}
       <div className="p-5 flex flex-col gap-3">
-        <Link to={`/producto/${producto.id}`} className="no-underline">
+        <Link to={`/producto/${producto._id}`} className="no-underline">
           <h3 className="font-poppins text-lg font-bold text-accent-blue m-0 mb-1">
             {producto.nombre}
           </h3>
         </Link>
-        
+
         <span className="text-sm text-accent-pink font-semibold">
           {producto.categoria}
         </span>

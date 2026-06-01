@@ -1,27 +1,42 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ProductCard from '../components/ProductCard';
-import { productos as todosLosProductos } from '../data/productos';
+import { obtenerProductos } from '../services/productoService';
 
 const Ofertas = () => {
-  const [filtroTipo, setFiltroTipo] = useState('');
+  const [productos, setProductos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [filtroCategoria, setFiltroCategoria] = useState('');
   const [filtroDescuento, setFiltroDescuento] = useState('');
 
-  // Filtrar productos en oferta
-  let productosOferta = todosLosProductos.filter(p => p.enOferta);
+  useEffect(() => {
+    cargarOfertas();
+  }, [filtroCategoria, filtroDescuento]);
 
-  // Aplicar filtros
-  if (filtroCategoria) {
-    productosOferta = productosOferta.filter(p => 
-      p.categoria.toLowerCase() === filtroCategoria.toLowerCase()
-    );
-  }
+  const cargarOfertas = async () => {
+    try {
+      setLoading(true);
+      const data = await obtenerProductos({
+        enOferta: true,
+        categoria: filtroCategoria || undefined,
+      });
 
-  if (filtroDescuento) {
-    productosOferta = productosOferta.filter(p => 
-      p.descuento >= parseInt(filtroDescuento)
-    );
-  }
+      // Filtro de descuento mínimo (se aplica en el frontend
+      // porque el backend no filtra por descuento mínimo aún)
+      let resultado = data.productos;
+      if (filtroDescuento) {
+        resultado = resultado.filter(p => p.descuento >= parseInt(filtroDescuento));
+      }
+
+      setProductos(resultado);
+      setError(null);
+    } catch (err) {
+      setError('Error al cargar las ofertas');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <main className="mt-[94px] mb-10 container mx-auto px-4 max-w-7xl">
@@ -46,27 +61,15 @@ const Ofertas = () => {
       {/* Filtros superiores */}
       <form className="flex gap-5 justify-center items-center mb-9 flex-wrap">
         <select
-          value={filtroTipo}
-          onChange={(e) => setFiltroTipo(e.target.value)}
-          className="py-3 px-5 rounded-xl border-2 border-gray-300 text-base bg-white text-gray-800 focus:border-accent-pink outline-none transition-colors"
-          aria-label="Tipo de oferta"
-        >
-          <option value="">Tipo de oferta</option>
-          <option value="descuento">Descuento</option>
-          <option value="2x1">2x1</option>
-          <option value="ultimas">Últimas unidades</option>
-        </select>
-
-        <select
           value={filtroCategoria}
           onChange={(e) => setFiltroCategoria(e.target.value)}
           className="py-3 px-5 rounded-xl border-2 border-gray-300 text-base bg-white text-gray-800 focus:border-accent-pink outline-none transition-colors"
           aria-label="Categoría"
         >
           <option value="">Categoría</option>
-          <option value="manga">Manga</option>
-          <option value="comic">Cómic</option>
-          <option value="arte">Arte</option>
+          <option value="Manga">Manga</option>
+          <option value="Cómic">Cómic</option>
+          <option value="Arte">Arte</option>
         </select>
 
         <select
@@ -84,13 +87,29 @@ const Ofertas = () => {
 
       {/* Productos en oferta */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {productosOferta.length === 0 ? (
+        {loading ? (
           <div className="col-span-full text-center py-20">
-            <p className="text-xl text-gray-400">No hay productos en oferta con estos filtros</p>
+            <p className="text-xl text-gray-400">Cargando ofertas...</p>
+          </div>
+        ) : error ? (
+          <div className="col-span-full text-center py-20">
+            <p className="text-xl text-red-400">{error}</p>
+            <button
+              onClick={cargarOfertas}
+              className="mt-4 bg-accent-purple text-white py-2 px-6 rounded-lg hover:bg-accent-pink transition-colors"
+            >
+              Reintentar
+            </button>
+          </div>
+        ) : productos.length === 0 ? (
+          <div className="col-span-full text-center py-20">
+            <p className="text-xl text-gray-400">
+              No hay productos en oferta con estos filtros
+            </p>
           </div>
         ) : (
-          productosOferta.map(producto => (
-            <ProductCard key={producto.id} producto={producto} />
+          productos.map(producto => (
+            <ProductCard key={producto._id} producto={producto} />
           ))
         )}
       </section>

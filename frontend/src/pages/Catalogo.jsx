@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
-import { categorias, editoriales } from "../data/productos";
+import { categorias, editoriales } from "../data/constants";
 import { obtenerProductos } from "../services/productoService";
 
 const Catalogo = () => {
