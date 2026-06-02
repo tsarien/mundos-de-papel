@@ -1,3 +1,16 @@
+import {
+  TbLayoutDashboard,
+  TbShoppingCart,
+  TbPackage,
+  TbTag,
+  TbUsers,
+  TbBuildingStore,
+  TbBell,
+  TbSettings,
+  TbLogout,
+  TbHome,
+  TbPlus,
+} from "react-icons/tb";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -19,43 +32,43 @@ const Dashboard = () => {
     resumen: {
       title: "Resumen general",
       sub: "Visión global del negocio",
-      icon: "ti-layout-dashboard",
+      icon: <TbLayoutDashboard size={18} />,
     },
     ventas: {
       title: "Ventas",
       sub: "Historial y pedidos activos",
-      icon: "ti-shopping-cart",
+      icon: <TbShoppingCart size={18} />,
     },
     inventario: {
       title: "Inventario",
       sub: "Control de stock y productos",
-      icon: "ti-package",
+      icon: <TbPackage size={18} />,
     },
     precios: {
       title: "Precios",
       sub: "Reglas y políticas de precio",
-      icon: "ti-tag",
+      icon: <TbTag size={18} />,
     },
     clientes: {
       title: "Clientes",
       sub: "Base de datos de compradores",
-      icon: "ti-users",
+      icon: <TbUsers size={18} />,
     },
     proveedores: {
       title: "Proveedores",
       sub: "Directorio y estado de relaciones",
-      icon: "ti-building-store",
+      icon: <TbBuildingStore size={18} />,
     },
     alertas: {
       title: "Alertas",
       sub: "Notificaciones pendientes",
-      icon: "ti-bell",
+      icon: <TbBell size={18} />,
       badge: 3,
     },
     configuracion: {
       title: "Configuración",
       sub: "Ajustes del sistema",
-      icon: "ti-settings",
+      icon: <TbSettings size={18} />,
     },
   };
 
@@ -109,7 +122,7 @@ const Dashboard = () => {
                 : "text-gray-400 border-transparent hover:text-white hover:bg-white/5"
             }`}
           >
-            <i className={`${pages.resumen.icon} text-base`}></i>
+            {pages.resumen.icon}
             Resumen
           </div>
           <div
@@ -120,7 +133,7 @@ const Dashboard = () => {
                 : "text-gray-400 border-transparent hover:text-white hover:bg-white/5"
             }`}
           >
-            <i className={`${pages.ventas.icon} text-base`}></i>
+            {pages.ventas.icon}
             Ventas
           </div>
 
@@ -136,7 +149,7 @@ const Dashboard = () => {
                 : "text-gray-400 border-transparent hover:text-white hover:bg-white/5"
             }`}
           >
-            <i className={`${pages.inventario.icon} text-base`}></i>
+            {pages.inventario.icon}
             Inventario
           </div>
           <div
@@ -147,7 +160,7 @@ const Dashboard = () => {
                 : "text-gray-400 border-transparent hover:text-white hover:bg-white/5"
             }`}
           >
-            <i className={`${pages.precios.icon} text-base`}></i>
+            {pages.precios.icon}
             Precios
           </div>
           <div
@@ -158,7 +171,7 @@ const Dashboard = () => {
                 : "text-gray-400 border-transparent hover:text-white hover:bg-white/5"
             }`}
           >
-            <i className={`${pages.clientes.icon} text-base`}></i>
+            {pages.clientes.icon}
             Clientes
           </div>
           <div
@@ -169,7 +182,7 @@ const Dashboard = () => {
                 : "text-gray-400 border-transparent hover:text-white hover:bg-white/5"
             }`}
           >
-            <i className={`${pages.proveedores.icon} text-base`}></i>
+            {pages.proveedores.icon}
             Proveedores
           </div>
 
@@ -185,7 +198,7 @@ const Dashboard = () => {
                 : "text-gray-400 border-transparent hover:text-white hover:bg-white/5"
             }`}
           >
-            <i className={`${pages.alertas.icon} text-base`}></i>
+            {pages.alertas.icon}
             Alertas
             {pages.alertas.badge > 0 && (
               <span className="ml-auto text-[9px] font-bold bg-accent-pink text-white rounded-full px-1.5 py-0.5">
@@ -201,7 +214,7 @@ const Dashboard = () => {
                 : "text-gray-400 border-transparent hover:text-white hover:bg-white/5"
             }`}
           >
-            <i className={`${pages.configuracion.icon} text-base`}></i>
+            {pages.configuracion.icon}
             Configuración
           </div>
         </nav>
@@ -222,7 +235,7 @@ const Dashboard = () => {
             className="text-gray-500 hover:text-white transition-colors"
             title="Cerrar sesión"
           >
-            <i className="ti-logout text-base"></i>
+            <TbLogout size={18} />
           </button>
         </div>
       </aside>
@@ -245,11 +258,11 @@ const Dashboard = () => {
               onClick={() => navigate("/")}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-white/10 bg-transparent text-gray-200 text-xs hover:bg-white/5 transition-all font-semibold"
             >
-              <i className="ti-home text-sm"></i>
+              <TbHome size={16} />
               Ver tienda
             </button>
             <button className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gradient-to-r from-accent-blue to-accent-purple text-bg text-xs hover:opacity-90 transition-all font-bold border-none shadow-md">
-              <i className="ti-plus text-sm"></i>
+              <TbPlus size={16} />
               Nuevo pedido
             </button>
           </div>
