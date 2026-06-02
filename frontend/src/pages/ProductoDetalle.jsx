@@ -1,8 +1,25 @@
-import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
-import ReviewSystem from '../components/ReviewSystem';
-import { obtenerProductoPorId, obtenerProductos } from '../services/productoService';
+import { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
+import { useCart } from "../context/CartContext";
+import ReviewSystem from "../components/ReviewSystem";
+import {
+  obtenerProductoPorId,
+  obtenerProductos,
+} from "../services/productoService";
+import {
+  TbBook,
+  TbUser,
+  TbBuilding,
+  TbLanguage,
+  TbFileText,
+  TbPackage,
+  TbShoppingCartPlus,
+  TbArrowLeft,
+  TbMinus,
+  TbPlus,
+  TbHome,
+  TbBooks,
+} from "react-icons/tb";
 
 const ProductoDetalle = () => {
   const { id } = useParams();
@@ -30,14 +47,14 @@ const ProductoDetalle = () => {
         categoria: data.producto.categoria,
         limite: 5,
       });
-      const relacionados = relacionadosData.productos.filter(
-        p => p._id !== data.producto._id
-      ).slice(0, 4);
+      const relacionados = relacionadosData.productos
+        .filter((p) => p._id !== data.producto._id)
+        .slice(0, 4);
       setProductosRelacionados(relacionados);
 
       setError(null);
     } catch (err) {
-      setError('Producto no encontrado');
+      setError("Producto no encontrado");
       console.error(err);
     } finally {
       setLoading(false);
@@ -47,7 +64,9 @@ const ProductoDetalle = () => {
   const handleAgregarAlCarrito = () => {
     if (producto && cantidad > 0) {
       addToCart(producto, cantidad);
-      alert(`${cantidad} ${cantidad === 1 ? 'unidad' : 'unidades'} de "${producto.nombre}" agregado${cantidad === 1 ? '' : 's'} al carrito`);
+      alert(
+        `${cantidad} ${cantidad === 1 ? "unidad" : "unidades"} de "${producto.nombre}" agregado${cantidad === 1 ? "" : "s"} al carrito`,
+      );
     }
   };
 
@@ -73,9 +92,13 @@ const ProductoDetalle = () => {
     return (
       <div className="min-h-screen bg-bg flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4">📚</div>
+          <div className="flex justify-center mb-4 text-accent-purple">
+            <TbBook size={72} />
+          </div>
           <h2 className="text-2xl text-white mb-2">Producto no encontrado</h2>
-          <p className="text-gray-400 mb-6">El producto que buscas no existe o fue eliminado</p>
+          <p className="text-gray-400 mb-6">
+            El producto que buscas no existe o fue eliminado
+          </p>
           <Link
             to="/catalogo"
             className="inline-block bg-accent-blue text-bg px-6 py-3 rounded-lg hover:opacity-90 transition-opacity"
@@ -88,7 +111,7 @@ const ProductoDetalle = () => {
   }
 
   const precioFinal = producto.enOferta
-    ? producto.precio - (producto.precio * producto.descuento / 100)
+    ? producto.precio - (producto.precio * producto.descuento) / 100
     : producto.precio;
 
   return (
@@ -96,9 +119,21 @@ const ProductoDetalle = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-gray-400 mb-6">
-          <Link to="/" className="hover:text-accent-blue transition-colors">Inicio</Link>
+          <Link
+            to="/"
+            className="hover:text-accent-blue transition-colors flex items-center gap-1"
+          >
+            <TbHome size={16} />
+            Inicio
+          </Link>
           <span>/</span>
-          <Link to="/catalogo" className="hover:text-accent-blue transition-colors">Catálogo</Link>
+          <Link
+            to="/catalogo"
+            className="hover:text-accent-blue transition-colors flex items-center gap-1"
+          >
+            <TbBooks size={16} />
+            Catálogo
+          </Link>
           <span>/</span>
           <span className="text-white">{producto.nombre}</span>
         </div>
@@ -121,12 +156,18 @@ const ProductoDetalle = () => {
               {producto.categoria}
             </div>
 
-            <h1 className="text-4xl font-bold text-white mb-4 leading-tight">{producto.nombre}</h1>
+            <h1 className="text-4xl font-bold text-white mb-4 leading-tight">
+              {producto.nombre}
+            </h1>
 
-            <p className="text-xl text-gray-300 mb-2">
-              Por <span className="text-accent-blue">{producto.autor}</span>
-            </p>
-            <p className="text-gray-400 mb-6">{producto.editorial}</p>
+            <div className="flex items-center gap-2 text-xl text-gray-300 mb-2">
+              <TbUser size={20} className="text-accent-blue" />
+              <span className="text-accent-blue">{producto.autor}</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-400 mb-6">
+              <TbBuilding size={18} />
+              {producto.editorial}
+            </div>
 
             <p className="text-gray-300 mb-6 leading-relaxed">
               {producto.descripcionCompleta || producto.descripcion}
@@ -135,21 +176,39 @@ const ProductoDetalle = () => {
             {/* Detalles técnicos */}
             <div className="grid grid-cols-2 gap-4 mb-6 bg-bg-light/50 border border-white/5 rounded-xl p-6">
               <div>
-                <p className="text-gray-400 text-sm">Páginas</p>
+                <p className="text-gray-400 text-sm flex items-center gap-2">
+                  <TbFileText size={16} />
+                  Páginas
+                </p>
                 <p className="text-white font-medium">{producto.paginas}</p>
               </div>
               <div>
-                <p className="text-gray-400 text-sm">Idioma</p>
+                <p className="text-gray-400 text-sm flex items-center gap-2">
+                  <TbLanguage size={16} />
+                  Idioma
+                </p>
                 <p className="text-white font-medium">{producto.idioma}</p>
               </div>
               <div>
-                <p className="text-gray-400 text-sm">Presentación</p>
-                <p className="text-white font-medium">{producto.presentacion}</p>
+                <p className="text-gray-400 text-sm flex items-center gap-2">
+                  <TbBook size={16} />
+                  Presentación
+                </p>
+                <p className="text-white font-medium">
+                  {producto.presentacion}
+                </p>
               </div>
               <div>
-                <p className="text-gray-400 text-sm">Stock</p>
-                <p className={`font-medium ${producto.stock > 5 ? 'text-accent-green' : 'text-yellow-500'}`}>
-                  {producto.stock > 0 ? `${producto.stock} disponibles` : 'Agotado'}
+                <p className="text-gray-400 text-sm flex items-center gap-2">
+                  <TbPackage size={16} />
+                  Stock
+                </p>
+                <p
+                  className={`font-medium ${producto.stock > 5 ? "text-accent-green" : "text-yellow-500"}`}
+                >
+                  {producto.stock > 0
+                    ? `${producto.stock} disponibles`
+                    : "Agotado"}
                 </p>
               </div>
             </div>
@@ -183,7 +242,7 @@ const ProductoDetalle = () => {
                   disabled={cantidad <= 1}
                   className="px-4 h-full text-white hover:bg-accent-blue hover:text-bg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                 >
-                  -
+                  <TbMinus size={18} />
                 </button>
                 <span className="px-6 text-white font-medium min-w-[60px] text-center">
                   {cantidad}
@@ -193,16 +252,17 @@ const ProductoDetalle = () => {
                   disabled={cantidad >= producto.stock}
                   className="px-4 h-full text-white hover:bg-accent-blue hover:text-bg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                 >
-                  +
+                  <TbPlus size={18} />
                 </button>
               </div>
 
               <button
                 onClick={handleAgregarAlCarrito}
                 disabled={producto.stock === 0}
-                className="flex-1 bg-gradient-to-r from-accent-blue to-accent-purple text-bg hover:from-accent-pink hover:to-accent-purple hover:text-white px-8 py-3 rounded-xl font-bold text-base hover:shadow-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed border-none h-12"
+                className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-accent-blue to-accent-purple text-bg hover:from-accent-pink hover:to-accent-purple hover:text-white px-8 py-3 rounded-xl font-bold text-base hover:shadow-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed border-none h-12"
               >
-                {producto.stock > 0 ? 'Agregar al Carrito' : 'Agotado'}
+                <TbShoppingCartPlus size={20} />
+                {producto.stock > 0 ? "Agregar al Carrito" : "Agotado"}
               </button>
             </div>
 
@@ -210,7 +270,10 @@ const ProductoDetalle = () => {
               to="/catalogo"
               className="inline-block text-center border border-accent-purple/40 text-accent-purple px-8 py-3 rounded-xl font-bold hover:bg-accent-purple hover:text-bg transition-all"
             >
-              Continuar Comprando
+              <span className="flex items-center justify-center gap-2">
+                <TbArrowLeft size={18} />
+                Continuar Comprando
+              </span>
             </Link>
           </div>
         </div>
@@ -226,11 +289,13 @@ const ProductoDetalle = () => {
         {/* Productos relacionados */}
         {productosRelacionados.length > 0 && (
           <div>
-            <h2 className="text-3xl font-bold text-white mb-8">Productos Relacionados</h2>
+            <h2 className="text-3xl font-bold text-white mb-8">
+              Productos Relacionados
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {productosRelacionados.map(prod => {
+              {productosRelacionados.map((prod) => {
                 const precioRel = prod.enOferta
-                  ? prod.precio - (prod.precio * prod.descuento / 100)
+                  ? prod.precio - (prod.precio * prod.descuento) / 100
                   : prod.precio;
 
                 return (
@@ -252,7 +317,9 @@ const ProductoDetalle = () => {
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="text-white font-bold mb-1 line-clamp-1 group-hover:text-accent-blue transition-colors text-sm">{prod.nombre}</h3>
+                      <h3 className="text-white font-bold mb-1 line-clamp-1 group-hover:text-accent-blue transition-colors text-sm">
+                        {prod.nombre}
+                      </h3>
                       <p className="text-gray-400 text-xs mb-2">{prod.autor}</p>
                       <div className="flex items-baseline gap-2">
                         {prod.enOferta ? (

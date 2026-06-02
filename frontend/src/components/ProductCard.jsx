@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { TbShoppingCartPlus } from "react-icons/tb";
 
 const ProductCard = ({ producto, showAddButton = true }) => {
   const { addToCart } = useCart();
@@ -57,9 +58,10 @@ const ProductCard = ({ producto, showAddButton = true }) => {
         {showAddButton && (
           <button
             onClick={handleAddToCart}
-            className="w-full bg-accent-blue text-bg font-bold py-2.5 px-6 rounded-xl transition-all duration-200 hover:bg-gradient-to-r hover:from-accent-blue hover:to-accent-purple hover:text-white hover:shadow-lg mt-2"
+            className="w-full flex items-center justify-center gap-2 bg-accent-blue text-bg font-bold py-2.5 px-6 rounded-xl transition-all duration-200 hover:bg-gradient-to-r hover:from-accent-blue hover:to-accent-purple hover:text-white hover:shadow-lg mt-2"
           >
-            Agregar al carrito
+            <TbShoppingCartPlus size={18} />
+            <span>Agregar al carrito</span>
           </button>
         )}
       </div>

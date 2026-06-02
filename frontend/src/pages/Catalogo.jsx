@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import { categorias, editoriales } from "../data/constants";
 import { obtenerProductos } from "../services/productoService";
+import { TbSearch } from "react-icons/tb";
 
 const Catalogo = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -91,7 +92,7 @@ const Catalogo = () => {
           className="bg-accent-purple border-none rounded-2xl w-12 h-12 flex items-center justify-center cursor-pointer hover:bg-accent-pink hover:shadow-lg transition-all"
           aria-label="Buscar"
         >
-          <span className="text-white text-xl">🔍</span>
+          <TbSearch size={22} className="text-white" />
         </button>
       </form>
 

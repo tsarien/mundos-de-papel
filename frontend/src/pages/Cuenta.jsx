@@ -2,6 +2,16 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useForm } from "react-hook-form";
+import {
+  TbUser,
+  TbShoppingBag,
+  TbLock,
+  TbLayoutDashboard,
+  TbLogout,
+  TbDeviceFloppy,
+  TbX,
+  TbEye,
+} from "react-icons/tb";
 
 const Cuenta = () => {
   const { user, logout, updateProfile, isAuthenticated } = useAuth();
@@ -56,20 +66,33 @@ const Cuenta = () => {
         <nav className="glass-panel rounded-2xl p-6 min-w-[180px] max-w-[260px] w-full lg:sticky lg:top-24 text-white">
           <ul className="list-none m-0 p-0 flex flex-col gap-4">
             {[
-              { id: "info", nombre: "Información personal" },
-              { id: "pedidos", nombre: "Historial de pedidos" },
-              { id: "password", nombre: "Cambiar contraseña" },
+              {
+                id: "info",
+                nombre: "Información personal",
+                icon: <TbUser size={18} />,
+              },
+              {
+                id: "pedidos",
+                nombre: "Historial de pedidos",
+                icon: <TbShoppingBag size={18} />,
+              },
+              {
+                id: "password",
+                nombre: "Cambiar contraseña",
+                icon: <TbLock size={18} />,
+              },
             ].map((item) => (
               <li key={item.id}>
                 <button
                   onClick={() => setSeccionActiva(item.id)}
-                  className={`w-full text-left font-poppins text-sm font-semibold py-2.5 px-4 rounded-xl transition-all duration-200 border-none cursor-pointer
-                    ${
-                      seccionActiva === item.id
-                        ? "bg-accent-purple text-bg font-bold"
-                        : "bg-transparent text-gray-300 hover:bg-white/5 hover:text-white"
-                    }`}
+                  className={`w-full text-left font-poppins text-sm font-semibold py-2.5 px-4 rounded-xl transition-all duration-200 border-none cursor-pointer flex items-center gap-3
+    ${
+      seccionActiva === item.id
+        ? "bg-accent-purple text-bg font-bold"
+        : "bg-transparent text-gray-300 hover:bg-white/5 hover:text-white"
+    }`}
                 >
+                  {item.icon}
                   {item.nombre}
                 </button>
               </li>
@@ -81,7 +104,10 @@ const Cuenta = () => {
                   to="/admin/dashboard"
                   className="w-full text-left font-poppins text-sm font-bold py-2.5 px-4 rounded-xl transition-all border-none cursor-pointer bg-accent-pink text-bg hover:opacity-90 block text-left shadow-md"
                 >
-                  Panel Admin
+                  <span className="flex items-center gap-3">
+                    <TbLayoutDashboard size={18} />
+                    Panel Admin
+                  </span>
                 </Link>
               </li>
             )}
@@ -91,7 +117,10 @@ const Cuenta = () => {
                 onClick={handleLogout}
                 className="w-full text-left font-poppins text-sm font-bold py-2.5 px-4 rounded-xl transition-all duration-200 cursor-pointer bg-transparent text-red-400 hover:bg-red-500/10 hover:text-red-300 border border-transparent hover:border-red-500/20"
               >
-                Cerrar sesión
+                <span className="flex items-center gap-3">
+                  <TbLogout size={18} />
+                  Cerrar sesión
+                </span>
               </button>
             </li>
           </ul>
@@ -164,13 +193,19 @@ const Cuenta = () => {
                     type="submit"
                     className="bg-accent-blue text-bg font-bold py-2.5 px-6 rounded-xl hover:bg-accent-pink hover:shadow-lg transition-all cursor-pointer border-none"
                   >
-                    Guardar cambios
+                    <span className="flex items-center gap-2">
+                      <TbDeviceFloppy size={18} />
+                      Guardar cambios
+                    </span>
                   </button>
                   <button
                     type="reset"
                     className="bg-transparent text-accent-blue border border-accent-blue/30 font-bold py-2.5 px-6 rounded-xl hover:bg-accent-blue/10 transition-all cursor-pointer"
                   >
-                    Cancelar
+                    <span className="flex items-center gap-2">
+                      <TbX size={18} />
+                      Cancelar
+                    </span>
                   </button>
                 </div>
               </form>
@@ -214,7 +249,10 @@ const Cuenta = () => {
                       </span>
                     </div>
                     <button className="bg-transparent text-accent-blue font-bold py-2 px-4 rounded-lg border border-accent-blue/40 cursor-pointer hover:bg-accent-blue hover:text-bg transition-all">
-                      Ver detalles
+                      <span className="flex items-center gap-2">
+                        <TbEye size={18} />
+                        Ver detalles
+                      </span>
                     </button>
                   </li>
                 ))}
