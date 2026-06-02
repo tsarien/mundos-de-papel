@@ -1,198 +1,157 @@
 const ConfiguracionView = () => {
   return (
-    <div className="flex flex-col gap-5">
-      {/* Información general */}
-      <div className="bg-white border border-black/8 rounded-2xl p-5">
-        <div className="text-[13px] font-medium text-[#1A1814] mb-4">
+    <div className="flex flex-col gap-5 text-white">
+      {/* Información de la tienda */}
+      <div className="glass-panel rounded-2xl p-6 border border-white/5">
+        <div className="text-xs font-bold uppercase tracking-wider text-accent-blue mb-5 border-b border-white/5 pb-2.5">
           Información de la tienda
         </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-[11px] text-[#9E9890] mb-1.5">
-              Nombre de la tienda
-            </label>
-            <input 
-              type="text" 
-              defaultValue="Mundos de Papel"
-              className="w-full text-[12px] px-3 py-2 rounded-lg border border-black/14 bg-white text-[#1A1814]"
-            />
-          </div>
-
-          <div>
-            <label className="block text-[11px] text-[#9E9890] mb-1.5">
-              Email de contacto
-            </label>
-            <input 
-              type="email" 
-              defaultValue="contacto@mundosdepapel.com"
-              className="w-full text-[12px] px-3 py-2 rounded-lg border border-black/14 bg-white text-[#1A1814]"
-            />
-          </div>
-
-          <div>
-            <label className="block text-[11px] text-[#9E9890] mb-1.5">
-              Teléfono
-            </label>
-            <input 
-              type="tel" 
-              defaultValue="+57 300 123 4567"
-              className="w-full text-[12px] px-3 py-2 rounded-lg border border-black/14 bg-white text-[#1A1814]"
-            />
-          </div>
-
-          <div>
-            <label className="block text-[11px] text-[#9E9890] mb-1.5">
-              Dirección
-            </label>
-            <input 
-              type="text" 
-              defaultValue="Calle 45 #67-89, Bogotá"
-              className="w-full text-[12px] px-3 py-2 rounded-lg border border-black/14 bg-white text-[#1A1814]"
-            />
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {[
+            {
+              label: "Nombre de la tienda",
+              type: "text",
+              value: "Mundos de Papel",
+            },
+            {
+              label: "Email de contacto",
+              type: "email",
+              value: "contacto@mundosdepapel.com",
+            },
+            { label: "Teléfono", type: "tel", value: "+57 300 123 4567" },
+            {
+              label: "Dirección",
+              type: "text",
+              value: "Calle 45 #67-89, Bogotá",
+            },
+          ].map((field) => (
+            <div key={field.label}>
+              <label className="block text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1.5">
+                {field.label}
+              </label>
+              <input
+                type={field.type}
+                defaultValue={field.value}
+                className="w-full text-xs px-3 py-2.5 rounded-lg border border-white/10 bg-[#232632] text-white focus:outline-none focus:border-accent-blue transition-colors"
+              />
+            </div>
+          ))}
         </div>
       </div>
 
       {/* Configuración de pedidos */}
-      <div className="bg-white border border-black/8 rounded-2xl p-5">
-        <div className="text-[13px] font-medium text-[#1A1814] mb-4">
+      <div className="glass-panel rounded-2xl p-6 border border-white/5">
+        <div className="text-xs font-bold uppercase tracking-wider text-accent-purple mb-5 border-b border-white/5 pb-2.5">
           Configuración de pedidos
         </div>
-
-        <div className="space-y-4">
-          <div className="flex items-center justify-between py-3 border-b border-black/8">
-            <div className="flex-1">
-              <div className="text-[12px] font-medium text-[#1A1814] mb-1">
-                Pedido mínimo
+        <div>
+          {[
+            {
+              label: "Pedido mínimo",
+              desc: "Monto mínimo para realizar un pedido",
+              value: "30000",
+            },
+            {
+              label: "Envío gratis desde",
+              desc: "Monto mínimo para envío gratuito",
+              value: "100000",
+            },
+            {
+              label: "Costo de envío",
+              desc: "Costo estándar de envío",
+              value: "10000",
+            },
+            {
+              label: "IVA (%)",
+              desc: "Porcentaje de IVA aplicado",
+              value: "19",
+            },
+          ].map((item, i, arr) => (
+            <div
+              key={item.label}
+              className={`flex items-center justify-between py-3.5 ${i < arr.length - 1 ? "border-b border-white/5" : ""}`}
+            >
+              <div className="flex-1">
+                <div className="text-xs font-semibold text-white mb-0.5">
+                  {item.label}
+                </div>
+                <div className="text-[10px] text-gray-400">{item.desc}</div>
               </div>
-              <div className="text-[11px] text-[#9E9890]">
-                Monto mínimo para realizar un pedido
-              </div>
+              <input
+                type="number"
+                defaultValue={item.value}
+                className="w-32 text-xs px-3 py-2.5 rounded-lg border border-white/10 bg-[#232632] text-white text-right focus:outline-none focus:border-accent-blue transition-colors"
+              />
             </div>
-            <input 
-              type="number" 
-              defaultValue="30000"
-              className="w-32 text-[12px] px-3 py-2 rounded-lg border border-black/14 bg-white text-[#1A1814] text-right"
-            />
-          </div>
-
-          <div className="flex items-center justify-between py-3 border-b border-black/8">
-            <div className="flex-1">
-              <div className="text-[12px] font-medium text-[#1A1814] mb-1">
-                Envío gratis desde
-              </div>
-              <div className="text-[11px] text-[#9E9890]">
-                Monto mínimo para envío gratuito
-              </div>
-            </div>
-            <input 
-              type="number" 
-              defaultValue="100000"
-              className="w-32 text-[12px] px-3 py-2 rounded-lg border border-black/14 bg-white text-[#1A1814] text-right"
-            />
-          </div>
-
-          <div className="flex items-center justify-between py-3 border-b border-black/8">
-            <div className="flex-1">
-              <div className="text-[12px] font-medium text-[#1A1814] mb-1">
-                Costo de envío
-              </div>
-              <div className="text-[11px] text-[#9E9890]">
-                Costo estándar de envío
-              </div>
-            </div>
-            <input 
-              type="number" 
-              defaultValue="10000"
-              className="w-32 text-[12px] px-3 py-2 rounded-lg border border-black/14 bg-white text-[#1A1814] text-right"
-            />
-          </div>
-
-          <div className="flex items-center justify-between py-3">
-            <div className="flex-1">
-              <div className="text-[12px] font-medium text-[#1A1814] mb-1">
-                IVA (%)
-              </div>
-              <div className="text-[11px] text-[#9E9890]">
-                Porcentaje de IVA aplicado
-              </div>
-            </div>
-            <input 
-              type="number" 
-              defaultValue="19"
-              className="w-32 text-[12px] px-3 py-2 rounded-lg border border-black/14 bg-white text-[#1A1814] text-right"
-            />
-          </div>
+          ))}
         </div>
       </div>
 
-      {/* Configuración de stock */}
-      <div className="bg-white border border-black/8 rounded-2xl p-5">
-        <div className="text-[13px] font-medium text-[#1A1814] mb-4">
+      {/* Configuración de inventario */}
+      <div className="glass-panel rounded-2xl p-6 border border-white/5">
+        <div className="text-xs font-bold uppercase tracking-wider text-accent-blue mb-5 border-b border-white/5 pb-2.5">
           Configuración de inventario
         </div>
-
-        <div className="space-y-4">
-          <div className="flex items-center justify-between py-3 border-b border-black/8">
-            <div className="flex-1">
-              <div className="text-[12px] font-medium text-[#1A1814] mb-1">
-                Umbral de stock bajo
+        <div>
+          {[
+            {
+              label: "Umbral de stock bajo",
+              desc: "Cantidad mínima antes de alertar",
+              value: "5",
+            },
+            {
+              label: "Alerta de stock crítico",
+              desc: "Notificar cuando el stock sea menor o igual a este valor",
+              value: "2",
+            },
+          ].map((item, i, arr) => (
+            <div
+              key={item.label}
+              className={`flex items-center justify-between py-3.5 ${i < arr.length - 1 ? "border-b border-white/5" : ""}`}
+            >
+              <div className="flex-1">
+                <div className="text-xs font-semibold text-white mb-0.5">
+                  {item.label}
+                </div>
+                <div className="text-[10px] text-gray-400">{item.desc}</div>
               </div>
-              <div className="text-[11px] text-[#9E9890]">
-                Cantidad mínima antes de alertar
-              </div>
+              <input
+                type="number"
+                defaultValue={item.value}
+                className="w-32 text-xs px-3 py-2.5 rounded-lg border border-white/10 bg-[#232632] text-white text-right focus:outline-none focus:border-accent-blue transition-colors"
+              />
             </div>
-            <input 
-              type="number" 
-              defaultValue="5"
-              className="w-32 text-[12px] px-3 py-2 rounded-lg border border-black/14 bg-white text-[#1A1814] text-right"
-            />
-          </div>
-
-          <div className="flex items-center justify-between py-3">
-            <div className="flex-1">
-              <div className="text-[12px] font-medium text-[#1A1814] mb-1">
-                Alerta de stock crítico
-              </div>
-              <div className="text-[11px] text-[#9E9890]">
-                Notificar cuando el stock sea menor o igual a este valor
-              </div>
-            </div>
-            <input 
-              type="number" 
-              defaultValue="2"
-              className="w-32 text-[12px] px-3 py-2 rounded-lg border border-black/14 bg-white text-[#1A1814] text-right"
-            />
-          </div>
+          ))}
         </div>
       </div>
 
       {/* Métodos de pago */}
-      <div className="bg-white border border-black/8 rounded-2xl p-5">
-        <div className="text-[13px] font-medium text-[#1A1814] mb-4">
+      <div className="glass-panel rounded-2xl p-6 border border-white/5">
+        <div className="text-xs font-bold uppercase tracking-wider text-accent-purple mb-5 border-b border-white/5 pb-2.5">
           Métodos de pago
         </div>
-
-        <div className="space-y-3">
+        <div>
           {[
-            { nombre: 'Tarjeta de crédito/débito', activo: true },
-            { nombre: 'Transferencia bancaria', activo: true },
-            { nombre: 'PSE', activo: true },
-            { nombre: 'Efectivo contra entrega', activo: true },
-            { nombre: 'Anticipo + saldo', activo: true },
-          ].map((metodo, index) => (
-            <div key={index} className="flex items-center justify-between py-3 border-b border-black/8 last:border-0">
-              <div className="text-[12px] text-[#1A1814]">
+            { nombre: "Tarjeta de crédito/débito", activo: true },
+            { nombre: "Transferencia bancaria", activo: true },
+            { nombre: "PSE", activo: true },
+            { nombre: "Efectivo contra entrega", activo: true },
+            { nombre: "Anticipo + saldo", activo: true },
+          ].map((metodo, index, arr) => (
+            <div
+              key={metodo.nombre}
+              className={`flex items-center justify-between py-3.5 ${index < arr.length - 1 ? "border-b border-white/5" : ""}`}
+            >
+              <div className="text-xs font-semibold text-white">
                 {metodo.nombre}
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  className="sr-only peer" 
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
                   defaultChecked={metodo.activo}
                 />
-                <div className="w-9 h-5 bg-[#F0EDE6] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#2D5016]"></div>
+                <div className="w-9 h-5 bg-[#13151b] border border-white/10 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-gray-500 after:border-transparent after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-accent-blue peer-checked:after:bg-white"></div>
               </label>
             </div>
           ))}
@@ -200,62 +159,59 @@ const ConfiguracionView = () => {
       </div>
 
       {/* Zona de peligro */}
-      <div className="bg-white border border-[#8C1A1A] rounded-2xl p-5">
-        <div className="text-[13px] font-medium text-[#8C1A1A] mb-4">
+      <div className="glass-panel rounded-2xl p-6 border border-red-500/30">
+        <div className="text-xs font-bold uppercase tracking-wider text-red-400 mb-5 border-b border-white/5 pb-2.5">
           Zona de peligro
         </div>
-
-        <div className="space-y-3">
-          <div className="flex items-center justify-between py-3 border-b border-black/8">
+        <div>
+          <div className="flex items-center justify-between py-3.5 border-b border-white/5">
             <div className="flex-1">
-              <div className="text-[12px] font-medium text-[#1A1814] mb-1">
+              <div className="text-xs font-semibold text-white mb-0.5">
                 Exportar datos
               </div>
-              <div className="text-[11px] text-[#9E9890]">
+              <div className="text-[10px] text-gray-400">
                 Descargar todos los datos del sistema
               </div>
             </div>
-            <button className="text-[12px] px-3 py-1.5 rounded-lg border border-black/14 bg-white text-[#1A1814] hover:bg-[#F0EDE6] transition-colors">
+            <button className="text-[11px] font-bold px-3 py-1.5 rounded-lg border border-white/10 bg-transparent text-gray-300 hover:text-white hover:bg-white/5 transition-all cursor-pointer">
               Exportar
             </button>
           </div>
-
-          <div className="flex items-center justify-between py-3 border-b border-black/8">
+          <div className="flex items-center justify-between py-3.5 border-b border-white/5">
             <div className="flex-1">
-              <div className="text-[12px] font-medium text-[#1A1814] mb-1">
+              <div className="text-xs font-semibold text-white mb-0.5">
                 Limpiar caché
               </div>
-              <div className="text-[11px] text-[#9E9890]">
+              <div className="text-[10px] text-gray-400">
                 Eliminar archivos temporales y caché del sistema
               </div>
             </div>
-            <button className="text-[12px] px-3 py-1.5 rounded-lg border border-black/14 bg-white text-[#1A1814] hover:bg-[#F0EDE6] transition-colors">
+            <button className="text-[11px] font-bold px-3 py-1.5 rounded-lg border border-white/10 bg-transparent text-gray-300 hover:text-white hover:bg-white/5 transition-all cursor-pointer">
               Limpiar
             </button>
           </div>
-
-          <div className="flex items-center justify-between py-3">
+          <div className="flex items-center justify-between py-3.5">
             <div className="flex-1">
-              <div className="text-[12px] font-medium text-[#8C1A1A] mb-1">
+              <div className="text-xs font-semibold text-red-400 mb-0.5">
                 Restablecer configuración
               </div>
-              <div className="text-[11px] text-[#9E9890]">
+              <div className="text-[10px] text-gray-400">
                 Volver a los valores predeterminados
               </div>
             </div>
-            <button className="text-[12px] px-3 py-1.5 rounded-lg bg-[#8C1A1A] text-white hover:bg-[#6B1414] transition-colors">
+            <button className="text-[11px] font-bold px-3 py-1.5 rounded-lg bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500/30 transition-all cursor-pointer">
               Restablecer
             </button>
           </div>
         </div>
       </div>
 
-      {/* Botón guardar */}
+      {/* Acciones */}
       <div className="flex justify-end gap-2">
-        <button className="text-[12px] px-4 py-2 rounded-lg border border-black/14 bg-white text-[#1A1814] hover:bg-[#F0EDE6] transition-colors">
+        <button className="text-[11px] font-bold px-4 py-2 rounded-lg border border-white/10 bg-transparent text-gray-300 hover:text-white hover:bg-white/5 transition-all cursor-pointer">
           Cancelar
         </button>
-        <button className="text-[12px] px-4 py-2 rounded-lg bg-[#2D5016] text-white hover:bg-[#4A7C28] transition-colors">
+        <button className="text-[11px] font-bold px-4 py-2 rounded-lg bg-gradient-to-r from-accent-blue to-accent-purple text-bg hover:opacity-90 hover:shadow-md transition-all border-none cursor-pointer">
           Guardar cambios
         </button>
       </div>

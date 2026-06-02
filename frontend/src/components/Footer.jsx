@@ -1,28 +1,28 @@
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer className="bg-bg-light text-gray-300 py-10 mt-8">
+    <footer className="bg-bg-light text-gray-300 py-10 mt-2">
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="flex flex-wrap gap-8 items-center justify-between">
           {/* Social */}
           <div className="flex gap-5">
-            <a 
-              href="#" 
+            <a
+              href="#"
               className="text-accent-blue font-semibold no-underline hover:text-accent-pink transition-colors duration-200"
               aria-label="Instagram"
             >
               Instagram
             </a>
-            <a 
-              href="#" 
+            <a
+              href="#"
               className="text-accent-blue font-semibold no-underline hover:text-accent-pink transition-colors duration-200"
               aria-label="Facebook"
             >
               Facebook
             </a>
-            <a 
-              href="#" 
+            <a
+              href="#"
               className="text-accent-blue font-semibold no-underline hover:text-accent-pink transition-colors duration-200"
               aria-label="Twitter"
             >
@@ -32,20 +32,20 @@ const Footer = () => {
 
           {/* Links */}
           <div className="flex gap-5">
-            <Link 
-              to="/contacto" 
+            <Link
+              to="/contacto"
               className="text-gray-300 no-underline hover:text-accent-blue transition-colors duration-200"
             >
               Contacto
             </Link>
-            <Link 
-              to="/terminos" 
+            <Link
+              to="/terminos"
               className="text-gray-300 no-underline hover:text-accent-blue transition-colors duration-200"
             >
               Términos
             </Link>
-            <Link 
-              to="/politicas" 
+            <Link
+              to="/politicas"
               className="text-gray-300 no-underline hover:text-accent-blue transition-colors duration-200"
             >
               Políticas

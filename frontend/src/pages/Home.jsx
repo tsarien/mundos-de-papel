@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import ProductCard from '../components/ProductCard';
-import { obtenerProductos } from '../services/productoService';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import ProductCard from "../components/ProductCard";
+import { obtenerProductos } from "../services/productoService";
 
 const Home = () => {
   const [destacados, setDestacados] = useState([]);
@@ -13,7 +13,7 @@ const Home = () => {
         const data = await obtenerProductos({ destacado: true, limite: 3 });
         setDestacados(data.productos);
       } catch (err) {
-        console.error('Error al cargar destacados:', err);
+        console.error("Error al cargar destacados:", err);
       } finally {
         setLoading(false);
       }
@@ -23,23 +23,26 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="mt-[70px]">
+    <div>
       {/* Banner principal */}
       <section className="relative h-[60vh] min-h-[340px] flex items-center justify-center bg-gradient-to-br from-accent-purple to-accent-pink overflow-hidden">
         <div
           className="absolute inset-0 opacity-20 z-0"
           style={{
-            backgroundImage: 'url(https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=1200&q=80)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            backgroundImage:
+              "url(https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=1200&q=80)",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
           }}
         />
         <div className="relative z-10 text-center text-white max-w-2xl mx-auto px-4">
           <h1 className="font-poppins text-4xl md:text-5xl font-bold mb-4 leading-tight">
-            Explora nuevos <span className="text-accent-pink">mundos</span> en cada página
+            Explora nuevos <span className="text-accent-pink">mundos</span> en
+            cada página
           </h1>
           <p className="text-xl mb-8 text-gray-200">
-            Especialistas en cómics, manga y libros de arte para mentes creativas.
+            Especialistas en cómics, manga y libros de arte para mentes
+            creativas.
           </p>
           <Link
             to="/catalogo"
@@ -56,37 +59,43 @@ const Home = () => {
           Destacados
         </h2>
         {loading ? (
-          <p className="text-center text-gray-400 text-xl">Cargando destacados...</p>
+          <p className="text-center text-gray-400 text-xl">
+            Cargando destacados...
+          </p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {destacados.map(producto => (
-              <ProductCard key={producto._id} producto={producto} showAddButton={false} />
+            {destacados.map((producto) => (
+              <ProductCard
+                key={producto._id}
+                producto={producto}
+                showAddButton={false}
+              />
             ))}
           </div>
         )}
       </section>
 
       {/* Categorías */}
-      <section className="container mx-auto px-4 max-w-7xl py-10">
+      <section className="container mx-auto px-4 max-w-7xl py-2">
         <h2 className="font-poppins text-3xl font-semibold mb-8 text-accent-pink text-center">
           Categorías
         </h2>
         <div className="flex flex-wrap gap-8 justify-center">
           <Link
             to="/catalogo?categoria=Manga"
-            className="flex-1 min-w-[200px] max-w-[300px] bg-white rounded-2xl p-10 text-center font-poppins text-xl font-semibold text-bg no-underline shadow-md border-2 border-transparent hover:border-accent-purple hover:bg-accent-purple hover:text-white transition-all duration-200 hover:-translate-y-1 hover:scale-105"
+            className="flex-1 min-w-[200px] max-w-[300px] glass-panel rounded-2xl p-10 text-center font-poppins text-xl font-bold text-accent-purple no-underline hover:border-accent-purple hover:shadow-[0_8px_32px_0_rgba(182,166,230,0.15)] hover:text-white transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03]"
           >
             Manga
           </Link>
           <Link
             to="/catalogo?categoria=Cómic"
-            className="flex-1 min-w-[200px] max-w-[300px] bg-white rounded-2xl p-10 text-center font-poppins text-xl font-semibold text-bg no-underline shadow-md border-2 border-transparent hover:border-accent-blue hover:bg-accent-blue hover:text-white transition-all duration-200 hover:-translate-y-1 hover:scale-105"
+            className="flex-1 min-w-[200px] max-w-[300px] glass-panel rounded-2xl p-10 text-center font-poppins text-xl font-bold text-accent-blue no-underline hover:border-accent-blue hover:shadow-[0_8px_32px_0_rgba(126,195,230,0.15)] hover:text-white transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03]"
           >
             Cómic
           </Link>
           <Link
             to="/catalogo?categoria=Arte"
-            className="flex-1 min-w-[200px] max-w-[300px] bg-white rounded-2xl p-10 text-center font-poppins text-xl font-semibold text-bg no-underline shadow-md border-2 border-transparent hover:border-accent-pink hover:bg-accent-pink hover:text-white transition-all duration-200 hover:-translate-y-1 hover:scale-105"
+            className="flex-1 min-w-[200px] max-w-[300px] glass-panel rounded-2xl p-10 text-center font-poppins text-xl font-bold text-accent-pink no-underline hover:border-accent-pink hover:shadow-[0_8px_32px_0_rgba(230,140,183,0.15)] hover:text-white transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03]"
           >
             Arte
           </Link>

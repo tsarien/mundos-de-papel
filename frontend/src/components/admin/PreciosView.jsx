@@ -1,121 +1,158 @@
 const PreciosView = () => {
   const reglas = [
-    { id: 1, nombre: 'Descuento por volumen', tipo: 'Porcentaje', valor: '10%', condicion: 'Compras > $500.000', activo: true },
-    { id: 2, nombre: 'Promoción manga', tipo: 'Fijo', valor: '$5.000', condicion: 'Categoría: Manga', activo: true },
-    { id: 3, nombre: 'Cliente frecuente', tipo: 'Porcentaje', valor: '15%', condicion: '> 10 pedidos', activo: true },
-    { id: 4, nombre: 'Black Friday', tipo: 'Porcentaje', valor: '30%', condicion: 'Fecha específica', activo: false },
+    {
+      id: 1,
+      nombre: "Descuento por volumen",
+      tipo: "Porcentaje",
+      valor: "10%",
+      condicion: "Compras > $500.000",
+      activo: true,
+    },
+    {
+      id: 2,
+      nombre: "Promoción manga",
+      tipo: "Fijo",
+      valor: "$5.000",
+      condicion: "Categoría: Manga",
+      activo: true,
+    },
+    {
+      id: 3,
+      nombre: "Cliente frecuente",
+      tipo: "Porcentaje",
+      valor: "15%",
+      condicion: "> 10 pedidos",
+      activo: true,
+    },
+    {
+      id: 4,
+      nombre: "Black Friday",
+      tipo: "Porcentaje",
+      valor: "30%",
+      condicion: "Fecha específica",
+      activo: false,
+    },
   ];
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5 text-white">
       {/* Métricas de precios */}
-      <div className="grid grid-cols-4 gap-3">
-        <div className="bg-white border border-black/8 rounded-2xl p-4">
-          <div className="text-[11px] text-[#9E9890] uppercase tracking-wider mb-2">
-            Precio promedio
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          {
+            label: "Precio promedio",
+            value: "$75K",
+            sub: "Por producto",
+            subColor: "text-gray-400",
+          },
+          {
+            label: "Margen promedio",
+            value: "42%",
+            sub: "Rentabilidad",
+            subColor: "text-accent-blue",
+          },
+          {
+            label: "Productos en oferta",
+            value: "5",
+            sub: "De 8 totales",
+            subColor: "text-gray-400",
+          },
+          {
+            label: "Descuento promedio",
+            value: "18%",
+            sub: "En promociones",
+            subColor: "text-gray-400",
+          },
+        ].map((m) => (
+          <div
+            key={m.label}
+            className="glass-panel rounded-2xl p-5 border border-white/5 hover:border-accent-blue/30 transition-all duration-300 shadow-soft"
+          >
+            <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">
+              {m.label}
+            </div>
+            <div className="font-poppins font-bold text-2xl text-white">
+              {m.value}
+            </div>
+            <div
+              className={`text-[10px] font-bold uppercase tracking-wider mt-2.5 ${m.subColor}`}
+            >
+              {m.sub}
+            </div>
           </div>
-          <div className="font-serif text-[26px] text-[#1A1814]">
-            $75K
-          </div>
-          <div className="text-[11px] text-[#9E9890] mt-1.5">
-            Por producto
-          </div>
-        </div>
-
-        <div className="bg-white border border-black/8 rounded-2xl p-4">
-          <div className="text-[11px] text-[#9E9890] uppercase tracking-wider mb-2">
-            Margen promedio
-          </div>
-          <div className="font-serif text-[26px] text-[#1A1814]">
-            42%
-          </div>
-          <div className="text-[11px] text-[#4A7C28] mt-1.5">
-            Rentabilidad
-          </div>
-        </div>
-
-        <div className="bg-white border border-black/8 rounded-2xl p-4">
-          <div className="text-[11px] text-[#9E9890] uppercase tracking-wider mb-2">
-            Productos en oferta
-          </div>
-          <div className="font-serif text-[26px] text-[#1A1814]">
-            5
-          </div>
-          <div className="text-[11px] text-[#9E9890] mt-1.5">
-            De 8 totales
-          </div>
-        </div>
-
-        <div className="bg-white border border-black/8 rounded-2xl p-4">
-          <div className="text-[11px] text-[#9E9890] uppercase tracking-wider mb-2">
-            Descuento promedio
-          </div>
-          <div className="font-serif text-[26px] text-[#1A1814]">
-            18%
-          </div>
-          <div className="text-[11px] text-[#9E9890] mt-1.5">
-            En promociones
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* Reglas de precio */}
-      <div className="bg-white border border-black/8 rounded-2xl p-5">
-        <div className="flex justify-between items-center mb-4">
-          <div className="text-[13px] font-medium text-[#1A1814]">
+      <div className="glass-panel rounded-2xl p-6 border border-white/5">
+        <div className="flex justify-between items-center mb-5 border-b border-white/5 pb-3">
+          <div className="text-xs font-bold uppercase tracking-wider text-accent-blue">
             Reglas de precio activas
           </div>
-          <button className="text-[12px] px-3 py-1.5 rounded-lg bg-[#2D5016] text-white hover:bg-[#4A7C28] transition-colors">
+          <button className="text-[11px] font-bold px-3 py-1.5 rounded-lg bg-gradient-to-r from-accent-blue to-accent-purple text-bg hover:opacity-90 hover:shadow-md transition-all border-none cursor-pointer">
             + Nueva regla
           </button>
         </div>
 
-        <table className="w-full text-[12px]">
+        <table className="w-full text-xs">
           <thead>
-            <tr className="text-[10px] text-[#9E9890] uppercase border-b border-black/8">
-              <th className="text-left pb-2 font-medium">Regla</th>
-              <th className="text-left pb-2 font-medium">Tipo</th>
-              <th className="text-right pb-2 font-medium">Descuento</th>
-              <th className="text-left pb-2 font-medium">Condición</th>
-              <th className="text-right pb-2 font-medium">Estado</th>
-              <th className="text-right pb-2 font-medium">Acciones</th>
+            <tr className="text-[10px] text-gray-400 uppercase border-b border-white/5">
+              <th className="text-left pb-2 font-bold tracking-wider">Regla</th>
+              <th className="text-left pb-2 font-bold tracking-wider">Tipo</th>
+              <th className="text-right pb-2 font-bold tracking-wider">
+                Descuento
+              </th>
+              <th className="text-left pb-2 font-bold tracking-wider">
+                Condición
+              </th>
+              <th className="text-right pb-2 font-bold tracking-wider">
+                Estado
+              </th>
+              <th className="text-right pb-2 font-bold tracking-wider">
+                Acciones
+              </th>
             </tr>
           </thead>
           <tbody>
             {reglas.map((regla) => (
-              <tr key={regla.id} className="border-b border-black/8 last:border-0">
+              <tr
+                key={regla.id}
+                className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors"
+              >
                 <td className="py-2.5">
-                  <div className="font-medium text-[#1A1814]">{regla.nombre}</div>
+                  <div className="font-semibold text-white">{regla.nombre}</div>
                 </td>
-                <td className="py-2.5 text-[#6B6560]">{regla.tipo}</td>
-                <td className="py-2.5 text-right font-medium text-[#1A1814]">
+                <td className="py-2.5 text-gray-300">{regla.tipo}</td>
+                <td className="py-2.5 text-right font-bold text-white">
                   {regla.valor}
                 </td>
-                <td className="py-2.5 text-[#6B6560]">{regla.condicion}</td>
+                <td className="py-2.5 text-gray-300">{regla.condicion}</td>
                 <td className="py-2.5 text-right">
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full ${
-                    regla.activo 
-                      ? 'bg-[#EAF3DE] text-[#2D5016]' 
-                      : 'bg-[#F0EDE6] text-[#6B6560]'
-                  }`}>
-                    {regla.activo ? 'Activa' : 'Inactiva'}
+                  <span
+                    className={`text-[9px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
+                      regla.activo
+                        ? "bg-accent-blue/10 text-accent-blue border border-accent-blue/20"
+                        : "bg-white/5 text-gray-400 border border-white/5"
+                    }`}
+                  >
+                    {regla.activo ? "Activa" : "Inactiva"}
                   </span>
                 </td>
                 <td className="py-2.5 text-right">
-                  <div className="flex gap-1 justify-end">
-                    <button 
-                      className="w-7 h-7 rounded-lg border border-black/14 flex items-center justify-center hover:bg-[#F0EDE6] transition-colors"
+                  <div className="flex gap-2 justify-end">
+                    <button
+                      className="w-7 h-7 rounded-lg border border-white/10 flex items-center justify-center bg-transparent text-gray-300 hover:text-white hover:bg-white/5 transition-all"
                       title="Editar"
                     >
-                      <i className="ti-pencil text-sm text-[#6B6560]"></i>
+                      <i className="ti-pencil text-sm"></i>
                     </button>
-                    <button 
-                      className={`w-7 h-7 rounded-lg border border-black/14 flex items-center justify-center transition-colors ${
-                        regla.activo ? 'hover:bg-[#FDEAEA]' : 'hover:bg-[#EAF3DE]'
-                      }`}
-                      title={regla.activo ? 'Desactivar' : 'Activar'}
+                    <button
+                      className="w-7 h-7 rounded-lg border border-white/10 flex items-center justify-center bg-transparent text-gray-300 hover:text-white hover:bg-white/5 transition-all"
+                      title={regla.activo ? "Desactivar" : "Activar"}
                     >
-                      <i className={`ti-${regla.activo ? 'x' : 'check'} text-sm text-[#6B6560]`}></i>
+                      <i
+                        className={`ti-${regla.activo ? "x" : "check"} text-sm`}
+                      ></i>
                     </button>
                   </div>
                 </td>
@@ -126,32 +163,40 @@ const PreciosView = () => {
       </div>
 
       {/* Rangos de precio por categoría */}
-      <div className="grid grid-cols-3 gap-3">
-        {[
-          { categoria: 'Manga', min: 50000, max: 80000, promedio: 62000 },
-          { categoria: 'Cómic', min: 70000, max: 90000, promedio: 80000 },
-          { categoria: 'Arte', min: 100000, max: 150000, promedio: 120000 },
-        ].map((cat) => (
-          <div key={cat.categoria} className="bg-white border border-black/8 rounded-2xl p-4">
-            <div className="text-[11px] text-[#9E9890] uppercase tracking-wider mb-2">
-              {cat.categoria}
+      <div className="glass-panel rounded-2xl p-6 border border-white/5">
+        <div className="text-xs font-bold uppercase tracking-wider text-accent-purple mb-5 border-b border-white/5 pb-2.5">
+          Rangos de precio por categoría
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {[
+            { categoria: "Manga", min: 50000, max: 80000, promedio: 62000 },
+            { categoria: "Cómic", min: 70000, max: 90000, promedio: 80000 },
+            { categoria: "Arte", min: 100000, max: 150000, promedio: 120000 },
+          ].map((cat) => (
+            <div
+              key={cat.categoria}
+              className="bg-white/5 rounded-xl p-4 border border-white/5"
+            >
+              <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-3">
+                {cat.categoria}
+              </div>
+              <div className="space-y-2">
+                {[
+                  { label: "Mínimo", value: cat.min },
+                  { label: "Promedio", value: cat.promedio },
+                  { label: "Máximo", value: cat.max },
+                ].map((row) => (
+                  <div key={row.label} className="flex justify-between text-xs">
+                    <span className="text-gray-400">{row.label}</span>
+                    <span className="text-white font-semibold">
+                      ${row.value.toLocaleString()}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="space-y-2 mt-3">
-              <div className="flex justify-between text-[11px]">
-                <span className="text-[#9E9890]">Mínimo</span>
-                <span className="text-[#1A1814] font-medium">${cat.min.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between text-[11px]">
-                <span className="text-[#9E9890]">Promedio</span>
-                <span className="text-[#1A1814] font-medium">${cat.promedio.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between text-[11px]">
-                <span className="text-[#9E9890]">Máximo</span>
-                <span className="text-[#1A1814] font-medium">${cat.max.toLocaleString()}</span>
-              </div>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

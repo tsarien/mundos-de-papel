@@ -164,24 +164,24 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
 
   return (
     <div className="max-w-3xl mx-auto py-6">
-      <p className="text-xs text-gray-500 uppercase tracking-wider mb-4">
+      <p className="text-xs text-accent-pink uppercase tracking-wider mb-4 font-bold">
         Calificaciones y reseñas
       </p>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+        <div className="bg-red-950/40 border border-red-500/30 text-red-200 px-4 py-3 rounded-lg mb-4 text-sm">
           {error}
         </div>
       )}
 
       {/* Tarjeta de resumen */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6 flex gap-8 items-center">
+      <div className="glass-panel rounded-2xl p-6 mb-6 flex gap-8 items-center border border-white/5 text-white">
         <div className="text-center min-w-[90px]">
-          <div className="text-5xl font-medium text-gray-900">{avg}</div>
+          <div className="text-5xl font-bold text-white">{avg}</div>
           <div className="flex gap-1 justify-center my-2">
             {renderStars(Math.round(parseFloat(avg)))}
           </div>
-          <div className="text-sm text-gray-500">
+          <div className="text-xs text-gray-400 font-semibold uppercase tracking-wider mt-1">
             {total} {total === 1 ? "reseña" : "reseñas"}
           </div>
         </div>
@@ -191,16 +191,16 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
             const count = dist[stars - 1];
             const pct = total ? Math.round((count / total) * 100) : 0;
             return (
-              <div key={stars} className="flex items-center gap-2 text-xs text-gray-600">
+              <div key={stars} className="flex items-center gap-2.5 text-xs text-gray-400 font-medium">
                 <span className="w-2 text-right">{stars}</span>
                 <span className="text-yellow-400">★</span>
-                <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
+                <div className="flex-1 h-1.5 bg-[#13151b] rounded-full overflow-hidden">
                   <div
                     className="h-full bg-yellow-400 rounded-full transition-all duration-500"
                     style={{ width: `${pct}%` }}
                   />
                 </div>
-                <span className="w-6">{count}</span>
+                <span className="w-6 text-right">{count}</span>
               </div>
             );
           })}
@@ -208,13 +208,13 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
       </div>
 
       {/* Filtros */}
-      <div className="flex gap-2 mb-4 flex-wrap">
+      <div className="flex gap-2.5 mb-6 flex-wrap">
         <button
           onClick={() => setActiveFilter(0)}
-          className={`px-4 py-1.5 text-sm rounded-full border transition-all ${
+          className={`px-4 py-1.5 text-xs font-semibold rounded-full border transition-all cursor-pointer ${
             activeFilter === 0
-              ? "bg-gray-900 text-white border-transparent"
-              : "bg-white text-gray-600 border-gray-300 hover:border-gray-900 hover:text-gray-900"
+              ? "bg-accent-purple text-bg border-transparent shadow-md"
+              : "bg-[#232632] text-gray-300 border-white/5 hover:border-accent-purple/30 hover:text-white"
           }`}
         >
           Todas
@@ -223,10 +223,10 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
           <button
             key={stars}
             onClick={() => setActiveFilter(stars)}
-            className={`px-4 py-1.5 text-sm rounded-full border transition-all ${
+            className={`px-4 py-1.5 text-xs font-semibold rounded-full border transition-all cursor-pointer ${
               activeFilter === stars
-                ? "bg-gray-900 text-white border-transparent"
-                : "bg-white text-gray-600 border-gray-300 hover:border-gray-900 hover:text-gray-900"
+                ? "bg-accent-purple text-bg border-transparent shadow-md"
+                : "bg-[#232632] text-gray-300 border-white/5 hover:border-accent-purple/30 hover:text-white"
             }`}
           >
             ★ {stars}
@@ -236,64 +236,63 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
 
       {/* Loading */}
       {loading && !reviews.length ? (
-        <div className="text-center py-8 text-gray-500">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-2"></div>
+        <div className="text-center py-12 text-gray-400">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent-blue mx-auto mb-3"></div>
           Cargando reseñas...
         </div>
       ) : (
         <div className="mb-6">
           {filteredReviews.length === 0 ? (
-            <div className="text-center py-8 text-gray-500 text-sm">
-              <div className="text-2xl mb-2">📭</div>
+            <div className="text-center py-12 text-gray-400 text-sm glass-panel rounded-2xl border border-white/5">
+              <div className="text-3xl mb-2">📭</div>
               No hay reseñas para este filtro.
             </div>
           ) : (
-            // ✅ Usa index para el color del avatar y _id para key y acciones
             filteredReviews.map((review, index) => {
               const style = getAvatarStyle(index);
               return (
                 <div
                   key={review._id}
-                  className="bg-white border border-gray-200 rounded-2xl p-5 mb-3"
+                  className="glass-panel rounded-2xl p-5 mb-4 border border-white/5 text-white"
                 >
                   <div className="flex items-center gap-3 mb-3">
                     <div
-                      className={`w-9 h-9 rounded-full ${style.bg} ${style.text} flex items-center justify-center text-sm font-medium flex-shrink-0`}
+                      className={`w-9 h-9 rounded-full ${style.bg} ${style.text} flex items-center justify-center text-xs font-bold flex-shrink-0 shadow-sm`}
                     >
                       {review.initials}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className="text-sm font-semibold text-white">
                           {review.nombre}
                         </span>
                         {review.verificada && (
-                          <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full">
+                          <span className="bg-green-500/10 text-accent-green border border-accent-green/20 text-[10px] px-2 py-0.5 rounded-full font-semibold">
                             Compra verificada
                           </span>
                         )}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-[10px] text-gray-400 font-semibold uppercase mt-0.5">
                         {formatearFecha(review.fecha)}
                       </div>
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex gap-0.5">
                       {renderStars(review.puntuacion)}
                     </div>
                   </div>
 
-                  <div className="text-sm text-gray-700 leading-relaxed mt-2">
+                  <div className="text-sm text-gray-300 leading-relaxed mt-2.5 pl-0.5">
                     {review.comentario}
                   </div>
 
-                  <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-200">
-                    <span className="text-xs text-gray-500">¿Útil?</span>
+                  <div className="flex items-center gap-2.5 mt-4 pt-3 border-t border-white/5">
+                    <span className="text-xs text-gray-400 font-semibold uppercase tracking-wider">¿Útil?</span>
                     <button
                       onClick={() => toggleHelpful(review._id)}
-                      className={`flex items-center gap-1.5 px-3 py-1 text-xs border rounded-lg transition-all ${
+                      className={`flex items-center gap-1.5 px-3 py-1.5 text-xs border rounded-lg transition-all cursor-pointer ${
                         review.userHelpful
-                          ? "border-green-500 text-green-700 bg-green-50"
-                          : "border-gray-300 text-gray-600 hover:bg-gray-50"
+                          ? "border-accent-green/30 text-accent-green bg-accent-green/10"
+                          : "border-white/10 text-gray-300 bg-bg/50 hover:bg-bg hover:text-white"
                       }`}
                     >
                       <span>👍</span> {review.helpful}
@@ -307,26 +306,26 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
       )}
 
       {/* Formulario de nueva reseña */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 mt-6">
-        <div className="text-base font-medium text-gray-900 mb-4">
+      <div className="glass-panel rounded-2xl p-6 mt-8 border border-white/5 text-white">
+        <div className="text-base font-bold text-white mb-4 border-b border-white/5 pb-2.5">
           Escribe una reseña
         </div>
 
         {!isAuthenticated && (
-          <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg mb-4 text-sm">
+          <div className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-300 rounded-xl p-4 mb-4 text-xs font-semibold">
             Debes iniciar sesión para escribir una reseña
           </div>
         )}
 
-        <div className="flex gap-2 mb-4">
+        <div className="flex gap-2 mb-5">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
               key={star}
               onClick={() => setSelectedRating(star)}
               disabled={!isAuthenticated}
-              className={`text-3xl transition-all ${
-                star <= selectedRating ? "text-yellow-400 scale-110" : "text-gray-300"
-              } hover:text-yellow-400 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed`}
+              className={`text-3xl transition-all cursor-pointer ${
+                star <= selectedRating ? "text-yellow-400 scale-110" : "text-gray-600"
+              } hover:text-yellow-400 hover:scale-110 disabled:opacity-30 disabled:cursor-not-allowed`}
               aria-label={`${star} estrella${star > 1 ? "s" : ""}`}
             >
               ★
@@ -334,40 +333,40 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
           ))}
         </div>
 
-        <div className="mb-3">
-          <label className="block text-xs text-gray-600 mb-1.5">Tu nombre</label>
+        <div className="mb-4">
+          <label className="block text-xs font-bold text-accent-purple uppercase tracking-wider mb-2">Tu nombre</label>
           <input
             type="text"
             value={formData.nombre}
             onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
             placeholder="Ej. María García"
             disabled={!isAuthenticated}
-            className="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-blue focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+            className="w-full px-4 py-2.5 text-sm rounded-lg border border-white/10 premium-input disabled:opacity-40 disabled:cursor-not-allowed"
           />
         </div>
 
-        <div className="mb-3">
-          <label className="block text-xs text-gray-600 mb-1.5">Comentario</label>
+        <div className="mb-4">
+          <label className="block text-xs font-bold text-accent-purple uppercase tracking-wider mb-2">Comentario</label>
           <textarea
             value={formData.comentario}
             onChange={(e) => setFormData({ ...formData, comentario: e.target.value })}
             placeholder="¿Qué te pareció el producto?"
             rows={3}
             disabled={!isAuthenticated}
-            className="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-accent-blue focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+            className="w-full px-4 py-2.5 text-sm rounded-lg border border-white/10 premium-input resize-none disabled:opacity-40 disabled:cursor-not-allowed"
           />
         </div>
 
         <button
           onClick={submitReview}
           disabled={!isFormValid || loading}
-          className="bg-gray-900 text-white px-6 py-2.5 text-sm font-medium rounded-lg hover:opacity-85 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed mt-1"
+          className="bg-gradient-to-r from-accent-blue to-accent-purple text-bg font-bold py-2.5 px-6 rounded-xl hover:from-accent-pink hover:to-accent-purple hover:text-white hover:shadow-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed mt-1 border-none cursor-pointer"
         >
           {loading ? "Publicando..." : "Publicar reseña"}
         </button>
 
         {showSuccess && (
-          <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 px-4 py-2.5 rounded-lg mt-3 text-sm">
+          <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/20 text-accent-green px-4 py-2.5 rounded-lg mt-4 text-sm font-semibold">
             <span>✓</span> ¡Tu reseña fue publicada exitosamente!
           </div>
         )}

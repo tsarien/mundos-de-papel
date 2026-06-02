@@ -18,6 +18,18 @@ import Registro from './pages/Registro';
 import Cuenta from './pages/Cuenta';
 import Dashboard from './pages/Dashboard';
 
+const PublicLayout = ({ children }) => {
+  return (
+    <div className="flex flex-col min-h-screen bg-bg text-gray-100">
+      <Header />
+      <main className="flex-grow pt-[70px]">
+        {children}
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
 function App() {
   return (
     <Router>
@@ -26,67 +38,51 @@ function App() {
           <Routes>
             {/* Rutas públicas con Header y Footer */}
             <Route path="/" element={
-              <>
-                <Header />
+              <PublicLayout>
                 <Home />
-                <Footer />
-              </>
+              </PublicLayout>
             } />
             
             <Route path="/catalogo" element={
-              <>
-                <Header />
+              <PublicLayout>
                 <Catalogo />
-                <Footer />
-              </>
+              </PublicLayout>
             } />
             
             <Route path="/producto/:id" element={
-              <>
-                <Header />
+              <PublicLayout>
                 <ProductoDetalle />
-                <Footer />
-              </>
+              </PublicLayout>
             } />
             
             <Route path="/carrito" element={
-              <>
-                <Header />
+              <PublicLayout>
                 <Carrito />
-                <Footer />
-              </>
+              </PublicLayout>
             } />
             
             <Route path="/ofertas" element={
-              <>
-                <Header />
+              <PublicLayout>
                 <Ofertas />
-                <Footer />
-              </>
+              </PublicLayout>
             } />
             
             <Route path="/login" element={
-              <>
-                <Header />
+              <PublicLayout>
                 <Login />
-                <Footer />
-              </>
+              </PublicLayout>
             } />
             
             <Route path="/registro" element={
-              <>
-                <Header />
+              <PublicLayout>
                 <Registro />
-                <Footer />
-              </>
+              </PublicLayout>
             } />
             
             <Route path="/cuenta" element={
-              <>
-                <Header />
+              <PublicLayout>
                 <Cuenta />
-                <Footer />
-              </>
+              </PublicLayout>
             } />
 
             {/* Ruta del Dashboard (sin Header/Footer, protegida) */}
@@ -98,9 +94,8 @@ function App() {
 
             {/* Ruta 404 */}
             <Route path="*" element={
-              <>
-                <Header />
-                <div className="min-h-screen bg-bg flex items-center justify-center">
+              <PublicLayout>
+                <div className="min-h-[50vh] flex items-center justify-center">
                   <div className="text-center">
                     <h1 className="text-6xl font-bold text-white mb-4">404</h1>
                     <p className="text-xl text-gray-400 mb-8">Página no encontrada</p>
@@ -109,8 +104,7 @@ function App() {
                     </a>
                   </div>
                 </div>
-                <Footer />
-              </>
+              </PublicLayout>
             } />
           </Routes>
         </CartProvider>

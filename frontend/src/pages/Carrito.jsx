@@ -59,7 +59,7 @@ const Carrito = () => {
 
   if (cart.length === 0) {
     return (
-      <main className="mt-[94px] mb-10 container mx-auto px-4 max-w-7xl">
+      <main className="mb-10 container mx-auto px-4 max-w-7xl pt-10">
         <h1 className="font-poppins text-4xl font-bold text-accent-purple mb-9 text-center">
           Tu Carrito
         </h1>
@@ -67,7 +67,7 @@ const Carrito = () => {
           <p className="text-2xl text-gray-400 mb-6">Tu carrito está vacío</p>
           <Link
             to="/catalogo"
-            className="inline-block bg-accent-blue text-bg font-semibold py-3 px-8 rounded-2xl no-underline hover:bg-accent-pink transition-all"
+            className="inline-block bg-accent-blue text-bg font-semibold py-3 px-8 rounded-2xl no-underline hover:bg-accent-pink transition-all shadow-md"
           >
             Ver catálogo
           </Link>
@@ -77,7 +77,7 @@ const Carrito = () => {
   }
 
   return (
-    <main className="mt-[94px] mb-10 container mx-auto px-4 max-w-7xl">
+    <main className="mb-10 container mx-auto px-4 max-w-7xl pt-10">
       <h1 className="font-poppins text-4xl font-bold text-accent-purple mb-9 text-center">
         Tu Carrito
       </h1>
@@ -91,55 +91,63 @@ const Carrito = () => {
             return (
               <div
                 key={producto.id}
-                className="bg-white rounded-2xl shadow-md flex items-center gap-6 p-6 relative transition-all hover:shadow-xl hover:-translate-y-1 hover:scale-[1.01]"
+                className="glass-panel rounded-2xl flex items-center gap-6 p-6 relative transition-all hover:border-accent-blue/30 hover:shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:-translate-y-0.5"
               >
-                <img
-                  src={producto.imagen}
-                  alt={producto.nombre}
-                  className="w-20 h-20 rounded-xl object-cover bg-accent-purple"
-                />
-                <div className="flex-1 flex flex-col gap-2">
-                  <h3 className="font-poppins text-lg font-bold text-accent-blue m-0">
+                <div className="w-20 h-24 bg-[#13151b] flex items-center justify-center p-2 rounded-xl border border-white/5 flex-shrink-0">
+                  <img
+                    src={producto.imagen}
+                    alt={producto.nombre}
+                    className="h-full w-auto object-contain"
+                  />
+                </div>
+                <div className="flex-1 flex flex-col gap-1.5">
+                  <h3 className="font-poppins text-base font-bold text-accent-blue m-0">
                     {producto.nombre}
                   </h3>
-                  <span className="text-base text-accent-pink font-semibold">
+                  <span className="text-sm text-accent-pink font-semibold">
                     ${precio.toLocaleString()}
                   </span>
 
                   {/* Cantidad */}
-                  <div className="flex items-center gap-3 my-2">
-                    <button
-                      onClick={() =>
-                        updateQuantity(producto.id, producto.cantidad - 1)
-                      }
-                      className="bg-gray-200 text-accent-purple border-none rounded-full w-8 h-8 text-xl font-bold cursor-pointer hover:bg-accent-purple hover:text-white transition-all flex items-center justify-center"
-                      aria-label="Disminuir cantidad"
-                    >
-                      −
-                    </button>
-                    <span className="text-lg font-semibold text-gray-800 min-w-[1.5em] text-center">
-                      {producto.cantidad}
-                    </span>
-                    <button
-                      onClick={() =>
-                        updateQuantity(producto.id, producto.cantidad + 1)
-                      }
-                      className="bg-gray-200 text-accent-purple border-none rounded-full w-8 h-8 text-xl font-bold cursor-pointer hover:bg-accent-purple hover:text-white transition-all flex items-center justify-center"
-                      aria-label="Aumentar cantidad"
-                    >
-                      +
-                    </button>
+                  <div className="flex items-center gap-3 my-1.5">
+                    <div className="flex items-center bg-[#13151b] border border-white/5 rounded-xl overflow-hidden h-9">
+                      <button
+                        onClick={() =>
+                          updateQuantity(producto.id, producto.cantidad - 1)
+                        }
+                        className="text-white hover:bg-accent-pink/20 hover:text-accent-pink w-10 h-full text-base font-bold transition-all flex items-center justify-center disabled:opacity-40"
+                        aria-label="Disminuir cantidad"
+                        disabled={producto.cantidad <= 1}
+                      >
+                        −
+                      </button>
+                      <span className="text-sm font-semibold text-white min-w-[2.5rem] text-center">
+                        {producto.cantidad}
+                      </span>
+                      <button
+                        onClick={() =>
+                          updateQuantity(producto.id, producto.cantidad + 1)
+                        }
+                        className="text-white hover:bg-accent-blue/20 hover:text-accent-blue w-10 h-full text-base font-bold transition-all flex items-center justify-center"
+                        aria-label="Aumentar cantidad"
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
 
-                  <span className="text-base text-accent-blue font-semibold">
-                    Subtotal: ${subtotalProducto.toLocaleString()}
+                  <span className="text-sm text-gray-400">
+                    Subtotal:{" "}
+                    <span className="text-accent-blue font-semibold">
+                      ${subtotalProducto.toLocaleString()}
+                    </span>
                   </span>
                 </div>
 
                 {/* Botón eliminar */}
                 <button
                   onClick={() => removeFromCart(producto.id)}
-                  className="bg-gray-200 text-red-500 border-none rounded-full w-9 h-9 text-2xl font-bold cursor-pointer hover:bg-red-500 hover:text-white transition-all ml-4 flex items-center justify-center"
+                  className="bg-transparent hover:bg-red-500/10 text-gray-400 hover:text-red-400 border border-white/10 hover:border-red-500/30 rounded-xl w-10 h-10 text-xl font-bold cursor-pointer transition-all ml-auto flex items-center justify-center flex-shrink-0"
                   aria-label="Eliminar producto"
                 >
                   ×
@@ -150,26 +158,28 @@ const Carrito = () => {
         </section>
 
         {/* Resumen del pedido */}
-        <aside className="bg-white rounded-2xl shadow-md p-9 min-w-[260px] max-w-[340px] w-full lg:sticky lg:top-24">
-          <h2 className="font-poppins text-xl font-bold text-accent-pink mb-5">
+        <aside className="glass-panel rounded-2xl p-8 min-w-[260px] max-w-[340px] w-full lg:sticky lg:top-24 text-white">
+          <h2 className="font-poppins text-lg font-bold text-accent-pink mb-5 border-b border-white/5 pb-2.5">
             Resumen del pedido
           </h2>
-          <div className="flex justify-between text-base text-gray-700 mb-2">
+          <div className="flex justify-between text-sm text-gray-300 mb-3">
             <span>Subtotal</span>
-            <span>${subtotal.toLocaleString()}</span>
+            <span className="font-medium">${subtotal.toLocaleString()}</span>
           </div>
-          <div className="flex justify-between text-base text-gray-700 mb-2">
+          <div className="flex justify-between text-sm text-gray-300 mb-4 pb-4 border-b border-white/5">
             <span>IVA (19%)</span>
-            <span>${Math.round(iva).toLocaleString()}</span>
+            <span className="font-medium">
+              ${Math.round(iva).toLocaleString()}
+            </span>
           </div>
-          <div className="flex justify-between text-xl font-bold text-accent-purple my-5">
+          <div className="flex justify-between text-lg font-bold text-accent-purple mb-6">
             <span>Total</span>
             <span>${Math.round(total).toLocaleString()}</span>
           </div>
           <button
             onClick={handleFinalizarCompra}
             disabled={loading}
-            className="w-full text-lg font-bold py-4 rounded-xl bg-accent-blue text-bg hover:bg-accent-pink transition-all mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full text-base font-bold py-3.5 rounded-xl bg-gradient-to-r from-accent-blue to-accent-purple text-bg hover:from-accent-pink hover:to-accent-purple hover:text-white hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Procesando..." : "Finalizar compra"}
           </button>

@@ -10,19 +10,22 @@ const Catalogo = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [busqueda, setBusqueda] = useState("");
-  const [filtros, setFiltros] = useState({
-    categorias: [],
+  const [filtros, setFiltros] = useState(() => ({
+    categorias: searchParams.get("categoria")
+      ? [searchParams.get("categoria")]
+      : [],
     autor: "",
     editorial: "",
     precioMin: "",
     precioMax: "",
-  });
+  }));
 
   useEffect(() => {
     const categoriaParam = searchParams.get("categoria");
-    if (categoriaParam) {
-      setFiltros((prev) => ({ ...prev, categorias: [categoriaParam] }));
-    }
+    setFiltros((prev) => ({
+      ...prev,
+      categorias: categoriaParam ? [categoriaParam] : [],
+    }));
   }, [searchParams]);
 
   useEffect(() => {
@@ -65,7 +68,7 @@ const Catalogo = () => {
   };
 
   return (
-    <main className="mt-[94px] mb-10 container mx-auto px-4 max-w-7xl">
+    <main className="mb-10 container mx-auto px-4 max-w-7xl pt-10">
       <h1 className="font-poppins text-4xl font-bold text-accent-purple mb-9 text-center">
         Catálogo de Libros
       </h1>
@@ -73,19 +76,19 @@ const Catalogo = () => {
       {/* Barra de búsqueda */}
       <form
         onSubmit={handleBusqueda}
-        className="flex items-center justify-center gap-2 mb-9"
+        className="flex items-center justify-center gap-3 mb-9"
       >
         <input
           type="search"
           placeholder="Buscar libros, autores, editoriales..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
-          className="py-3 px-5 rounded-2xl border-2 border-gray-300 text-base outline-none bg-white text-gray-800 w-80 focus:border-accent-pink transition-colors"
+          className="py-3 px-5 rounded-2xl border border-white/10 text-base outline-none bg-[#232632]/80 text-white w-80 focus:border-accent-pink focus:ring-1 focus:ring-accent-pink transition-all shadow-inner"
           aria-label="Buscar libros"
         />
         <button
           type="submit"
-          className="bg-accent-purple border-none rounded-full w-11 h-11 flex items-center justify-center cursor-pointer hover:bg-accent-pink transition-colors"
+          className="bg-accent-purple border-none rounded-2xl w-12 h-12 flex items-center justify-center cursor-pointer hover:bg-accent-pink hover:shadow-lg transition-all"
           aria-label="Buscar"
         >
           <span className="text-white text-xl">🔍</span>
@@ -94,26 +97,26 @@ const Catalogo = () => {
 
       <div className="flex flex-col lg:flex-row gap-10 items-start">
         {/* Filtros laterales */}
-        <aside className="bg-white rounded-2xl shadow-md p-8 min-w-[220px] max-w-[260px] w-full lg:sticky lg:top-24">
-          <h2 className="font-poppins text-lg font-bold text-accent-pink mb-5">
+        <aside className="glass-panel rounded-2xl p-8 min-w-[220px] max-w-[260px] w-full lg:sticky lg:top-24 text-white">
+          <h2 className="font-poppins text-lg font-bold text-accent-pink mb-5 border-b border-white/5 pb-2">
             Filtrar por
           </h2>
 
           {/* Categoría */}
-          <div className="mb-6 flex flex-col gap-2">
-            <span className="text-base font-semibold text-accent-purple mb-1">
+          <div className="mb-6 flex flex-col gap-2.5">
+            <span className="text-sm font-bold text-accent-purple uppercase tracking-wider mb-1">
               Categoría
             </span>
             {categorias.map((cat) => (
               <label
                 key={cat.id}
-                className="text-base text-gray-700 font-medium cursor-pointer flex items-center gap-2"
+                className="text-sm text-gray-300 hover:text-white font-medium cursor-pointer flex items-center gap-2.5 transition-colors"
               >
                 <input
                   type="checkbox"
                   checked={filtros.categorias.includes(cat.slug)}
                   onChange={() => handleCategoriaChange(cat.slug)}
-                  className="cursor-pointer"
+                  className="cursor-pointer accent-accent-purple rounded"
                 />
                 {cat.nombre}
               </label>
@@ -122,7 +125,7 @@ const Catalogo = () => {
 
           {/* Autor */}
           <div className="mb-6 flex flex-col gap-2">
-            <span className="text-base font-semibold text-accent-purple mb-1">
+            <span className="text-sm font-bold text-accent-purple uppercase tracking-wider mb-1">
               Autor
             </span>
             <input
@@ -132,13 +135,13 @@ const Catalogo = () => {
               onChange={(e) =>
                 setFiltros({ ...filtros, autor: e.target.value })
               }
-              className="py-2 px-4 rounded-lg border border-gray-300 text-base bg-gray-100 text-gray-800 mt-1"
+              className="py-2.5 px-4 rounded-lg border border-white/10 text-sm premium-input mt-1"
             />
           </div>
 
           {/* Editorial */}
           <div className="mb-6 flex flex-col gap-2">
-            <span className="text-base font-semibold text-accent-purple mb-1">
+            <span className="text-sm font-bold text-accent-purple uppercase tracking-wider mb-1">
               Editorial
             </span>
             <select
@@ -146,11 +149,17 @@ const Catalogo = () => {
               onChange={(e) =>
                 setFiltros({ ...filtros, editorial: e.target.value })
               }
-              className="py-2 px-4 rounded-lg border border-gray-300 text-base bg-gray-100 text-gray-800 mt-1"
+              className="py-2.5 px-4 rounded-lg border border-white/10 text-sm premium-input mt-1 cursor-pointer"
             >
-              <option value="">Todas</option>
+              <option value="" className="bg-[#232632] text-white">
+                Todas
+              </option>
               {editoriales.map((ed) => (
-                <option key={ed.id} value={ed.nombre}>
+                <option
+                  key={ed.id}
+                  value={ed.nombre}
+                  className="bg-[#232632] text-white"
+                >
                   {ed.nombre}
                 </option>
               ))}
@@ -159,26 +168,26 @@ const Catalogo = () => {
 
           {/* Precio */}
           <div className="mb-6 flex flex-col gap-2">
-            <span className="text-base font-semibold text-accent-purple mb-1">
+            <span className="text-sm font-bold text-accent-purple uppercase tracking-wider mb-1">
               Precio
             </span>
             <input
               type="number"
-              placeholder="$ Min"
+              placeholder="$ Mínimo"
               value={filtros.precioMin}
               onChange={(e) =>
                 setFiltros({ ...filtros, precioMin: e.target.value })
               }
-              className="py-2 px-4 rounded-lg border border-gray-300 text-base bg-gray-100 text-gray-800"
+              className="py-2.5 px-4 rounded-lg border border-white/10 text-sm premium-input"
             />
             <input
               type="number"
-              placeholder="$ Max"
+              placeholder="$ Máximo"
               value={filtros.precioMax}
               onChange={(e) =>
                 setFiltros({ ...filtros, precioMax: e.target.value })
               }
-              className="py-2 px-4 rounded-lg border border-gray-300 text-base bg-gray-100 text-gray-800"
+              className="py-2.5 px-4 rounded-lg border border-white/10 text-sm premium-input"
             />
           </div>
         </aside>
@@ -187,14 +196,16 @@ const Catalogo = () => {
         <section className="flex-1 min-w-0">
           {loading ? (
             <div className="text-center py-20">
-              <p className="text-xl text-gray-400">Cargando productos...</p>
+              <p className="text-xl text-gray-400 animate-pulse">
+                Cargando productos...
+              </p>
             </div>
           ) : error ? (
             <div className="text-center py-20">
               <p className="text-xl text-red-400">{error}</p>
               <button
                 onClick={cargarProductos}
-                className="mt-4 bg-accent-purple text-white py-2 px-6 rounded-lg hover:bg-accent-pink transition-colors"
+                className="mt-4 bg-accent-purple text-white py-2 px-6 rounded-lg hover:bg-accent-pink transition-colors shadow-md"
               >
                 Reintentar
               </button>
@@ -213,15 +224,15 @@ const Catalogo = () => {
                 ))}
               </div>
 
-              {/* Paginación (placeholder) */}
-              <nav className="flex gap-2 justify-center items-center mt-10">
-                <button className="bg-gray-200 text-gray-700 border-none rounded-lg py-3 px-5 font-semibold cursor-pointer hover:bg-accent-purple hover:text-white transition-all">
+              {/* Paginación */}
+              <nav className="flex gap-3 justify-center items-center mt-12">
+                <button className="bg-[#232632] text-gray-300 border border-white/5 rounded-lg py-2.5 px-4 font-semibold cursor-pointer hover:bg-accent-purple hover:text-white transition-all duration-200">
                   1
                 </button>
-                <button className="bg-gray-200 text-gray-700 border-none rounded-lg py-3 px-5 font-semibold cursor-pointer hover:bg-accent-purple hover:text-white transition-all">
+                <button className="bg-[#232632] text-gray-300 border border-white/5 rounded-lg py-2.5 px-4 font-semibold cursor-pointer hover:bg-accent-purple hover:text-white transition-all duration-200">
                   2
                 </button>
-                <button className="bg-gray-200 text-gray-700 border-none rounded-lg py-3 px-5 font-semibold cursor-pointer hover:bg-accent-purple hover:text-white transition-all">
+                <button className="bg-[#232632] text-gray-300 border border-white/5 rounded-lg py-2.5 px-4 font-semibold cursor-pointer hover:bg-accent-purple hover:text-white transition-all duration-200">
                   3
                 </button>
               </nav>

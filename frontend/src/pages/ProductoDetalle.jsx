@@ -106,11 +106,12 @@ const ProductoDetalle = () => {
         {/* Detalle del producto */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
           {/* Imagen */}
-          <div className="bg-bg-light rounded-2xl p-8 flex items-center justify-center">
+          <div className="glass-panel rounded-2xl p-8 flex items-center justify-center relative overflow-hidden shadow-hard border border-white/5 hover:border-accent-purple/20 transition-all duration-300 group">
+            <div className="absolute inset-0 bg-gradient-to-tr from-accent-purple/5 to-accent-pink/5 opacity-50 pointer-events-none" />
             <img
               src={producto.imagen}
               alt={producto.nombre}
-              className="max-h-[500px] w-auto object-contain"
+              className="max-h-[500px] w-auto object-contain transition-all duration-500 group-hover:scale-[1.02] drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)]"
             />
           </div>
 
@@ -120,7 +121,7 @@ const ProductoDetalle = () => {
               {producto.categoria}
             </div>
 
-            <h1 className="text-4xl font-bold text-white mb-4">{producto.nombre}</h1>
+            <h1 className="text-4xl font-bold text-white mb-4 leading-tight">{producto.nombre}</h1>
 
             <p className="text-xl text-gray-300 mb-2">
               Por <span className="text-accent-blue">{producto.autor}</span>
@@ -132,7 +133,7 @@ const ProductoDetalle = () => {
             </p>
 
             {/* Detalles técnicos */}
-            <div className="grid grid-cols-2 gap-4 mb-6 bg-bg-light rounded-xl p-6">
+            <div className="grid grid-cols-2 gap-4 mb-6 bg-bg-light/50 border border-white/5 rounded-xl p-6">
               <div>
                 <p className="text-gray-400 text-sm">Páginas</p>
                 <p className="text-white font-medium">{producto.paginas}</p>
@@ -163,7 +164,7 @@ const ProductoDetalle = () => {
                   <span className="text-2xl text-gray-500 line-through">
                     ${producto.precio.toLocaleString()}
                   </span>
-                  <span className="bg-accent-pink text-white px-3 py-1 rounded-full text-sm font-bold">
+                  <span className="bg-gradient-to-r from-accent-pink to-accent-purple text-white px-3 py-1 rounded-full text-sm font-bold shadow-md">
                     -{producto.descuento}%
                   </span>
                 </div>
@@ -176,21 +177,21 @@ const ProductoDetalle = () => {
 
             {/* Cantidad y botón agregar */}
             <div className="flex items-center gap-4 mb-6">
-              <div className="flex items-center bg-bg-light rounded-lg overflow-hidden">
+              <div className="flex items-center bg-[#13151b] border border-white/5 rounded-xl overflow-hidden h-12">
                 <button
                   onClick={decrementar}
                   disabled={cantidad <= 1}
-                  className="px-4 py-3 text-white hover:bg-accent-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 h-full text-white hover:bg-accent-blue hover:text-bg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   -
                 </button>
-                <span className="px-6 py-3 text-white font-medium min-w-[60px] text-center">
+                <span className="px-6 text-white font-medium min-w-[60px] text-center">
                   {cantidad}
                 </span>
                 <button
                   onClick={incrementar}
                   disabled={cantidad >= producto.stock}
-                  className="px-4 py-3 text-white hover:bg-accent-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 h-full text-white hover:bg-accent-blue hover:text-bg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   +
                 </button>
@@ -199,7 +200,7 @@ const ProductoDetalle = () => {
               <button
                 onClick={handleAgregarAlCarrito}
                 disabled={producto.stock === 0}
-                className="flex-1 bg-accent-blue text-bg px-8 py-3 rounded-lg font-bold text-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 bg-gradient-to-r from-accent-blue to-accent-purple text-bg hover:from-accent-pink hover:to-accent-purple hover:text-white px-8 py-3 rounded-xl font-bold text-base hover:shadow-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed border-none h-12"
               >
                 {producto.stock > 0 ? 'Agregar al Carrito' : 'Agotado'}
               </button>
@@ -207,7 +208,7 @@ const ProductoDetalle = () => {
 
             <Link
               to="/catalogo"
-              className="inline-block text-center border border-accent-purple text-accent-purple px-8 py-3 rounded-lg font-bold hover:bg-accent-purple hover:text-bg transition-all"
+              className="inline-block text-center border border-accent-purple/40 text-accent-purple px-8 py-3 rounded-xl font-bold hover:bg-accent-purple hover:text-bg transition-all"
             >
               Continuar Comprando
             </Link>
@@ -236,35 +237,35 @@ const ProductoDetalle = () => {
                   <Link
                     key={prod._id}
                     to={`/producto/${prod._id}`}
-                    className="bg-bg-light rounded-2xl overflow-hidden hover:transform hover:scale-105 transition-all group"
+                    className="glass-panel rounded-2xl overflow-hidden transition-all duration-300 hover:border-accent-purple/30 hover:shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:-translate-y-1 group"
                   >
-                    <div className="relative aspect-[3/4] overflow-hidden">
+                    <div className="relative aspect-[3/4] bg-[#13151b] flex items-center justify-center p-4 overflow-hidden border-b border-white/5">
                       <img
                         src={prod.imagen}
                         alt={prod.nombre}
-                        className="w-full h-full object-cover"
+                        className="h-full w-auto object-contain transition-all duration-300 group-hover:scale-[1.05]"
                       />
                       {prod.enOferta && (
-                        <div className="absolute top-4 right-4 bg-accent-pink text-white px-3 py-1 rounded-full text-sm font-bold z-10">
+                        <div className="absolute top-3 right-3 bg-gradient-to-r from-accent-pink to-accent-purple text-white px-3 py-1 rounded-lg text-xs font-bold z-10 shadow-md">
                           -{prod.descuento}%
                         </div>
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="text-white font-bold mb-1 line-clamp-1">{prod.nombre}</h3>
-                      <p className="text-gray-400 text-sm mb-2">{prod.autor}</p>
+                      <h3 className="text-white font-bold mb-1 line-clamp-1 group-hover:text-accent-blue transition-colors text-sm">{prod.nombre}</h3>
+                      <p className="text-gray-400 text-xs mb-2">{prod.autor}</p>
                       <div className="flex items-baseline gap-2">
                         {prod.enOferta ? (
                           <>
-                            <span className="text-xl font-bold text-accent-blue">
+                            <span className="text-base font-bold text-accent-blue">
                               ${precioRel.toLocaleString()}
                             </span>
-                            <span className="text-sm text-gray-500 line-through">
+                            <span className="text-xs text-gray-500 line-through">
                               ${prod.precio.toLocaleString()}
                             </span>
                           </>
                         ) : (
-                          <span className="text-xl font-bold text-white">
+                          <span className="text-base font-bold text-white">
                             ${prod.precio.toLocaleString()}
                           </span>
                         )}
