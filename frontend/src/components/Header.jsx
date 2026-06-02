@@ -1,5 +1,5 @@
-import { Link, useLocation } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
+import { Link, useLocation } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
 const Header = () => {
   const location = useLocation();
@@ -17,6 +17,7 @@ const Header = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 no-underline">
             <div className="h-11 w-11 rounded-full overflow-hidden border-2 border-accent-blue bg-white">
+              <img src="/logo.jpg" alt="Mundos de Papel Logo" />
               <div className="w-full h-full bg-gradient-to-br from-accent-purple to-accent-pink" />
             </div>
             <span className="font-poppins font-bold text-xl tracking-wide text-accent-blue">
@@ -31,9 +32,10 @@ const Header = () => {
                 <Link
                   to="/"
                   className={`text-gray-100 no-underline font-medium text-base pb-1.5 border-b-2 transition-all duration-200
-                    ${isActive('/') 
-                      ? 'text-accent-blue border-accent-blue' 
-                      : 'border-transparent hover:text-accent-blue hover:border-accent-blue'
+                    ${
+                      isActive("/")
+                        ? "text-accent-blue border-accent-blue"
+                        : "border-transparent hover:text-accent-blue hover:border-accent-blue"
                     }`}
                 >
                   Inicio
@@ -43,9 +45,10 @@ const Header = () => {
                 <Link
                   to="/catalogo"
                   className={`text-gray-100 no-underline font-medium text-base pb-1.5 border-b-2 transition-all duration-200
-                    ${isActive('/catalogo') 
-                      ? 'text-accent-blue border-accent-blue' 
-                      : 'border-transparent hover:text-accent-blue hover:border-accent-blue'
+                    ${
+                      isActive("/catalogo")
+                        ? "text-accent-blue border-accent-blue"
+                        : "border-transparent hover:text-accent-blue hover:border-accent-blue"
                     }`}
                 >
                   Catálogo
@@ -55,9 +58,10 @@ const Header = () => {
                 <Link
                   to="/ofertas"
                   className={`text-gray-100 no-underline font-medium text-base pb-1.5 border-b-2 transition-all duration-200
-                    ${isActive('/ofertas') 
-                      ? 'text-accent-blue border-accent-blue' 
-                      : 'border-transparent hover:text-accent-blue hover:border-accent-blue'
+                    ${
+                      isActive("/ofertas")
+                        ? "text-accent-blue border-accent-blue"
+                        : "border-transparent hover:text-accent-blue hover:border-accent-blue"
                     }`}
                 >
                   Ofertas
@@ -67,9 +71,10 @@ const Header = () => {
                 <Link
                   to="/cuenta"
                   className={`text-gray-100 no-underline font-medium text-base pb-1.5 border-b-2 transition-all duration-200
-                    ${isActive('/cuenta') 
-                      ? 'text-accent-blue border-accent-blue' 
-                      : 'border-transparent hover:text-accent-blue hover:border-accent-blue'
+                    ${
+                      isActive("/cuenta")
+                        ? "text-accent-blue border-accent-blue"
+                        : "border-transparent hover:text-accent-blue hover:border-accent-blue"
                     }`}
                 >
                   Mi Cuenta
@@ -79,9 +84,10 @@ const Header = () => {
                 <Link
                   to="/carrito"
                   className={`text-gray-100 no-underline font-medium text-base pb-1.5 border-b-2 transition-all duration-200
-                    ${isActive('/carrito') 
-                      ? 'text-accent-blue border-accent-blue' 
-                      : 'border-transparent hover:text-accent-blue hover:border-accent-blue'
+                    ${
+                      isActive("/carrito")
+                        ? "text-accent-blue border-accent-blue"
+                        : "border-transparent hover:text-accent-blue hover:border-accent-blue"
                     }`}
                 >
                   Carrito

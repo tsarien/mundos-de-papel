@@ -24,15 +24,6 @@ const Login = () => {
 
   return (
     <div className="min-h-screen w-screen flex flex-col items-center justify-center bg-bg">
-      <div className="flex flex-col items-center mb-10">
-        <div className="h-[70px] w-[70px] rounded-full overflow-hidden border-[2.5px] border-accent-blue bg-white mb-3">
-          <div className="w-full h-full bg-gradient-to-br from-accent-purple to-accent-pink" />
-        </div>
-        <span className="font-poppins font-bold text-xl text-accent-blue tracking-wide">
-          Mundos de Papel
-        </span>
-      </div>
-
       <main className="w-full max-w-[370px]">
         <form
           onSubmit={handleSubmit(onSubmit)}
