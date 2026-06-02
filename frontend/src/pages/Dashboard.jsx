@@ -11,9 +11,10 @@ import {
   TbHome,
   TbPlus,
 } from "react-icons/tb";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { obtenerAlertas } from "../services/adminService";
 import ResumenView from "../components/admin/ResumenView";
 import VentasView from "../components/admin/VentasView";
 import InventarioView from "../components/admin/InventarioView";
@@ -27,6 +28,19 @@ const Dashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [activeView, setActiveView] = useState("resumen");
+  const [alertasPendientes, setAlertasPendientes] = useState(0);
+
+  useEffect(() => {
+    const cargarAlertas = async () => {
+      try {
+        const data = await obtenerAlertas();
+        setAlertasPendientes(data.resumen?.pendientes || 0);
+      } catch {
+        setAlertasPendientes(0);
+      }
+    };
+    if (user?.rol === "admin") cargarAlertas();
+  }, [user]);
 
   const pages = {
     resumen: {
@@ -63,7 +77,7 @@ const Dashboard = () => {
       title: "Alertas",
       sub: "Notificaciones pendientes",
       icon: <TbBell size={18} />,
-      badge: 3,
+      badge: alertasPendientes,
     },
     configuracion: {
       title: "Configuración",

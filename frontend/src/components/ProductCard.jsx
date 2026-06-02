@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { TbShoppingCartPlus } from "react-icons/tb";
+import { toast } from "sonner";
 
 const ProductCard = ({ producto, showAddButton = true }) => {
   const { addToCart } = useCart();
@@ -12,6 +13,9 @@ const ProductCard = ({ producto, showAddButton = true }) => {
   const handleAddToCart = (e) => {
     e.preventDefault();
     addToCart(producto, 1);
+    toast.success(`"${producto.nombre}" agregado al carrito`, {
+      description: "1 unidad",
+    });
   };
 
   return (
@@ -41,7 +45,7 @@ const ProductCard = ({ producto, showAddButton = true }) => {
         </Link>
 
         <span className="text-xs text-accent-pink/90 font-semibold tracking-wider uppercase">
-          {producto.categoria}
+          {producto.categoria?.nombre || "Categoría"}
         </span>
 
         <div className="flex items-center gap-2 mt-1">

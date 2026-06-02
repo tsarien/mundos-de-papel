@@ -1,77 +1,73 @@
-const AlertasView = () => {
-  const alertas = [
-    {
-      id: 1,
-      tipo: "critico",
-      titulo: "Stock crítico",
-      mensaje: "All-Star Superman tiene solo 2 unidades en stock",
-      fecha: "Hace 2 horas",
-      icono: "ti-alert-circle",
-      accion: "Reabastecer",
-    },
-    {
-      id: 2,
-      tipo: "advertencia",
-      titulo: "Pedido pendiente de pago",
-      mensaje: "Cliente Carlos Méndez debe segundo pago del pedido #2846",
-      fecha: "Hace 5 horas",
-      icono: "ti-credit-card",
-      accion: "Contactar",
-    },
-    {
-      id: 3,
-      tipo: "advertencia",
-      titulo: "Stock bajo",
-      mensaje: "1001 Obras de Arte tiene 3 unidades. Umbral: 5",
-      fecha: "Hace 8 horas",
-      icono: "ti-alert-triangle",
-      accion: "Revisar",
-    },
-    {
-      id: 4,
-      tipo: "info",
-      titulo: "Nuevo cliente registrado",
-      mensaje: "Diego Torres se registró en la plataforma",
-      fecha: "Hace 1 día",
-      icono: "ti-user-plus",
-      accion: "Ver perfil",
-    },
-    {
-      id: 5,
-      tipo: "info",
-      titulo: "Pedido completado",
-      mensaje: "Pedido #2847 de Ana Torres fue entregado exitosamente",
-      fecha: "Hace 1 día",
-      icono: "ti-check-circle",
-      accion: "Ver detalles",
-    },
-    {
-      id: 6,
-      tipo: "advertencia",
-      titulo: "Retraso en envío",
-      mensaje: "Pedido #2843 está retrasado 2 días",
-      fecha: "Hace 2 días",
-      icono: "ti-clock",
-      accion: "Actualizar",
-    },
-  ];
+import { useState, useEffect } from "react";
+import { obtenerAlertas } from "../../services/adminService";
 
-  const alertasCriticas = alertas.filter((a) => a.tipo === "critico").length;
-  const alertasAdvertencia = alertas.filter(
-    (a) => a.tipo === "advertencia",
-  ).length;
-  const alertasInfo = alertas.filter((a) => a.tipo === "info").length;
+const tiempoRelativo = (fecha) => {
+  const diff = Date.now() - new Date(fecha).getTime();
+  const horas = Math.floor(diff / (1000 * 60 * 60));
+  if (horas < 1) return "Hace un momento";
+  if (horas < 24) return `Hace ${horas} hora${horas !== 1 ? "s" : ""}`;
+  const dias = Math.floor(horas / 24);
+  return `Hace ${dias} día${dias !== 1 ? "s" : ""}`;
+};
+
+const AlertasView = () => {
+  const [datos, setDatos] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const cargar = async () => {
+      try {
+        const data = await obtenerAlertas();
+        setDatos(data);
+      } catch {
+        setDatos(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    cargar();
+  }, []);
+
+  if (loading) {
+    return <p className="text-gray-400 text-sm">Cargando alertas...</p>;
+  }
+
+  if (!datos) {
+    return <p className="text-gray-400 text-sm">No se pudieron cargar las alertas.</p>;
+  }
+
+  const { alertas, resumen } = datos;
+
+  const estilos = {
+    critico: {
+      bg: "bg-red-500/10",
+      border: "border-red-500/30",
+      iconBg: "bg-red-500/20",
+      iconColor: "text-red-400",
+    },
+    advertencia: {
+      bg: "bg-yellow-500/10",
+      border: "border-yellow-500/30",
+      iconBg: "bg-yellow-500/20",
+      iconColor: "text-yellow-400",
+    },
+    info: {
+      bg: "bg-accent-blue/10",
+      border: "border-accent-blue/30",
+      iconBg: "bg-accent-blue/20",
+      iconColor: "text-accent-blue",
+    },
+  };
 
   return (
     <div className="flex flex-col gap-5 text-white">
-      {/* Resumen de alertas */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="glass-panel rounded-2xl p-5 border border-white/5 hover:border-accent-blue/30 transition-all duration-300 shadow-soft">
           <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">
             Total alertas
           </div>
           <div className="font-poppins font-bold text-2xl text-white">
-            {alertas.length}
+            {resumen.total}
           </div>
           <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-2.5">
             Pendientes
@@ -83,7 +79,7 @@ const AlertasView = () => {
             Críticas
           </div>
           <div className="font-poppins font-bold text-2xl text-red-400">
-            {alertasCriticas}
+            {resumen.criticas}
           </div>
           <div className="text-[10px] text-red-300 font-bold uppercase tracking-wider mt-2.5">
             Requieren atención
@@ -95,7 +91,7 @@ const AlertasView = () => {
             Advertencias
           </div>
           <div className="font-poppins font-bold text-2xl text-yellow-500">
-            {alertasAdvertencia}
+            {resumen.advertencias}
           </div>
           <div className="text-[10px] text-yellow-500 font-bold uppercase tracking-wider mt-2.5">
             Para revisar
@@ -107,7 +103,7 @@ const AlertasView = () => {
             Información
           </div>
           <div className="font-poppins font-bold text-2xl text-accent-blue">
-            {alertasInfo}
+            {resumen.info}
           </div>
           <div className="text-[10px] text-accent-blue font-bold uppercase tracking-wider mt-2.5">
             Notificaciones
@@ -115,53 +111,20 @@ const AlertasView = () => {
         </div>
       </div>
 
-      {/* Lista de alertas */}
       <div className="glass-panel rounded-2xl p-6 border border-white/5">
         <div className="flex justify-between items-center mb-5 border-b border-white/5 pb-3">
           <div className="text-xs font-bold uppercase tracking-wider text-accent-blue">
             Todas las alertas
           </div>
-          <div className="flex gap-2">
-            <button className="text-[11px] font-bold px-3 py-1.5 rounded-lg bg-[#232632] border border-white/10 text-white hover:bg-white/5 transition-all cursor-pointer">
-              Filtrar
-            </button>
-            <button className="text-[11px] font-bold px-3 py-1.5 rounded-lg bg-[#232632] border border-white/10 text-white hover:bg-white/5 transition-all cursor-pointer">
-              Marcar todas como leídas
-            </button>
-          </div>
         </div>
 
         <div className="space-y-3.5">
           {alertas.map((alerta) => {
-            const estilos = {
-              critico: {
-                bg: "bg-red-500/10",
-                border: "border-red-500/30",
-                iconBg: "bg-red-500/20",
-                iconColor: "text-red-400",
-                badge: "bg-red-500/20 text-red-300",
-              },
-              advertencia: {
-                bg: "bg-yellow-500/10",
-                border: "border-yellow-500/30",
-                iconBg: "bg-yellow-500/20",
-                iconColor: "text-yellow-400",
-                badge: "bg-yellow-500/20 text-yellow-300",
-              },
-              info: {
-                bg: "bg-accent-blue/10",
-                border: "border-accent-blue/30",
-                iconBg: "bg-accent-blue/20",
-                iconColor: "text-accent-blue",
-                badge: "bg-accent-blue/20 text-accent-blue",
-              },
-            };
-
             const estilo = estilos[alerta.tipo];
 
             return (
               <div
-                key={alerta.id}
+                key={alerta._id}
                 className={`${estilo.bg} border-l-2 ${estilo.border} rounded-xl p-4 transition-all hover:shadow-sm`}
               >
                 <div className="flex gap-3.5">
@@ -179,7 +142,7 @@ const AlertasView = () => {
                         {alerta.titulo}
                       </div>
                       <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                        {alerta.fecha}
+                        {tiempoRelativo(alerta.createdAt)}
                       </div>
                     </div>
 
@@ -191,74 +154,12 @@ const AlertasView = () => {
                       <button className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-[#13151b] border border-white/10 text-white hover:bg-white/5 transition-all cursor-pointer">
                         {alerta.accion}
                       </button>
-                      <button className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-transparent border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 transition-all cursor-pointer">
-                        Descartar
-                      </button>
                     </div>
                   </div>
                 </div>
               </div>
             );
           })}
-        </div>
-      </div>
-
-      {/* Configuración de alertas */}
-      <div className="glass-panel rounded-2xl p-6 border border-white/5">
-        <div className="text-xs font-bold uppercase tracking-wider text-accent-purple mb-4 border-b border-white/5 pb-2.5">
-          Configuración de notificaciones
-        </div>
-
-        <div className="space-y-3">
-          {[
-            {
-              nombre: "Stock bajo",
-              desc: "Notificar cuando el stock esté por debajo del umbral",
-              activo: true,
-            },
-            {
-              nombre: "Nuevos pedidos",
-              desc: "Recibir alerta de cada nuevo pedido",
-              activo: true,
-            },
-            {
-              nombre: "Pagos pendientes",
-              desc: "Alertar sobre pagos pendientes después de 24h",
-              activo: true,
-            },
-            {
-              nombre: "Nuevos clientes",
-              desc: "Notificar cuando un nuevo cliente se registre",
-              activo: false,
-            },
-            {
-              nombre: "Reseñas nuevas",
-              desc: "Alertar sobre nuevas reseñas de productos",
-              activo: false,
-            },
-          ].map((config, index) => (
-            <div
-              key={index}
-              className="flex items-start justify-between py-3.5 border-b border-white/5 last:border-0"
-            >
-              <div className="flex-1 min-w-0 pr-4">
-                <div className="text-xs font-semibold text-white mb-1">
-                  {config.nombre}
-                </div>
-                <div className="text-[10px] text-gray-400 font-medium">
-                  {config.desc}
-                </div>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="sr-only peer"
-                  defaultChecked={config.activo}
-                />
-                <div className="w-9 h-5 bg-[#13151b] border border-white/10 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-gray-500 after:border-transparent after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-accent-blue peer-checked:after:bg-white"></div>
-              </label>
-            </div>
-          ))}
         </div>
       </div>
     </div>

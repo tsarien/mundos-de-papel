@@ -1,13 +1,18 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
-import { categorias, editoriales } from "../data/constants";
 import { obtenerProductos } from "../services/productoService";
+import {
+  obtenerCategorias,
+  obtenerEditoriales,
+} from "../services/catalogoService";
 import { TbSearch } from "react-icons/tb";
 
 const Catalogo = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [productos, setProductos] = useState([]);
+  const [categorias, setCategorias] = useState([]);
+  const [editoriales, setEditoriales] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [busqueda, setBusqueda] = useState("");
@@ -20,6 +25,23 @@ const Catalogo = () => {
     precioMin: "",
     precioMax: "",
   }));
+
+  // Cargar categorías y editoriales
+  useEffect(() => {
+    const cargarFiltros = async () => {
+      try {
+        const [cats, edits] = await Promise.all([
+          obtenerCategorias(),
+          obtenerEditoriales(),
+        ]);
+        setCategorias(cats);
+        setEditoriales(edits);
+      } catch (err) {
+        console.error("Error al cargar filtros:", err);
+      }
+    };
+    cargarFiltros();
+  }, []);
 
   useEffect(() => {
     const categoriaParam = searchParams.get("categoria");
@@ -55,12 +77,12 @@ const Catalogo = () => {
     }
   };
 
-  const handleCategoriaChange = (categoria) => {
+  const handleCategoriaChange = (categoriaId) => {
     setFiltros((prev) => ({
       ...prev,
-      categorias: prev.categorias.includes(categoria)
-        ? prev.categorias.filter((c) => c !== categoria)
-        : [...prev.categorias, categoria],
+      categorias: prev.categorias.includes(categoriaId)
+        ? prev.categorias.filter((c) => c !== categoriaId)
+        : [...prev.categorias, categoriaId],
     }));
   };
 
@@ -108,20 +130,24 @@ const Catalogo = () => {
             <span className="text-sm font-bold text-accent-purple uppercase tracking-wider mb-1">
               Categoría
             </span>
-            {categorias.map((cat) => (
-              <label
-                key={cat.id}
-                className="text-sm text-gray-300 hover:text-white font-medium cursor-pointer flex items-center gap-2.5 transition-colors"
-              >
-                <input
-                  type="checkbox"
-                  checked={filtros.categorias.includes(cat.slug)}
-                  onChange={() => handleCategoriaChange(cat.slug)}
-                  className="cursor-pointer accent-accent-purple rounded"
-                />
-                {cat.nombre}
-              </label>
-            ))}
+            {categorias.length > 0 ? (
+              categorias.map((cat) => (
+                <label
+                  key={cat._id}
+                  className="text-sm text-gray-300 hover:text-white font-medium cursor-pointer flex items-center gap-2.5 transition-colors"
+                >
+                  <input
+                    type="checkbox"
+                    checked={filtros.categorias.includes(cat._id)}
+                    onChange={() => handleCategoriaChange(cat._id)}
+                    className="cursor-pointer accent-accent-purple rounded"
+                  />
+                  {cat.nombre}
+                </label>
+              ))
+            ) : (
+              <p className="text-sm text-gray-400">Cargando categorías...</p>
+            )}
           </div>
 
           {/* Autor */}
@@ -155,15 +181,21 @@ const Catalogo = () => {
               <option value="" className="bg-[#232632] text-white">
                 Todas
               </option>
-              {editoriales.map((ed) => (
-                <option
-                  key={ed.id}
-                  value={ed.nombre}
-                  className="bg-[#232632] text-white"
-                >
-                  {ed.nombre}
+              {editoriales.length > 0 ? (
+                editoriales.map((ed) => (
+                  <option
+                    key={ed._id}
+                    value={ed.nombre}
+                    className="bg-[#232632] text-white"
+                  >
+                    {ed.nombre}
+                  </option>
+                ))
+              ) : (
+                <option className="bg-[#232632] text-gray-400" disabled>
+                  Cargando...
                 </option>
-              ))}
+              )}
             </select>
           </div>
 

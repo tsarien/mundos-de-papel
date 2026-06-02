@@ -1,11 +1,11 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from "react";
 
 const CartContext = createContext();
 
 export const useCart = () => {
   const context = useContext(CartContext);
   if (!context) {
-    throw new Error('useCart debe usarse dentro de un CartProvider');
+    throw new Error("useCart debe usarse dentro de un CartProvider");
   }
   return context;
 };
@@ -15,7 +15,7 @@ export const CartProvider = ({ children }) => {
 
   // Cargar carrito desde localStorage al iniciar
   useEffect(() => {
-    const savedCart = localStorage.getItem('mundos-papel-cart');
+    const savedCart = localStorage.getItem("mundos-papel-cart");
     if (savedCart) {
       setCart(JSON.parse(savedCart));
     }
@@ -23,27 +23,27 @@ export const CartProvider = ({ children }) => {
 
   // Guardar carrito en localStorage cuando cambie
   useEffect(() => {
-    localStorage.setItem('mundos-papel-cart', JSON.stringify(cart));
+    localStorage.setItem("mundos-papel-cart", JSON.stringify(cart));
   }, [cart]);
 
   const addToCart = (producto, cantidad = 1) => {
-    setCart(prevCart => {
-      const existingItem = prevCart.find(item => item.id === producto.id);
-      
+    setCart((prevCart) => {
+      const existingItem = prevCart.find((item) => item._id === producto._id);
+
       if (existingItem) {
-        return prevCart.map(item =>
-          item.id === producto.id
+        return prevCart.map((item) =>
+          item._id === producto._id
             ? { ...item, cantidad: item.cantidad + cantidad }
-            : item
+            : item,
         );
       }
-      
+
       return [...prevCart, { ...producto, cantidad }];
     });
   };
 
   const removeFromCart = (productoId) => {
-    setCart(prevCart => prevCart.filter(item => item.id !== productoId));
+    setCart((prevCart) => prevCart.filter((item) => item._id !== productoId));
   };
 
   const updateQuantity = (productoId, cantidad) => {
@@ -51,11 +51,11 @@ export const CartProvider = ({ children }) => {
       removeFromCart(productoId);
       return;
     }
-    
-    setCart(prevCart =>
-      prevCart.map(item =>
-        item.id === productoId ? { ...item, cantidad } : item
-      )
+
+    setCart((prevCart) =>
+      prevCart.map((item) =>
+        item._id === productoId ? { ...item, cantidad } : item,
+      ),
     );
   };
 
@@ -65,10 +65,10 @@ export const CartProvider = ({ children }) => {
 
   const getCartTotal = () => {
     return cart.reduce((total, item) => {
-      const precio = item.enOferta 
-        ? item.precio - (item.precio * item.descuento / 100)
+      const precio = item.enOferta
+        ? item.precio - (item.precio * item.descuento) / 100
         : item.precio;
-      return total + (precio * item.cantidad);
+      return total + precio * item.cantidad;
     }, 0);
   };
 

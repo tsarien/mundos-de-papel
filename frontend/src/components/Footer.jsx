@@ -1,4 +1,12 @@
 import { Link } from "react-router-dom";
+import {
+  TbBrandInstagram,
+  TbBrandFacebook,
+  TbBrandTwitter,
+  TbMail,
+  TbFileText,
+  TbShieldCheck,
+} from "react-icons/tb";
 
 const Footer = () => {
   return (
@@ -9,23 +17,26 @@ const Footer = () => {
           <div className="flex gap-5">
             <a
               href="#"
-              className="text-accent-blue font-semibold no-underline hover:text-accent-pink transition-colors duration-200"
+              className="flex items-center gap-1.5 text-accent-blue font-semibold no-underline hover:text-accent-pink transition-colors duration-200"
               aria-label="Instagram"
             >
+              <TbBrandInstagram size={18} />
               Instagram
             </a>
             <a
               href="#"
-              className="text-accent-blue font-semibold no-underline hover:text-accent-pink transition-colors duration-200"
+              className="flex items-center gap-1.5 text-accent-blue font-semibold no-underline hover:text-accent-pink transition-colors duration-200"
               aria-label="Facebook"
             >
+              <TbBrandFacebook size={18} />
               Facebook
             </a>
             <a
               href="#"
-              className="text-accent-blue font-semibold no-underline hover:text-accent-pink transition-colors duration-200"
+              className="flex items-center gap-1.5 text-accent-blue font-semibold no-underline hover:text-accent-pink transition-colors duration-200"
               aria-label="Twitter"
             >
+              <TbBrandTwitter size={18} />
               Twitter
             </a>
           </div>
@@ -34,20 +45,23 @@ const Footer = () => {
           <div className="flex gap-5">
             <Link
               to="/contacto"
-              className="text-gray-300 no-underline hover:text-accent-blue transition-colors duration-200"
+              className="flex items-center gap-1.5 text-gray-300 no-underline hover:text-accent-blue transition-colors duration-200"
             >
+              <TbMail size={16} />
               Contacto
             </Link>
             <Link
               to="/terminos"
-              className="text-gray-300 no-underline hover:text-accent-blue transition-colors duration-200"
+              className="flex items-center gap-1.5 text-gray-300 no-underline hover:text-accent-blue transition-colors duration-200"
             >
+              <TbFileText size={16} />
               Términos
             </Link>
             <Link
               to="/politicas"
-              className="text-gray-300 no-underline hover:text-accent-blue transition-colors duration-200"
+              className="flex items-center gap-1.5 text-gray-300 no-underline hover:text-accent-blue transition-colors duration-200"
             >
+              <TbShieldCheck size={16} />
               Políticas
             </Link>
           </div>

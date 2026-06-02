@@ -26,7 +26,9 @@ const validacionProducto = [
   body("descripcion").notEmpty().withMessage("La descripción es requerida"),
   body("precio").isNumeric().withMessage("El precio debe ser un número"),
   body("categoria")
-    .isIn(["Manga", "Cómic", "Arte"])
+    .notEmpty()
+    .withMessage("La categoría es requerida")
+    .isMongoId()
     .withMessage("Categoría inválida"),
   body("autor").notEmpty().withMessage("El autor es requerido"),
   body("editorial").notEmpty().withMessage("La editorial es requerida"),
@@ -53,12 +55,33 @@ router.get("/:id", obtenerProductoPorId);
 router.get("/:id/valoraciones", obtenerValoraciones);
 
 // Rutas protegidas - Usuario
-router.post("/:id/valoraciones", proteger, validacionValoracion, agregarValoracion);
-router.put("/:id/valoraciones/:valoracionId/util", proteger, marcarValoracionUtil);
+router.post(
+  "/:id/valoraciones",
+  proteger,
+  validacionValoracion,
+  agregarValoracion,
+);
+router.put(
+  "/:id/valoraciones/:valoracionId/util",
+  proteger,
+  marcarValoracionUtil,
+);
 
 // Rutas protegidas - Admin
-router.post("/", proteger, autorizar("admin"), validacionProducto, crearProducto);
-router.put("/:id/imagen", proteger, autorizar("admin"), upload.single("imagen"), subirImagenProducto);
+router.post(
+  "/",
+  proteger,
+  autorizar("admin"),
+  validacionProducto,
+  crearProducto,
+);
+router.put(
+  "/:id/imagen",
+  proteger,
+  autorizar("admin"),
+  upload.single("imagen"),
+  subirImagenProducto,
+);
 router.put("/:id/stock", proteger, autorizar("admin"), actualizarStock);
 router.put("/:id", proteger, autorizar("admin"), actualizarProducto);
 router.delete("/:id", proteger, autorizar("admin"), eliminarProducto);

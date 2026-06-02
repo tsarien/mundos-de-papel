@@ -2,24 +2,30 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import { obtenerProductos } from "../services/productoService";
+import { obtenerCategorias } from "../services/catalogoService";
 
 const Home = () => {
   const [destacados, setDestacados] = useState([]);
+  const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const cargarDestacados = async () => {
+    const cargarDatos = async () => {
       try {
-        const data = await obtenerProductos({ destacado: true, limite: 3 });
-        setDestacados(data.productos);
+        const [productosData, categoriasData] = await Promise.all([
+          obtenerProductos({ destacado: true, limite: 3 }),
+          obtenerCategorias(),
+        ]);
+        setDestacados(productosData.productos);
+        setCategorias(categoriasData);
       } catch (err) {
-        console.error("Error al cargar destacados:", err);
+        console.error("Error al cargar datos:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    cargarDestacados();
+    cargarDatos();
   }, []);
 
   return (
@@ -81,24 +87,19 @@ const Home = () => {
           Categorías
         </h2>
         <div className="flex flex-wrap gap-8 justify-center">
-          <Link
-            to="/catalogo?categoria=Manga"
-            className="flex-1 min-w-[200px] max-w-[300px] glass-panel rounded-2xl p-10 text-center font-poppins text-xl font-bold text-accent-purple no-underline hover:border-accent-purple hover:shadow-[0_8px_32px_0_rgba(182,166,230,0.15)] hover:text-white transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03]"
-          >
-            Manga
-          </Link>
-          <Link
-            to="/catalogo?categoria=Cómic"
-            className="flex-1 min-w-[200px] max-w-[300px] glass-panel rounded-2xl p-10 text-center font-poppins text-xl font-bold text-accent-blue no-underline hover:border-accent-blue hover:shadow-[0_8px_32px_0_rgba(126,195,230,0.15)] hover:text-white transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03]"
-          >
-            Cómic
-          </Link>
-          <Link
-            to="/catalogo?categoria=Arte"
-            className="flex-1 min-w-[200px] max-w-[300px] glass-panel rounded-2xl p-10 text-center font-poppins text-xl font-bold text-accent-pink no-underline hover:border-accent-pink hover:shadow-[0_8px_32px_0_rgba(230,140,183,0.15)] hover:text-white transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03]"
-          >
-            Arte
-          </Link>
+          {categorias.length > 0 ? (
+            categorias.map((cat) => (
+              <Link
+                key={cat._id}
+                to={`/catalogo?categoria=${cat._id}`}
+                className="flex-1 min-w-[200px] max-w-[300px] glass-panel rounded-2xl p-10 text-center font-poppins text-xl font-bold text-accent-purple no-underline hover:border-accent-purple hover:shadow-[0_8px_32px_0_rgba(182,166,230,0.15)] hover:text-white transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03]"
+              >
+                {cat.nombre}
+              </Link>
+            ))
+          ) : (
+            <p className="text-center text-gray-400">Cargando categorías...</p>
+          )}
         </div>
       </section>
 

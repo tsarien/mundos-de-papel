@@ -58,6 +58,7 @@ export const obtenerProductos = async (req, res) => {
     const skip = (Number(pagina) - 1) * Number(limite);
 
     const productos = await Producto.find(filtros)
+      .populate("categoria", "nombre slug icono")
       .sort(ordenar)
       .limit(Number(limite))
       .skip(skip);
@@ -87,10 +88,9 @@ export const obtenerProductos = async (req, res) => {
 // @access  Public
 export const obtenerProductoPorId = async (req, res) => {
   try {
-    const producto = await Producto.findById(req.params.id).populate(
-      "valoraciones.usuario",
-      "nombre apellido",
-    );
+    const producto = await Producto.findById(req.params.id)
+      .populate("categoria", "nombre slug icono")
+      .populate("valoraciones.usuario", "nombre apellido");
 
     if (!producto) {
       return res
@@ -138,6 +138,9 @@ export const crearProducto = async (req, res) => {
         .catch(() => {}); // Si falla el rename no es crítico
     }
 
+    // Poblar la categoría antes de devolver
+    await producto.populate("categoria", "nombre slug icono");
+
     res.status(201).json({ success: true, producto });
   } catch (error) {
     console.error("Error al crear producto:", error);
@@ -176,6 +179,9 @@ export const subirImagenProducto = async (req, res) => {
     producto.imagen = resultado.secure_url;
     await producto.save();
 
+    // Poblar la categoría antes de devolver
+    await producto.populate("categoria", "nombre slug icono");
+
     res.json({
       success: true,
       mensaje: "Imagen actualizada correctamente",
@@ -200,7 +206,7 @@ export const actualizarProducto = async (req, res) => {
     const producto = await Producto.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
-    });
+    }).populate("categoria", "nombre slug icono");
 
     if (!producto) {
       return res

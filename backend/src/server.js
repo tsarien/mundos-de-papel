@@ -12,6 +12,9 @@ import errorHandler from "./middleware/errorHandler.js";
 import authRoutes from "./routes/authRoutes.js";
 import productoRoutes from "./routes/productoRoutes.js";
 import pedidoRoutes from "./routes/pedidoRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+import categoriaRoutes from "./routes/categoriaRoutes.js";
+import editorialRoutes from "./routes/editorialRoutes.js";
 
 // Conectar a la base de datos
 connectDB();
@@ -53,6 +56,9 @@ app.use("/api/", limiter);
 app.use("/api/auth", authRoutes);
 app.use("/api/productos", productoRoutes);
 app.use("/api/pedidos", pedidoRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/categorias", categoriaRoutes);
+app.use("/api/editoriales", editorialRoutes);
 
 // Ruta de prueba
 app.get("/", (req, res) => {
@@ -64,6 +70,7 @@ app.get("/", (req, res) => {
       auth: "/api/auth",
       productos: "/api/productos",
       pedidos: "/api/pedidos",
+      admin: "/api/admin",
     },
   });
 });

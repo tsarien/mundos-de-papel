@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useForm } from "react-hook-form";
+import { obtenerMisPedidos } from "../services/pedidoService";
 import {
   TbUser,
   TbShoppingBag,
@@ -20,6 +21,44 @@ const Cuenta = () => {
     defaultValues: user || {},
   });
   const [seccionActiva, setSeccionActiva] = useState("info");
+  const [pedidos, setPedidos] = useState([]);
+  const [cargandoPedidos, setCargandoPedidos] = useState(false);
+
+  useEffect(() => {
+    if (seccionActiva !== "pedidos") return;
+
+    const cargarPedidos = async () => {
+      try {
+        setCargandoPedidos(true);
+        const data = await obtenerMisPedidos();
+        setPedidos(data.pedidos || []);
+      } catch {
+        setPedidos([]);
+      } finally {
+        setCargandoPedidos(false);
+      }
+    };
+
+    cargarPedidos();
+  }, [seccionActiva]);
+
+  const formatearEstado = (estado) => {
+    const estados = {
+      entregado: "Entregado",
+      procesando: "En proceso",
+      confirmado: "En proceso",
+      enviado: "Enviado",
+      cancelado: "Cancelado",
+    };
+    return estados[estado] || estado;
+  };
+
+  const formatearFecha = (fecha) =>
+    new Date(fecha).toLocaleDateString("es-CO", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
 
   if (!isAuthenticated) {
     navigate("/login");
@@ -35,25 +74,6 @@ const Cuenta = () => {
     logout();
     navigate("/");
   };
-
-  const BASE_URL = `https://res.cloudinary.com/dndknc8cp/image/upload`;
-
-  const pedidosEjemplo = [
-    {
-      id: 1,
-      nombre: "Batman",
-      fecha: "12/04/2024",
-      estado: "Entregado",
-      imagen: `${BASE_URL}/batman.jpg`,
-    },
-    {
-      id: 2,
-      nombre: "Dragon Ball",
-      fecha: "28/03/2024",
-      estado: "En proceso",
-      imagen: `${BASE_URL}/dragon-ball.webp`,
-    },
-  ];
 
   return (
     <main className="mb-10 container mx-auto px-4 max-w-7xl pt-10">
@@ -218,45 +238,62 @@ const Cuenta = () => {
               <h2 className="font-poppins text-2xl font-bold text-accent-pink mb-6 border-b border-white/5 pb-2">
                 Historial de pedidos
               </h2>
-              <ul className="list-none m-0 p-0 flex flex-col gap-5">
-                {pedidosEjemplo.map((pedido) => (
-                  <li
-                    key={pedido.id}
-                    className="flex items-center gap-5 bg-[#13151b]/80 border border-white/5 rounded-xl p-5 justify-between hover:border-white/10 transition-all"
-                  >
-                    <div className="w-12 h-16 bg-[#232632] flex items-center justify-center p-1 rounded-lg border border-white/5 flex-shrink-0">
-                      <img
-                        src={pedido.imagen}
-                        alt={pedido.nombre}
-                        className="h-full w-auto object-contain"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <span className="font-bold text-accent-blue text-base block">
-                        {pedido.nombre}
-                      </span>
-                      <span className="text-accent-pink text-sm mr-3 font-semibold">
-                        {pedido.fecha}
-                      </span>
-                      <span
-                        className={`text-xs font-semibold rounded-lg py-1 px-3 ml-2 inline-block ${
-                          pedido.estado === "Entregado"
-                            ? "bg-accent-blue/20 text-accent-blue border border-accent-blue/30"
-                            : "bg-accent-pink/20 text-accent-pink border border-accent-pink/30"
-                        }`}
+              {cargandoPedidos ? (
+                <p className="text-gray-400 text-sm">Cargando pedidos...</p>
+              ) : pedidos.length === 0 ? (
+                <p className="text-gray-400 text-sm">
+                  No tienes pedidos registrados.
+                </p>
+              ) : (
+                <ul className="list-none m-0 p-0 flex flex-col gap-5">
+                  {pedidos.map((pedido) => {
+                    const item = pedido.items[0];
+                    const nombre = item?.nombre || item?.producto?.nombre;
+                    const imagen = item?.producto?.imagen;
+                    const estadoLabel = formatearEstado(pedido.estado);
+
+                    return (
+                      <li
+                        key={pedido._id}
+                        className="flex items-center gap-5 bg-[#13151b]/80 border border-white/5 rounded-xl p-5 justify-between hover:border-white/10 transition-all"
                       >
-                        {pedido.estado}
-                      </span>
-                    </div>
-                    <button className="bg-transparent text-accent-blue font-bold py-2 px-4 rounded-lg border border-accent-blue/40 cursor-pointer hover:bg-accent-blue hover:text-bg transition-all">
-                      <span className="flex items-center gap-2">
-                        <TbEye size={18} />
-                        Ver detalles
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
+                        <div className="w-12 h-16 bg-[#232632] flex items-center justify-center p-1 rounded-lg border border-white/5 flex-shrink-0">
+                          {imagen && (
+                            <img
+                              src={imagen}
+                              alt={nombre}
+                              className="h-full w-auto object-contain"
+                            />
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <span className="font-bold text-accent-blue text-base block">
+                            {nombre}
+                          </span>
+                          <span className="text-accent-pink text-sm mr-3 font-semibold">
+                            {formatearFecha(pedido.createdAt)}
+                          </span>
+                          <span
+                            className={`text-xs font-semibold rounded-lg py-1 px-3 ml-2 inline-block ${
+                              pedido.estado === "entregado"
+                                ? "bg-accent-blue/20 text-accent-blue border border-accent-blue/30"
+                                : "bg-accent-pink/20 text-accent-pink border border-accent-pink/30"
+                            }`}
+                          >
+                            {estadoLabel}
+                          </span>
+                        </div>
+                        <button className="bg-transparent text-accent-blue font-bold py-2 px-4 rounded-lg border border-accent-blue/40 cursor-pointer hover:bg-accent-blue hover:text-bg transition-all">
+                          <span className="flex items-center gap-2">
+                            <TbEye size={18} />
+                            Ver detalles
+                          </span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </div>
           )}
 

@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { TbHome, TbBooks, TbTag, TbUser, TbShoppingCart } from "react-icons/tb";
 
 const Header = () => {
   const location = useLocation();
@@ -31,65 +32,70 @@ const Header = () => {
               <li>
                 <Link
                   to="/"
-                  className={`text-gray-100 no-underline font-medium text-base pb-1.5 border-b-2 transition-all duration-200
+                  className={`flex items-center gap-1.5 text-gray-100 no-underline font-medium text-base pb-1.5 border-b-2 transition-all duration-200
                     ${
                       isActive("/")
                         ? "text-accent-blue border-accent-blue"
                         : "border-transparent hover:text-accent-blue hover:border-accent-blue"
                     }`}
                 >
+                  <TbHome size={18} />
                   Inicio
                 </Link>
               </li>
               <li>
                 <Link
                   to="/catalogo"
-                  className={`text-gray-100 no-underline font-medium text-base pb-1.5 border-b-2 transition-all duration-200
+                  className={`flex items-center gap-1.5 text-gray-100 no-underline font-medium text-base pb-1.5 border-b-2 transition-all duration-200
                     ${
                       isActive("/catalogo")
                         ? "text-accent-blue border-accent-blue"
                         : "border-transparent hover:text-accent-blue hover:border-accent-blue"
                     }`}
                 >
+                  <TbBooks size={18} />
                   Catálogo
                 </Link>
               </li>
               <li>
                 <Link
                   to="/ofertas"
-                  className={`text-gray-100 no-underline font-medium text-base pb-1.5 border-b-2 transition-all duration-200
+                  className={`flex items-center gap-1.5 text-gray-100 no-underline font-medium text-base pb-1.5 border-b-2 transition-all duration-200
                     ${
                       isActive("/ofertas")
                         ? "text-accent-blue border-accent-blue"
                         : "border-transparent hover:text-accent-blue hover:border-accent-blue"
                     }`}
                 >
+                  <TbTag size={18} />
                   Ofertas
                 </Link>
               </li>
               <li>
                 <Link
                   to="/cuenta"
-                  className={`text-gray-100 no-underline font-medium text-base pb-1.5 border-b-2 transition-all duration-200
+                  className={`flex items-center gap-1.5 text-gray-100 no-underline font-medium text-base pb-1.5 border-b-2 transition-all duration-200
                     ${
                       isActive("/cuenta")
                         ? "text-accent-blue border-accent-blue"
                         : "border-transparent hover:text-accent-blue hover:border-accent-blue"
                     }`}
                 >
+                  <TbUser size={18} />
                   Mi Cuenta
                 </Link>
               </li>
               <li className="relative">
                 <Link
                   to="/carrito"
-                  className={`text-gray-100 no-underline font-medium text-base pb-1.5 border-b-2 transition-all duration-200
+                  className={`flex items-center gap-1.5 text-gray-100 no-underline font-medium text-base pb-1.5 border-b-2 transition-all duration-200
                     ${
                       isActive("/carrito")
                         ? "text-accent-blue border-accent-blue"
                         : "border-transparent hover:text-accent-blue hover:border-accent-blue"
                     }`}
                 >
+                  <TbShoppingCart size={18} />
                   Carrito
                   {cartCount > 0 && (
                     <span className="absolute -top-2 -right-3 bg-accent-pink text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">

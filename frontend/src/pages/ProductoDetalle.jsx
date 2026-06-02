@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { useParams, Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import ReviewSystem from "../components/ReviewSystem";
@@ -44,7 +45,7 @@ const ProductoDetalle = () => {
 
       // Cargar productos relacionados de la misma categoría
       const relacionadosData = await obtenerProductos({
-        categoria: data.producto.categoria,
+        categoria: data.producto.categoria?._id || data.producto.categoria,
         limite: 5,
       });
       const relacionados = relacionadosData.productos
@@ -64,9 +65,9 @@ const ProductoDetalle = () => {
   const handleAgregarAlCarrito = () => {
     if (producto && cantidad > 0) {
       addToCart(producto, cantidad);
-      alert(
-        `${cantidad} ${cantidad === 1 ? "unidad" : "unidades"} de "${producto.nombre}" agregado${cantidad === 1 ? "" : "s"} al carrito`,
-      );
+      toast.success(`"${producto.nombre}" agregado al carrito`, {
+        description: `${cantidad} ${cantidad === 1 ? "unidad" : "unidades"}`,
+      });
     }
   };
 
@@ -141,19 +142,19 @@ const ProductoDetalle = () => {
         {/* Detalle del producto */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
           {/* Imagen */}
-          <div className="glass-panel rounded-2xl p-8 flex items-center justify-center relative overflow-hidden shadow-hard border border-white/5 hover:border-accent-purple/20 transition-all duration-300 group">
+          <div className="glass-panel rounded-2xl p-8 flex items-center justify-center relative overflow-hidden shadow-hard border border-white/5 hover:border-accent-purple/20 transition-all duration-300 group self-start h-[480px]">
             <div className="absolute inset-0 bg-gradient-to-tr from-accent-purple/5 to-accent-pink/5 opacity-50 pointer-events-none" />
             <img
               src={producto.imagen}
               alt={producto.nombre}
-              className="max-h-[500px] w-auto object-contain transition-all duration-500 group-hover:scale-[1.02] drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)]"
+              className="h-full w-auto object-contain transition-all duration-500 group-hover:scale-[1.02] drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)]"
             />
           </div>
 
           {/* Información */}
           <div className="flex flex-col justify-center">
             <div className="inline-block bg-accent-purple/20 text-accent-purple px-3 py-1 rounded-full text-sm font-medium w-fit mb-4">
-              {producto.categoria}
+              {producto.categoria?.nombre || producto.categoria}
             </div>
 
             <h1 className="text-4xl font-bold text-white mb-4 leading-tight">
@@ -289,7 +290,7 @@ const ProductoDetalle = () => {
         {/* Productos relacionados */}
         {productosRelacionados.length > 0 && (
           <div>
-            <h2 className="text-3xl font-bold text-white mb-8">
+            <h2 className="text-3xl font-bold text-white mb-4">
               Productos Relacionados
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

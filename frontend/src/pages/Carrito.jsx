@@ -3,12 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { crearPedido } from "../services/pedidoService";
+import { toast } from "sonner";
 
 const Carrito = () => {
   const navigate = useNavigate();
   const { cart, removeFromCart, updateQuantity, clearCart, getCartTotal } =
     useCart();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [loading, setLoading] = useState(false);
 
   const subtotal = getCartTotal();
@@ -27,18 +28,24 @@ const Carrito = () => {
       return;
     }
 
+    if (!user?.direccion || !user?.telefono) {
+      toast.warning("Perfil incompleto", {
+        description: "Completa tu dirección y teléfono antes de comprar",
+      });
+      navigate("/cuenta");
+      return;
+    }
+
     try {
       setLoading(true);
       const datosPedido = {
         items: cart.map((item) => ({
-          producto: item.id,
+          producto: item._id,
           cantidad: item.cantidad,
         })),
         direccionEnvio: {
-          direccion: "Dirección del usuario",
-          ciudad: "Bogotá",
-          departamento: "Cundinamarca",
-          telefono: "300-123-4567",
+          direccion: user.direccion,
+          telefono: user.telefono,
         },
         metodoPago: "tarjeta",
       };
@@ -47,11 +54,14 @@ const Carrito = () => {
 
       if (resultado.success) {
         clearCart();
-        alert("¡Pedido realizado con éxito!");
+        toast.success("¡Pedido realizado con éxito!", {
+          description: `Número: ${resultado.pedido._id.toString().slice(-6).toUpperCase()}`,
+        });
         navigate("/cuenta");
       }
     } catch (error) {
-      alert(error.mensaje || "Error al crear el pedido");
+      toast.error(error.mensaje || error.message || "Error al crear el pedido");
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -90,7 +100,7 @@ const Carrito = () => {
             const subtotalProducto = precio * producto.cantidad;
             return (
               <div
-                key={producto.id}
+                key={producto._id}
                 className="glass-panel rounded-2xl flex items-center gap-6 p-6 relative transition-all hover:border-accent-blue/30 hover:shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:-translate-y-0.5"
               >
                 <div className="w-20 h-24 bg-[#13151b] flex items-center justify-center p-2 rounded-xl border border-white/5 flex-shrink-0">
@@ -113,7 +123,7 @@ const Carrito = () => {
                     <div className="flex items-center bg-[#13151b] border border-white/5 rounded-xl overflow-hidden h-9">
                       <button
                         onClick={() =>
-                          updateQuantity(producto.id, producto.cantidad - 1)
+                          updateQuantity(producto._id, producto.cantidad - 1)
                         }
                         className="text-white hover:bg-accent-pink/20 hover:text-accent-pink w-10 h-full text-base font-bold transition-all flex items-center justify-center disabled:opacity-40"
                         aria-label="Disminuir cantidad"
@@ -126,7 +136,7 @@ const Carrito = () => {
                       </span>
                       <button
                         onClick={() =>
-                          updateQuantity(producto.id, producto.cantidad + 1)
+                          updateQuantity(producto._id, producto.cantidad + 1)
                         }
                         className="text-white hover:bg-accent-blue/20 hover:text-accent-blue w-10 h-full text-base font-bold transition-all flex items-center justify-center"
                         aria-label="Aumentar cantidad"
@@ -146,7 +156,7 @@ const Carrito = () => {
 
                 {/* Botón eliminar */}
                 <button
-                  onClick={() => removeFromCart(producto.id)}
+                  onClick={() => removeFromCart(producto._id)}
                   className="bg-transparent hover:bg-red-500/10 text-gray-400 hover:text-red-400 border border-white/10 hover:border-red-500/30 rounded-xl w-10 h-10 text-xl font-bold cursor-pointer transition-all ml-auto flex items-center justify-center flex-shrink-0"
                   aria-label="Eliminar producto"
                 >

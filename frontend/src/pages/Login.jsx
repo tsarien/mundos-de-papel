@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../context/AuthContext";
+import { toast } from "sonner";
+import { TbMail, TbLock, TbLogin } from "react-icons/tb";
 
 const Login = () => {
   const {
@@ -16,6 +18,9 @@ const Login = () => {
   const onSubmit = async (data) => {
     const result = await login(data.email, data.password);
     if (result.success) {
+      toast.success("¡Bienvenido de vuelta!", {
+        description: data.email,
+      });
       navigate("/cuenta");
     } else {
       setError(result.mensaje || "Usuario o contraseña incorrectos");
@@ -40,7 +45,10 @@ const Login = () => {
           )}
 
           <div className="flex items-center bg-[#13151b]/80 rounded-xl px-4 py-1.5 gap-3 border border-white/10 focus-within:border-accent-pink transition-all duration-200">
-            <span className="text-lg text-accent-purple opacity-80">👤</span>
+            <TbMail
+              size={18}
+              className="text-accent-purple opacity-80 flex-shrink-0"
+            />
             <input
               type="email"
               placeholder="Correo electrónico"
@@ -59,7 +67,10 @@ const Login = () => {
           )}
 
           <div className="flex items-center bg-[#13151b]/80 rounded-xl px-4 py-1.5 gap-3 border border-white/10 focus-within:border-accent-pink transition-all duration-200">
-            <span className="text-lg text-accent-purple opacity-80">🔒</span>
+            <TbLock
+              size={18}
+              className="text-accent-purple opacity-80 flex-shrink-0"
+            />
             <input
               type="password"
               placeholder="Contraseña"
@@ -77,8 +88,9 @@ const Login = () => {
 
           <button
             type="submit"
-            className="bg-gradient-to-r from-accent-blue to-accent-purple text-bg font-bold py-3 px-6 rounded-2xl text-sm cursor-pointer hover:from-accent-pink hover:to-accent-purple hover:text-white transition-all shadow-lg hover:shadow-[0_0_15px_rgba(230,140,183,0.3)] mt-2 border-none"
+            className="flex items-center justify-center gap-2 bg-gradient-to-r from-accent-blue to-accent-purple text-bg font-bold py-3 px-6 rounded-2xl text-sm cursor-pointer hover:from-accent-pink hover:to-accent-purple hover:text-white transition-all shadow-lg hover:shadow-[0_0_15px_rgba(230,140,183,0.3)] mt-2 border-none"
           >
+            <TbLogin size={18} />
             Iniciar sesión
           </button>
 
