@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useForm } from "react-hook-form";
 import { obtenerMisPedidos } from "../services/pedidoService";
+import { toast } from "sonner";
 import {
   TbUser,
   TbShoppingBag,
@@ -65,9 +66,17 @@ const Cuenta = () => {
     return null;
   }
 
-  const onSubmitInfo = (data) => {
-    updateProfile(data);
-    alert("Información actualizada correctamente");
+  const onSubmitInfo = async (data) => {
+    const result = await updateProfile(data);
+    if (result.success) {
+      toast.success("Perfil actualizado", {
+        description: "Tu información personal fue guardada correctamente.",
+      });
+    } else {
+      toast.error("Error al actualizar", {
+        description: result.mensaje || "Inténtalo de nuevo.",
+      });
+    }
   };
 
   const handleLogout = () => {

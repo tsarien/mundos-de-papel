@@ -275,10 +275,6 @@ const Dashboard = () => {
               <TbHome size={16} />
               Ver tienda
             </button>
-            <button className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gradient-to-r from-accent-blue to-accent-purple text-bg text-xs hover:opacity-90 transition-all font-bold border-none shadow-md">
-              <TbPlus size={16} />
-              Nuevo pedido
-            </button>
           </div>
         </header>
 

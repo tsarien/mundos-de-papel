@@ -13,6 +13,22 @@ import {
   TbUserPlus,
 } from "react-icons/tb";
 
+const Field = ({ id, label, icon: Icon, error, children }) => (
+  <div className="flex flex-col gap-1.5">
+    <label
+      htmlFor={id}
+      className="flex items-center gap-1.5 text-xs font-bold text-accent-purple uppercase tracking-wider"
+    >
+      <Icon size={14} />
+      {label}
+    </label>
+    {children}
+    {error && (
+      <span className="text-red-400 text-xs mt-0.5">{error.message}</span>
+    )}
+  </div>
+);
+
 const Registro = () => {
   const {
     register,
@@ -25,31 +41,19 @@ const Registro = () => {
 
   const password = watch("password");
 
-  const onSubmit = (data) => {
-    const result = registerUser(data);
+  const onSubmit = async (data) => {
+    const result = await registerUser(data);
     if (result.success) {
       toast.success("¡Cuenta creada con éxito!", {
-        description: `Bienvenido, ${data.nombres}`,
+        description: `Bienvenido, ${data.nombre}`,
       });
       navigate("/cuenta");
+    } else {
+      toast.error("Error al registrarse", {
+        description: result.mensaje || "Inténtalo de nuevo",
+      });
     }
   };
-
-  const Field = ({ id, label, icon: Icon, error, children }) => (
-    <div className="flex flex-col gap-1.5">
-      <label
-        htmlFor={id}
-        className="flex items-center gap-1.5 text-xs font-bold text-accent-purple uppercase tracking-wider"
-      >
-        <Icon size={14} />
-        {label}
-      </label>
-      {children}
-      {error && (
-        <span className="text-red-400 text-xs mt-0.5">{error.message}</span>
-      )}
-    </div>
-  );
 
   return (
     <div className="flex flex-col items-center justify-center py-14 px-4">
@@ -90,16 +94,16 @@ const Registro = () => {
             </Field>
 
             <Field
-              id="nombres"
+              id="nombre"
               label="Nombres"
               icon={TbUsers}
-              error={errors.nombres}
+              error={errors.nombre}
             >
               <input
                 type="text"
-                id="nombres"
+                id="nombre"
                 placeholder="Ej. Juan"
-                {...register("nombres", {
+                {...register("nombre", {
                   required: "Los nombres son requeridos",
                 })}
                 className="py-3 px-4 rounded-lg border border-white/10 text-sm premium-input"
@@ -107,16 +111,16 @@ const Registro = () => {
             </Field>
 
             <Field
-              id="apellidos"
+              id="apellido"
               label="Apellidos"
               icon={TbUsers}
-              error={errors.apellidos}
+              error={errors.apellido}
             >
               <input
                 type="text"
-                id="apellidos"
+                id="apellido"
                 placeholder="Ej. García López"
-                {...register("apellidos", {
+                {...register("apellido", {
                   required: "Los apellidos son requeridos",
                 })}
                 className="py-3 px-4 rounded-lg border border-white/10 text-sm premium-input"
@@ -161,7 +165,7 @@ const Registro = () => {
                 {...register("fechaNacimiento", {
                   required: "La fecha es requerida",
                 })}
-                className="py-3 px-4 rounded-lg border border-white/10 text-sm premium-input"
+                className="py-3 px-4 rounded-lg border border-white/10 text-sm premium-input [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:cursor-pointer"
               />
             </Field>
 

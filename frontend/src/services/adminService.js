@@ -39,3 +39,22 @@ export const obtenerConfiguracion = async () => {
   const response = await api.get("/admin/configuracion");
   return response.data;
 };
+
+export const obtenerCategorias = async () => {
+  const response = await api.get("/categorias");
+  return response.data;
+};
+
+export const crearProducto = async (datos) => {
+  const response = await api.post("/productos", datos);
+  return response.data;
+};
+
+export const subirImagenProducto = async (id, imagenFile) => {
+  const formData = new FormData();
+  formData.append("imagen", imagenFile);
+  const response = await api.put(`/productos/${id}/imagen`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return response.data;
+};

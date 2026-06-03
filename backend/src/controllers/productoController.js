@@ -280,3 +280,61 @@ export const actualizarStock = async (req, res) => {
     });
   }
 };
+
+// @desc    Obtener resumen de inventario para el panel de administración
+// @route   GET /api/productos/inventario
+// @access  Private/Admin
+export const obtenerInventario = async (req, res) => {
+  try {
+    // CORRECCIÓN: Quitamos el .select restrictivo para que Mongoose herede y pueble correctamente los IDs y la categoría completa
+    const productos = await Producto.find({ activo: true }).populate(
+      "categoria",
+      "_id nombre",
+    );
+
+    const totalProductos = productos.length;
+
+    // 2. Calculamos el stock total y valor del inventario
+    const stockTotal = productos.reduce((acc, p) => acc + (p.stock || 0), 0);
+    const valorInventario = productos.reduce(
+      (acc, p) => acc + (p.precio || 0) * (p.stock || 0),
+      0,
+    );
+
+    // 3. Contamos los productos con stock bajo (ejemplo menor o igual a 5)
+    const stockBajo = productos.filter((p) => p.stock <= 5).length;
+
+    // 4. Agrupamos dinámicamente para la distribución por categorías
+    const conteoCategorias = {};
+    productos.forEach((p) => {
+      const nombreCat = p.categoria?.nombre || "Sin Categoría";
+      conteoCategorias[nombreCat] = (conteoCategorias[nombreCat] || 0) + 1;
+    });
+
+    // Transformamos el mapa de categorías en el formato de array que espera el Frontend
+    const categoriasDistribucion = Object.keys(conteoCategorias).map((cat) => {
+      const count = conteoCategorias[cat];
+      const pct = totalProductos > 0 ? (count / totalProductos) * 100 : 0;
+      return { categoria: cat, count, pct };
+    });
+
+    res.status(200).json({
+      success: true,
+      inventario: {
+        totalProductos,
+        stockTotal,
+        stockBajo,
+        valorInventario,
+        productos,
+        categorias: categoriasDistribucion,
+      },
+    });
+  } catch (error) {
+    console.error("Error al obtener el inventario:", error);
+    res.status(500).json({
+      success: false,
+      mensaje: "Error al obtener el resumen del inventario",
+      error: error.message,
+    });
+  }
+};
