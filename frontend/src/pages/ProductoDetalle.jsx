@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useParams, Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import ChatBot from "../components/chatbot/Chatbot";
 import ReviewSystem from "../components/ui/ReviewSystem";
 import {
   obtenerProductoPorId,
@@ -346,6 +347,7 @@ const ProductoDetalle = () => {
           </div>
         )}
       </div>
+      <ChatBot />
     </div>
   );
 };

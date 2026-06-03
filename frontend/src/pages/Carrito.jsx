@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import ChatBot from "../components/chatbot/Chatbot";
 import { obtenerCategorias } from "../services/catalogoService";
 import { crearPedido } from "../services/pedidoService";
 import { toast } from "sonner";
@@ -174,6 +175,7 @@ const Carrito = () => {
             )}
           </div>
         </div>
+        <ChatBot />
       </main>
     );
   }
@@ -287,6 +289,7 @@ const Carrito = () => {
           </button>
         </aside>
       </div>
+      <ChatBot />
     </main>
   );
 };

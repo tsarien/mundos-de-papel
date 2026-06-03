@@ -15,6 +15,7 @@ import pedidoRoutes from "./routes/pedidoRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import categoriaRoutes from "./routes/categoriaRoutes.js";
 import editorialRoutes from "./routes/editorialRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js";
 
 // Conectar a la base de datos
 connectDB();
@@ -62,6 +63,7 @@ app.use("/api/pedidos", pedidoRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/categorias", categoriaRoutes);
 app.use("/api/editoriales", editorialRoutes);
+app.use("/api/chat", chatRoutes);
 
 // Ruta de prueba
 app.get("/", (req, res) => {

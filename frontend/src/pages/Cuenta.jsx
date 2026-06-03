@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useForm } from "react-hook-form";
+import ChatBot from "../components/chatbot/Chatbot";
 import { obtenerMisPedidos } from "../services/pedidoService";
 import { toast } from "sonner";
 import {
@@ -359,6 +360,7 @@ const Cuenta = () => {
           )}
         </section>
       </div>
+      <ChatBot />
     </main>
   );
 };

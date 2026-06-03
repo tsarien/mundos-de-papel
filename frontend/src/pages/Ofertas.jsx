@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import ChatBot from "../components/chatbot/Chatbot";
 import ProductCard from "../components/ui/ProductCard";
 import { obtenerProductos } from "../services/productoService";
 
@@ -132,6 +133,7 @@ const Ofertas = () => {
           ))
         )}
       </section>
+      <ChatBot />
     </main>
   );
 };

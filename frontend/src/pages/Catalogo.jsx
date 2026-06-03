@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import ChatBot from "../components/chatbot/Chatbot";
 import ProductCard from "../components/ui/ProductCard";
 import { obtenerProductos } from "../services/productoService";
 import {
@@ -273,6 +274,7 @@ const Catalogo = () => {
           )}
         </section>
       </div>
+      <ChatBot />
     </main>
   );
 };

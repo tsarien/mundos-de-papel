@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import ChatBot from "../components/chatbot/Chatbot";
 import ProductCard from "../components/ui/ProductCard";
 import { obtenerProductos } from "../services/productoService";
 import { obtenerCategorias } from "../services/catalogoService";
@@ -120,6 +121,8 @@ const Home = () => {
           </Link>
         </div>
       </section>
+
+      <ChatBot />
     </div>
   );
 };
