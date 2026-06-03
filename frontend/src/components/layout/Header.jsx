@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { useCart } from "../context/CartContext";
+import { useCart } from "../../context/CartContext";
 import { TbHome, TbBooks, TbTag, TbUser, TbShoppingCart } from "react-icons/tb";
 
 const Header = () => {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import ProductCard from "../components/ProductCard";
+import ProductCard from "../components/ui/ProductCard";
 import { obtenerProductos } from "../services/productoService";
 
 const Ofertas = () => {

@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import { obtenerCategorias } from "../services/catalogoService";
 import { crearPedido } from "../services/pedidoService";
 import { toast } from "sonner";
 
@@ -12,6 +13,10 @@ const Carrito = () => {
   const { isAuthenticated, user } = useAuth();
   const [loading, setLoading] = useState(false);
 
+  // Estados para categorías (deben estar al nivel superior)
+  const [categorias, setCategorias] = useState([]);
+  const [cargandoCategorias, setCargandoCategorias] = useState(true);
+
   const subtotal = getCartTotal();
   const iva = subtotal * 0.19;
   const total = subtotal + iva;
@@ -21,6 +26,21 @@ const Carrito = () => {
       ? producto.precio - (producto.precio * producto.descuento) / 100
       : producto.precio;
   };
+
+  // Cargar categorías solo una vez
+  useEffect(() => {
+    const cargarCategorias = async () => {
+      try {
+        const cats = await obtenerCategorias();
+        setCategorias(cats);
+      } catch (error) {
+        console.error("Error al cargar categorías:", error);
+      } finally {
+        setCargandoCategorias(false);
+      }
+    };
+    cargarCategorias();
+  }, []);
 
   const handleFinalizarCompra = async () => {
     if (!isAuthenticated) {
@@ -73,14 +93,86 @@ const Carrito = () => {
         <h1 className="font-poppins text-4xl font-bold text-accent-purple mb-9 text-center">
           Tu Carrito
         </h1>
-        <div className="text-center py-20">
-          <p className="text-2xl text-gray-400 mb-6">Tu carrito está vacío</p>
+        <div className="glass-panel rounded-2xl p-10 text-center max-w-2xl mx-auto border border-white/5 shadow-soft">
+          {/* Icono */}
+          <div className="flex justify-center mb-6">
+            <div className="w-24 h-24 rounded-full bg-accent-blue/10 flex items-center justify-center border border-accent-blue/30">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-12 w-12 text-accent-blue"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6M17 13l1.5 6M9 21h6M12 15v6"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <h2 className="font-poppins text-2xl font-bold text-white mb-3">
+            ¡Tu carrito está vacío!
+          </h2>
+          <p className="text-gray-400 text-sm mb-8 max-w-md mx-auto">
+            Parece que aún no has agregado ningún producto. Explora nuestro
+            catálogo y encuentra tu próxima gran lectura.
+          </p>
+
+          {/* Botón principal */}
           <Link
             to="/catalogo"
-            className="inline-block bg-accent-blue text-bg font-semibold py-3 px-8 rounded-2xl no-underline hover:bg-accent-pink transition-all shadow-md"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-accent-blue to-accent-purple text-bg font-bold py-3 px-8 rounded-2xl hover:from-accent-pink hover:to-accent-purple hover:text-white transition-all shadow-md mb-10"
           >
-            Ver catálogo
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
+            </svg>
+            Explorar catálogo
           </Link>
+
+          {/* Enlaces rápidos a categorías con IDs reales */}
+          <div className="border-t border-white/5 pt-6">
+            <p className="text-xs text-gray-400 uppercase tracking-wider mb-4">
+              O explora por categoría
+            </p>
+            {cargandoCategorias ? (
+              <div className="flex justify-center">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-accent-blue"></div>
+              </div>
+            ) : (
+              <div className="flex flex-wrap justify-center gap-3">
+                {categorias.map((cat) => (
+                  <Link
+                    key={cat._id}
+                    to={`/catalogo?categoria=${cat._id}`}
+                    className="text-xs font-semibold px-3 py-1.5 rounded-full bg-accent-blue/10 text-accent-blue border border-accent-blue/20 hover:bg-accent-blue/20 transition-colors"
+                  >
+                    {cat.nombre}
+                  </Link>
+                ))}
+                <Link
+                  to="/ofertas"
+                  className="text-xs font-semibold px-3 py-1.5 rounded-full bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 hover:bg-yellow-500/20 transition-colors"
+                >
+                  Ofertas
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </main>
     );

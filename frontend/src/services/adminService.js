@@ -58,3 +58,8 @@ export const subirImagenProducto = async (id, imagenFile) => {
   });
   return response.data;
 };
+
+export const actualizarStock = async (id, cantidad) => {
+  const response = await api.put(`/productos/${id}/stock`, { cantidad });
+  return response.data;
+};

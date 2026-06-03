@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import {
   obtenerResenas,
   agregarResena,
   marcarResenaUtil,
-} from "../services/resenaService";
+} from "../../services/resenaService";
 
 const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
   const { user, isAuthenticated } = useAuth();

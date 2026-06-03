@@ -1,11 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
-import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
+import ProtectedAdminRoute from "./components/ui/ProtectedAdminRoute";
 
 // Layout
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import Header from "./components/layout/Header";
+import Footer from "./components/layout/Footer";
 import { Toaster } from "sonner";
 
 // Pages
