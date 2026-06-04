@@ -22,8 +22,6 @@ const Ofertas = () => {
         categoria: filtroCategoria || undefined,
       });
 
-      // Filtro de descuento mínimo (se aplica en el frontend
-      // porque el backend no filtra por descuento mínimo aún)
       let resultado = data.productos;
       if (filtroDescuento) {
         resultado = resultado.filter(

@@ -2,9 +2,9 @@ import axios from "axios";
 
 /**
  * Sends a message to the chat API along with the conversation history.
- * @param {string} userMessage - The latest user message
- * @param {Array<{role: string, content: string}>} history - Previous messages in the conversation
- * @returns {Promise<string>} - The assistant's reply text
+ * @param {string} userMessage
+ * @param {Array<{role: string, content: string}>} history
+ * @returns {Promise<string>}
  */
 export const enviarMensaje = async (userMessage, history = []) => {
   const response = await axios.post("/api/chat", {

@@ -7,26 +7,20 @@ import compression from "compression";
 import rateLimit from "express-rate-limit";
 import connectDB from "./config/database.js";
 import errorHandler from "./middleware/errorHandler.js";
-
-// Importar rutas
 import authRoutes from "./routes/authRoutes.js";
-import productoRoutes from "./routes/productoRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
 import pedidoRoutes from "./routes/pedidoRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
-import categoriaRoutes from "./routes/categoriaRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
 import editorialRoutes from "./routes/editorialRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 
-// Conectar a la base de datos
 connectDB();
 
-// Inicializar Express
 const app = express();
 
-// Middlewares de seguridad
 app.use(helmet());
 
-// CORS
 app.use(
   cors({
     origin: process.env.CLIENT_URL || [
@@ -37,17 +31,14 @@ app.use(
   }),
 );
 
-// Comprimir respuestas
 app.use(compression());
 
-// Body parser
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 100, // límite de 100 peticiones por ventana
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message:
     "Demasiadas peticiones desde esta IP, por favor intenta de nuevo más tarde",
   standardHeaders: true,
@@ -56,16 +47,14 @@ const limiter = rateLimit({
 
 app.use("/api/", limiter);
 
-// Rutas
 app.use("/api/auth", authRoutes);
-app.use("/api/productos", productoRoutes);
+app.use("/api/productos", productRoutes);
 app.use("/api/pedidos", pedidoRoutes);
 app.use("/api/admin", adminRoutes);
-app.use("/api/categorias", categoriaRoutes);
+app.use("/api/categorias", categoryRoutes);
 app.use("/api/editoriales", editorialRoutes);
 app.use("/api/chat", chatRoutes);
 
-// Ruta de prueba
 app.get("/", (req, res) => {
   res.json({
     success: true,
@@ -80,7 +69,6 @@ app.get("/", (req, res) => {
   });
 });
 
-// Ruta para health check
 app.get("/health", (req, res) => {
   res.status(200).json({
     status: "ok",
@@ -89,7 +77,6 @@ app.get("/health", (req, res) => {
   });
 });
 
-// Manejo de rutas no encontradas
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -97,23 +84,24 @@ app.use((req, res) => {
   });
 });
 
-// Middleware de manejo de errores (debe ir al final)
 app.use(errorHandler);
 
-// Puerto
 const PORT = process.env.PORT || 5000;
 
-// Iniciar servidor
 const server = app.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
   console.log(`📍 Entorno: ${process.env.NODE_ENV || "development"}`);
   console.log(`🌐 URL: http://localhost:${PORT}`);
+  console.log(
+    `🤴 Credenciales de administrador: admin@mundosdepapel.com - admin123`,
+  );
+  console.log(
+    `🧑 Credenciales de usuario de prueba: usuario@example.com - usuario123`,
+  );
 });
 
-// Manejo de rechazos de promesas no controladas
 process.on("unhandledRejection", (err) => {
   console.error("❌ Error no controlado:", err.message);
-  // Cerrar servidor y salir
   server.close(() => process.exit(1));
 });
 

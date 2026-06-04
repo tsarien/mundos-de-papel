@@ -44,7 +44,6 @@ const ProductoDetalle = () => {
       const data = await obtenerProductoPorId(id);
       setProducto(data.producto);
 
-      // Cargar productos relacionados de la misma categoría
       const relacionadosData = await obtenerProductos({
         categoria: data.producto.categoria?._id || data.producto.categoria,
         limite: 5,
@@ -80,7 +79,6 @@ const ProductoDetalle = () => {
     if (cantidad > 1) setCantidad(cantidad - 1);
   };
 
-  // Estado: cargando
   if (loading) {
     return (
       <div className="min-h-screen bg-bg flex items-center justify-center">
@@ -89,7 +87,6 @@ const ProductoDetalle = () => {
     );
   }
 
-  // Estado: error o no encontrado
   if (error || !producto) {
     return (
       <div className="min-h-screen bg-bg flex items-center justify-center">

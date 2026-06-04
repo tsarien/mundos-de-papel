@@ -1,9 +1,9 @@
-import Categoria from "../models/Categoria.js";
+import Category from "../models/Category.js";
 import { NotFoundError } from "../utils/errors.js";
 
 export const obtenerCategorias = async (req, res, next) => {
   try {
-    const categorias = await Categoria.find({ activo: true });
+    const categorias = await Category.find({ activo: true });
     res.status(200).json({ success: true, categorias });
   } catch (error) {
     next(error);
@@ -12,7 +12,7 @@ export const obtenerCategorias = async (req, res, next) => {
 
 export const obtenerCategoria = async (req, res, next) => {
   try {
-    const categoria = await Categoria.findById(req.params.id);
+    const categoria = await Category.findById(req.params.id);
     if (!categoria) throw new NotFoundError("Categoría");
     res.status(200).json({ success: true, categoria });
   } catch (error) {
@@ -31,14 +31,14 @@ export const crearCategoria = async (req, res, next) => {
       });
     }
 
-    const categoriaExistente = await Categoria.findOne({ nombre });
+    const categoriaExistente = await Category.findOne({ nombre });
     if (categoriaExistente) {
       return res
         .status(400)
         .json({ success: false, mensaje: "La categoría ya existe" });
     }
 
-    const categoria = await Categoria.create({
+    const categoria = await Category.create({
       nombre,
       descripcion,
       icono: icono || "ti-book",
@@ -56,12 +56,12 @@ export const crearCategoria = async (req, res, next) => {
 export const actualizarCategoria = async (req, res, next) => {
   try {
     const { nombre, descripcion, icono, activo } = req.body;
-    let categoria = await Categoria.findById(req.params.id);
+    let categoria = await Category.findById(req.params.id);
 
     if (!categoria) throw new NotFoundError("Categoría");
 
     if (nombre && nombre !== categoria.nombre) {
-      const categoriaExistente = await Categoria.findOne({ nombre });
+      const categoriaExistente = await Category.findOne({ nombre });
       if (categoriaExistente) {
         return res.status(400).json({
           success: false,
@@ -70,7 +70,7 @@ export const actualizarCategoria = async (req, res, next) => {
       }
     }
 
-    categoria = await Categoria.findByIdAndUpdate(
+    categoria = await Category.findByIdAndUpdate(
       req.params.id,
       { nombre, descripcion, icono, activo },
       { new: true, runValidators: true },
@@ -88,7 +88,7 @@ export const actualizarCategoria = async (req, res, next) => {
 
 export const eliminarCategoria = async (req, res, next) => {
   try {
-    const categoria = await Categoria.findByIdAndDelete(req.params.id);
+    const categoria = await Category.findByIdAndDelete(req.params.id);
     if (!categoria) throw new NotFoundError("Categoría");
     res
       .status(200)

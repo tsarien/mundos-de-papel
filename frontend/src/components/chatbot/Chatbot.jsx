@@ -26,7 +26,6 @@ function ChatBot() {
           border border-white/10
         "
       >
-        {/* Icon swap with a simple CSS transition */}
         <span
           className="transition-all duration-200"
           style={{

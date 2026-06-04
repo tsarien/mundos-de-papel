@@ -1,3 +1,4 @@
+import { formatearFecha } from "../../utils/formatters.js";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import {
@@ -45,7 +46,6 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
     }
   }, [productoId, activeFilter]);
 
-  // Colores para avatares
   const avatarColors = [
     { bg: "bg-blue-100", text: "text-blue-700" },
     { bg: "bg-green-100", text: "text-green-700" },
@@ -53,23 +53,10 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
     { bg: "bg-red-100", text: "text-red-700" },
   ];
 
-  // Usa el índice del array en vez del id para evitar undefined
   const getAvatarStyle = (index) => {
     return avatarColors[index % avatarColors.length];
   };
 
-  // Formatear fecha ISO de MongoDB a texto legible
-  const formatearFecha = (fecha) => {
-    if (!fecha) return "";
-    const date = new Date(fecha);
-    return date.toLocaleDateString("es-CO", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
-  };
-
-  // Calcular estadísticas
   const calcStats = () => {
     const total = reviews.length;
     const sum = reviews.reduce((a, r) => a + r.puntuacion, 0);
@@ -106,7 +93,6 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
     try {
       const data = await marcarResenaUtil(productoId, valoracionId);
 
-      // Actualizar estado local usando _id
       setReviews(
         reviews.map((r) =>
           r._id === valoracionId

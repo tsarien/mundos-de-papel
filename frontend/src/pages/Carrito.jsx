@@ -14,7 +14,6 @@ const Carrito = () => {
   const { isAuthenticated, user } = useAuth();
   const [loading, setLoading] = useState(false);
 
-  // Estados para categorías (deben estar al nivel superior)
   const [categorias, setCategorias] = useState([]);
   const [cargandoCategorias, setCargandoCategorias] = useState(true);
 
@@ -28,7 +27,6 @@ const Carrito = () => {
       : producto.precio;
   };
 
-  // Cargar categorías solo una vez
   useEffect(() => {
     const cargarCategorias = async () => {
       try {

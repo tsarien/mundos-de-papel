@@ -1,9 +1,9 @@
-import Producto from "../models/Producto.js";
+import Product from "../models/Product.js";
 
 /**
  * Obtiene productos con filtros y paginación
- * @param {object} queryParams - Parámetros de consulta
- * @returns {Promise<object>} Productos y metadata
+ * @param {object} queryParams
+ * @returns {Promise<object>}
  */
 export const obtenerProductosConFiltros = async (queryParams) => {
   const {
@@ -36,9 +36,9 @@ export const obtenerProductosConFiltros = async (queryParams) => {
   }
 
   const skip = (Number(pagina) - 1) * Number(limite);
-  const total = await Producto.countDocuments(filtros);
+  const total = await Product.countDocuments(filtros);
 
-  const productos = await Producto.find(filtros)
+  const productos = await Product.find(filtros)
     .populate("categoria", "nombre slug icono")
     .sort(ordenar)
     .limit(Number(limite))
@@ -55,9 +55,9 @@ export const obtenerProductosConFiltros = async (queryParams) => {
 
 /**
  * Actualiza stock de un producto
- * @param {object} producto - Producto a actualizar
- * @param {number} nuevaCantidad - Nueva cantidad de stock
- * @returns {Promise<object>} Producto actualizado
+ * @param {object} producto
+ * @param {number} nuevaCantidad
+ * @returns {Promise<object>}
  */
 export const actualizarStockProducto = async (producto, nuevaCantidad) => {
   producto.stock = nuevaCantidad;

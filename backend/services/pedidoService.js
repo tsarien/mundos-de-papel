@@ -1,19 +1,19 @@
 import Pedido from "../models/Pedido.js";
-import Producto from "../models/Producto.js";
-import { calcularPrecioFinal } from "../utils/formateadores.js";
+import Product from "../models/Product.js";
+import { calcularPrecioFinal } from "../utils/formatters.js";
 import { obtenerConfigEnvio } from "./configService.js";
 
 /**
  * Procesa los items de un pedido y verifica stock
- * @param {Array} items - Items del pedido
- * @returns {Promise<object>} Items procesados y descuento total
+ * @param {Array} items
+ * @returns {Promise<object>}
  */
 export const procesarItemsPedido = async (items) => {
   const itemsProcesados = [];
   let descuentoTotal = 0;
 
   for (const item of items) {
-    const producto = await Producto.findById(item.producto);
+    const producto = await Product.findById(item.producto);
 
     if (!producto) {
       throw new Error(`Producto ${item.producto} no encontrado`);
@@ -43,7 +43,6 @@ export const procesarItemsPedido = async (items) => {
       subtotal,
     });
 
-    // Reducir stock
     producto.stock -= item.cantidad;
     await producto.save();
   }
@@ -53,9 +52,9 @@ export const procesarItemsPedido = async (items) => {
 
 /**
  * Calcula los totales de un pedido
- * @param {number} subtotal - Subtotal del pedido
- * @param {number} descuentoTotal - Descuento total aplicado
- * @returns {Promise<object>} Totales calculados
+ * @param {number} subtotal
+ * @param {number} descuentoTotal
+ * @returns {Promise<object>}
  */
 export const calcularTotalesPedido = async (subtotal, descuentoTotal = 0) => {
   const configEnvio = await obtenerConfigEnvio();
@@ -69,9 +68,9 @@ export const calcularTotalesPedido = async (subtotal, descuentoTotal = 0) => {
 
 /**
  * Crea un nuevo pedido
- * @param {string} usuarioId - ID del usuario
- * @param {object} datosPedido - Datos del pedido
- * @returns {Promise<object>} Pedido creado
+ * @param {string} usuarioId
+ * @param {object} datosPedido
+ * @returns {Promise<object>}
  */
 export const crearNuevoPedido = async (usuarioId, datosPedido) => {
   const { items, direccionEnvio, metodoPago, notas } = datosPedido;
@@ -102,14 +101,13 @@ export const crearNuevoPedido = async (usuarioId, datosPedido) => {
 
 /**
  * Cancela un pedido y restaura stock
- * @param {object} pedido - Pedido a cancelar
- * @param {string} motivo - Motivo de cancelación
- * @returns {Promise<object>} Pedido cancelado
+ * @param {object} pedido
+ * @param {string} motivo
+ * @returns {Promise<object>}
  */
 export const cancelarPedidoConStock = async (pedido, motivo) => {
-  // Restaurar stock
   for (const item of pedido.items) {
-    const producto = await Producto.findById(item.producto);
+    const producto = await Product.findById(item.producto);
     if (producto) {
       producto.stock += item.cantidad;
       await producto.save();

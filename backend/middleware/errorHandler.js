@@ -8,7 +8,6 @@ const errorHandler = (err, req, res, next) => {
     console.error("Error:", err);
   }
 
-  // Error operacional personalizado
   if (err instanceof AppError) {
     return res.status(err.statusCode).json({
       success: false,
@@ -16,18 +15,15 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  // Error de Mongoose - ID inválido
   if (err.name === "CastError") {
     error = { message: "Recurso no encontrado", statusCode: 404 };
   }
 
-  // Error de Mongoose - Duplicate key
   if (err.code === 11000) {
     const campo = Object.keys(err.keyValue)[0];
     error = { message: `El ${campo} ya existe`, statusCode: 400 };
   }
 
-  // Error de Mongoose - Validation
   if (err.name === "ValidationError") {
     const mensaje = Object.values(err.errors)
       .map((val) => val.message)
@@ -35,7 +31,6 @@ const errorHandler = (err, req, res, next) => {
     error = { message: mensaje, statusCode: 400 };
   }
 
-  // Error de JWT
   if (err.name === "JsonWebTokenError") {
     error = { message: "Token inválido", statusCode: 401 };
   }

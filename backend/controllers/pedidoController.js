@@ -9,8 +9,7 @@ import {
   BadRequestError,
 } from "../utils/errors.js";
 
-// @desc    Crear nuevo pedido
-// @route   POST /api/pedidos
+// Crear nuevo pedido - POST /api/pedidos
 export const crearPedido = async (req, res, next) => {
   try {
     const pedido = await crearNuevoPedido(req.usuario.id, req.body);
@@ -20,8 +19,7 @@ export const crearPedido = async (req, res, next) => {
   }
 };
 
-// @desc    Obtener pedidos del usuario
-// @route   GET /api/pedidos/mis-pedidos
+// Obtener pedidos del usuario - GET /api/pedidos/mis-pedidos
 export const obtenerMisPedidos = async (req, res, next) => {
   try {
     const pedidos = await Pedido.find({ usuario: req.usuario.id })
@@ -34,8 +32,7 @@ export const obtenerMisPedidos = async (req, res, next) => {
   }
 };
 
-// @desc    Obtener pedido por ID
-// @route   GET /api/pedidos/:id
+// Obtener pedido por ID - GET /api/pedidos/:id
 export const obtenerPedidoPorId = async (req, res, next) => {
   try {
     const pedido = await Pedido.findById(req.params.id)
@@ -59,8 +56,7 @@ export const obtenerPedidoPorId = async (req, res, next) => {
   }
 };
 
-// @desc    Obtener todos los pedidos (Admin)
-// @route   GET /api/pedidos
+// Obtener todos los pedidos (Admin) - GET /api/pedidos
 export const obtenerTodosPedidos = async (req, res, next) => {
   try {
     const { estado, pagina = 1, limite = 20 } = req.query;
@@ -91,8 +87,7 @@ export const obtenerTodosPedidos = async (req, res, next) => {
   }
 };
 
-// @desc    Actualizar estado del pedido
-// @route   PUT /api/pedidos/:id/estado
+// Actualizar estado del pedido - PUT /api/pedidos/:id/estado
 export const actualizarEstadoPedido = async (req, res, next) => {
   try {
     const { estado, comentario, tracking } = req.body;
@@ -115,8 +110,7 @@ export const actualizarEstadoPedido = async (req, res, next) => {
   }
 };
 
-// @desc    Cancelar pedido
-// @route   PUT /api/pedidos/:id/cancelar
+// Cancelar pedido - PUT /api/pedidos/:id/cancelar
 export const cancelarPedido = async (req, res, next) => {
   try {
     const pedido = await Pedido.findById(req.params.id).populate(
@@ -155,8 +149,7 @@ export const cancelarPedido = async (req, res, next) => {
   }
 };
 
-// @desc    Obtener estadísticas de pedidos (Admin)
-// @route   GET /api/pedidos/estadisticas
+// Obtener estadísticas de pedidos (Admin) - GET /api/pedidos/estadisticas
 export const obtenerEstadisticas = async (req, res, next) => {
   try {
     const [totalPedidos, pedidosPorEstado, ventasTotales] = await Promise.all([

@@ -65,14 +65,3 @@ export const formatearEstadoPago = (estadoPago) => {
 
 export const formatearNumeroPedido = (id) =>
   id?.toString().slice(-6).toUpperCase() || "";
-
-export const renderStars = (rating) => {
-  return [...Array(5)].map((_, i) => (
-    <span
-      key={i}
-      className={`text-base ${i < rating ? "text-yellow-400" : "text-gray-300"}`}
-    >
-      {i < rating ? "★" : "☆"}
-    </span>
-  ));
-};

@@ -1,23 +1,44 @@
 import Pedido from "../models/Pedido.js";
-import Producto from "../models/Producto.js";
-import Usuario from "../models/Usuario.js";
-import Alerta from "../models/Alerta.js";
-import Categoria from "../models/Categoria.js";
+import Product from "../models/Product.js";
+import User from "../models/User.js";
+import Alert from "../models/Alert.js";
+import Category from "../models/Category.js";
 import ReglaPrecio from "../models/ReglaPrecio.js";
-import Proveedor from "../models/Proveedor.js";
 import { inicioMes, inicioDia } from "../utils/fechaUtils.js";
 import {
   formatearEstadoCliente,
   formatearNumeroPedido,
-} from "../utils/formateadores.js";
+} from "../utils/formatters.js";
 
 /**
  * Obtiene métricas para el dashboard
- * @param {number} umbralStockBajo - Umbral para considerar stock bajo
- * @returns {Promise<object>} Métricas del dashboard
+ * @param {number} umbralStockBajo
+ * @returns {Promise<object>}
  */
 export const obtenerMetricasDashboard = async (umbralStockBajo) => {
   const mesInicio = inicioMes();
+
+  const productosVendidosRaw = await Pedido.aggregate([
+    { $match: { estado: { $ne: "cancelado" } } },
+    { $unwind: "$items" },
+    { $group: { _id: "$items.producto", ventas: { $sum: "$items.cantidad" } } },
+    { $sort: { ventas: -1 } },
+    { $limit: 5 },
+  ]);
+
+  const productosIds = productosVendidosRaw.map((p) => p._id);
+  const productosInfo = await Product.find({
+    _id: { $in: productosIds },
+  }).select("nombre");
+  const nombreMap = new Map(
+    productosInfo.map((p) => [p._id.toString(), p.nombre]),
+  );
+
+  const productosVendidos = productosVendidosRaw.map((p) => ({
+    nombre: nombreMap.get(p._id.toString()) || "Producto eliminado",
+    ventas: p.ventas,
+    max: Math.max(p.ventas, 10),
+  }));
 
   const [
     ventasMes,
@@ -25,7 +46,6 @@ export const obtenerMetricasDashboard = async (umbralStockBajo) => {
     stockBajo,
     clientesNuevos,
     pedidosRecientes,
-    productosVendidos,
     productosStockBajo,
     alertasPendientes,
   ] = await Promise.all([
@@ -41,26 +61,19 @@ export const obtenerMetricasDashboard = async (umbralStockBajo) => {
     Pedido.countDocuments({
       estado: { $in: ["procesando", "confirmado", "enviado"] },
     }),
-    Producto.countDocuments({ activo: true, stock: { $lte: umbralStockBajo } }),
-    Usuario.countDocuments({ rol: "usuario", createdAt: { $gte: mesInicio } }),
+    Product.countDocuments({ activo: true, stock: { $lte: umbralStockBajo } }),
+    User.countDocuments({ rol: "usuario", createdAt: { $gte: mesInicio } }),
     Pedido.find()
       .populate("usuario", "nombre apellido")
       .populate("items.producto", "nombre")
       .sort("-createdAt")
       .limit(4),
-    Pedido.aggregate([
-      { $match: { estado: { $ne: "cancelado" } } },
-      { $unwind: "$items" },
-      { $group: { _id: "$items.nombre", ventas: { $sum: "$items.cantidad" } } },
-      { $sort: { ventas: -1 } },
-      { $limit: 5 },
-    ]),
-    Producto.find({ activo: true, stock: { $lte: umbralStockBajo } })
+    Product.find({ activo: true, stock: { $lte: umbralStockBajo } })
       .populate("categoria", "nombre")
       .sort("stock")
       .limit(5)
       .select("nombre stock categoria"),
-    Alerta.countDocuments({ leida: false }),
+    Alert.countDocuments({ leida: false }),
   ]);
 
   const pedidosListosEnviar = await Pedido.countDocuments({
@@ -78,16 +91,12 @@ export const obtenerMetricasDashboard = async (umbralStockBajo) => {
       id: p._id,
       numero: formatearNumeroPedido(p._id),
       cliente: `${p.usuario?.nombre || ""} ${p.usuario?.apellido || ""}`.trim(),
-      libro: p.items[0]?.nombre || p.items[0]?.producto?.nombre || "",
+      libro: p.items[0]?.producto?.nombre || "",
       total: p.total,
       estado: p.estadoPago === "pagado" ? "ok" : "low",
       estadoPedido: p.estado,
     })),
-    productosVendidos: productosVendidos.map((p) => ({
-      nombre: p._id,
-      ventas: p.ventas,
-      max: Math.max(p.ventas, 10),
-    })),
+    productosVendidos,
     productosStockBajo: productosStockBajo.map((p) => ({
       nombre: p.nombre,
       stock: p.stock,
@@ -99,7 +108,7 @@ export const obtenerMetricasDashboard = async (umbralStockBajo) => {
 
 /**
  * Obtiene métricas de ventas
- * @returns {Promise<object>} Métricas de ventas
+ * @returns {Promise<object>}
  */
 export const obtenerMetricasVentas = async () => {
   const hoy = inicioDia();
@@ -136,7 +145,7 @@ export const obtenerMetricasVentas = async () => {
       id: p._id,
       numero: `#${p._id.toString().slice(-4).toUpperCase()}`,
       cliente: `${p.usuario?.nombre || ""} ${p.usuario?.apellido || ""}`.trim(),
-      producto: p.items[0]?.nombre || p.items[0]?.producto?.nombre || "",
+      producto: p.items[0]?.producto?.nombre || "",
       fecha: p.createdAt,
       tipo: p.estadoPago === "pagado" ? "Contado" : "Anticipo",
       total: p.total,
@@ -147,11 +156,11 @@ export const obtenerMetricasVentas = async () => {
 
 /**
  * Obtiene datos de inventario
- * @param {number} umbralBajo - Umbral para stock bajo
- * @returns {Promise<object>} Datos de inventario
+ * @param {number} umbralBajo
+ * @returns {Promise<object>}
  */
 export const obtenerDatosInventario = async (umbralBajo) => {
-  const productos = await Producto.find({ activo: true })
+  const productos = await Product.find({ activo: true })
     .populate("categoria", "nombre")
     .sort("nombre");
 
@@ -192,10 +201,10 @@ export const obtenerDatosInventario = async (umbralBajo) => {
 
 /**
  * Obtiene datos de clientes con estadísticas
- * @returns {Promise<object>} Datos de clientes
+ * @returns {Promise<object>}
  */
 export const obtenerDatosClientes = async () => {
-  const usuarios = await Usuario.find({ rol: "usuario" }).select("-password");
+  const usuarios = await User.find({ rol: "usuario" }).select("-password");
 
   const stats = await Pedido.aggregate([
     {
@@ -246,13 +255,13 @@ export const obtenerDatosClientes = async () => {
 
 /**
  * Obtiene datos de precios y reglas
- * @returns {Promise<object>} Datos de precios
+ * @returns {Promise<object>}
  */
 export const obtenerDatosPrecios = async () => {
   const [productos, reglas, categoriasDB] = await Promise.all([
-    Producto.find({ activo: true }).populate("categoria", "nombre"),
+    Product.find({ activo: true }).populate("categoria", "nombre"),
     ReglaPrecio.find().sort("nombre"),
-    Categoria.find({ activo: true }).sort("nombre"),
+    Category.find({ activo: true }).sort("nombre"),
   ]);
 
   const precioPromedio = productos.length
@@ -296,10 +305,10 @@ export const obtenerDatosPrecios = async () => {
 
 /**
  * Obtiene todas las alertas con resumen
- * @returns {Promise<object>} Alertas y resumen
+ * @returns {Promise<object>}
  */
 export const obtenerAlertasConResumen = async () => {
-  const alertas = await Alerta.find().sort("-createdAt");
+  const alertas = await Alert.find().sort("-createdAt");
   return {
     alertas,
     resumen: {

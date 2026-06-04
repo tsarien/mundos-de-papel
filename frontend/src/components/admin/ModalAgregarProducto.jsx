@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { TbX, TbPhoto, TbDeviceFloppy, TbLoader2 } from "../../constants/icons";
+import { TbX, TbPhoto, TbDeviceFloppy, TbLoader2 } from "react-icons/tb";
 import {
   crearProducto,
   subirImagenProducto,

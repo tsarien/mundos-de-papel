@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import Usuario from "../models/Usuario.js";
+import User from "../models/User.js";
 import { UnauthorizedError, ForbiddenError } from "../utils/errors.js";
 
 export const proteger = async (req, res, next) => {
@@ -19,7 +19,7 @@ export const proteger = async (req, res, next) => {
 
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.usuario = await Usuario.findById(decoded.id);
+      req.usuario = await User.findById(decoded.id);
 
       if (!req.usuario) {
         throw new UnauthorizedError("Usuario no encontrado");

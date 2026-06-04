@@ -1,11 +1,6 @@
+import { formatearFecha } from "../../utils/formatters.js";
 import { useState, useEffect } from "react";
 import { obtenerVentas } from "../../services/adminService";
-
-const formatearFecha = (fecha) =>
-  new Date(fecha).toLocaleDateString("es-CO", {
-    day: "numeric",
-    month: "short",
-  });
 
 const VentasView = () => {
   const [ventas, setVentas] = useState(null);
@@ -30,7 +25,9 @@ const VentasView = () => {
   }
 
   if (!ventas) {
-    return <p className="text-gray-400 text-sm">No se pudieron cargar las ventas.</p>;
+    return (
+      <p className="text-gray-400 text-sm">No se pudieron cargar las ventas.</p>
+    );
   }
 
   return (

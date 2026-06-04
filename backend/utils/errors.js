@@ -1,5 +1,3 @@
-// Clases de error personalizadas para manejo consistente
-
 export class AppError extends Error {
   constructor(message, statusCode) {
     super(message);

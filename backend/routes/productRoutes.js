@@ -9,7 +9,7 @@ import {
   eliminarProducto,
   actualizarStock,
   subirImagenProducto,
-} from "../controllers/productoController.js";
+} from "../controllers/productController.js";
 import {
   agregarValoracion,
   marcarValoracionUtil,

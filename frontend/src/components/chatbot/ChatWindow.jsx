@@ -6,7 +6,7 @@ import { enviarMensaje } from "../../services/chatService";
 const WELCOME_MESSAGE = {
   role: "assistant",
   content:
-    "¡Hola! Soy LIBRA, tu asistente literario 📚\n¿En qué puedo ayudarte hoy? Puedo recomendarte libros, contarte sobre nuestro catálogo o ayudarte con tu pedido.",
+    "¡Hola! Soy LIBRA, tu asistente literario.\n¿En qué puedo ayudarte hoy? Puedo recomendarte libros, contarte sobre nuestro catálogo o ayudarte con tu pedido.",
   timestamp: new Date(),
 };
 
@@ -19,12 +19,10 @@ function ChatWindow({ onClose }) {
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
 
-  // Auto-scroll to latest message
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
-  // Focus input on open
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
@@ -39,7 +37,6 @@ function ChatWindow({ onClose }) {
     setIsLoading(true);
     setError(null);
 
-    // Build history array (exclude welcome message for cleaner context)
     const history = messages
       .filter((m) => m !== WELCOME_MESSAGE)
       .map(({ role, content }) => ({ role, content }));

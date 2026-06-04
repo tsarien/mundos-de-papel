@@ -17,7 +17,6 @@ import {
   actualizarStock,
 } from "../../services/adminService";
 
-// ─── Campo reutilizable para el modal ────────────────────────────────────────
 const FieldModal = ({ label, error, children, full = false }) => (
   <div className={`flex flex-col gap-1.5 ${full ? "col-span-full" : ""}`}>
     <span className="text-[10px] font-bold text-accent-purple uppercase tracking-wider">
@@ -33,7 +32,6 @@ const FieldModal = ({ label, error, children, full = false }) => (
 const inputCls =
   "py-2 px-3 rounded-lg border border-white/10 bg-[#13151b] text-white text-xs focus:outline-none focus:border-accent-blue transition-colors";
 
-// ─── Modal Agregar Producto ───────────────────────────────────────────────────
 const ModalAgregarProducto = ({ onClose, onSuccess, listaCategorias }) => {
   const {
     register,
@@ -338,7 +336,6 @@ const ModalAgregarProducto = ({ onClose, onSuccess, listaCategorias }) => {
   );
 };
 
-// ─── Vista de Inventario ──────────────────────────────────────────────────────
 const InventarioView = () => {
   const [inventario, setInventario] = useState(null);
   const [categorias, setCategorias] = useState([]);
@@ -367,12 +364,10 @@ const InventarioView = () => {
     cargarDatos();
   }, []);
 
-  // Función para actualizar stock
   const handleUpdateStock = async (productoId, nuevoStock) => {
     if (nuevoStock < 0) return;
     try {
       await actualizarStock(productoId, nuevoStock);
-      // Actualizar estado local
       setInventario((prev) => ({
         ...prev,
         productos: prev.productos.map((p) =>

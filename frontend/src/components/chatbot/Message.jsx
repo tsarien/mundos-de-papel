@@ -26,10 +26,9 @@ const TypingIndicator = () => (
 );
 
 /**
- * Renders a single chat message bubble.
  *
  * @param {{ role: "user" | "assistant", content: string, timestamp: Date }} message
- * @param {boolean} isTyping - Shows the typing indicator instead of content
+ * @param {boolean} isTyping
  */
 const Message = ({ message, isTyping = false }) => {
   if (isTyping) return <TypingIndicator />;

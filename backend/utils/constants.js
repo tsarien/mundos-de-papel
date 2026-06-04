@@ -1,5 +1,3 @@
-// Constantes del sistema - Centralizadas y reutilizables
-
 export const ROLES = {
   ADMIN: "admin",
   USER: "usuario",

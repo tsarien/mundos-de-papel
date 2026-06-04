@@ -1,23 +1,23 @@
-import Configuracion from "../models/Configuracion.js";
+import Configuration from "../models/Configuration.js";
 import { UMBRALES_POR_DEFECTO } from "../utils/constants.js";
 
 let configCache = null;
 let cacheExpiration = null;
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutos
+const CACHE_TTL = 5 * 60 * 1000;
 
 /**
  * Obtiene la configuración general del sistema con caché
- * @param {boolean} forceRefresh - Forzar refresco del caché
- * @returns {Promise<object>} Configuración
+ * @param {boolean} forceRefresh
+ * @returns {Promise<object>}
  */
 export const obtenerConfiguracion = async (forceRefresh = false) => {
   if (!forceRefresh && configCache && cacheExpiration > Date.now()) {
     return configCache;
   }
 
-  let config = await Configuracion.findOne({ clave: "general" });
+  let config = await Configuration.findOne({ clave: "general" });
   if (!config) {
-    config = await Configuracion.create({});
+    config = await Configuration.create({});
   }
 
   configCache = config;
@@ -25,9 +25,6 @@ export const obtenerConfiguracion = async (forceRefresh = false) => {
   return config;
 };
 
-/**
- * Limpia el caché de configuración
- */
 export const limpiarCacheConfig = () => {
   configCache = null;
   cacheExpiration = null;
@@ -35,7 +32,7 @@ export const limpiarCacheConfig = () => {
 
 /**
  * Obtiene umbrales de stock de la configuración
- * @returns {Promise<object>} Umbrales
+ * @returns {Promise<object>}
  */
 export const obtenerUmbralesStock = async () => {
   const config = await obtenerConfiguracion();
@@ -49,7 +46,7 @@ export const obtenerUmbralesStock = async () => {
 
 /**
  * Obtiene configuración de envíos
- * @returns {Promise<object>} Configuración de envíos
+ * @returns {Promise<object>}
  */
 export const obtenerConfigEnvio = async () => {
   const config = await obtenerConfiguracion();

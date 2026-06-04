@@ -6,13 +6,12 @@ import {
   crearCategoria,
   actualizarCategoria,
   eliminarCategoria,
-} from "../controllers/categoriaController.js";
+} from "../controllers/categoryController.js";
 import { proteger, autorizar } from "../middleware/auth.js";
 import { validarResultados } from "../middleware/validator.js";
 
 const router = express.Router();
 
-// Validaciones
 const validacionCategoria = [
   body("nombre").notEmpty().withMessage("El nombre es requerido"),
   body("descripcion")
@@ -22,11 +21,9 @@ const validacionCategoria = [
   validarResultados,
 ];
 
-// Rutas públicas
 router.get("/", obtenerCategorias);
 router.get("/:id", obtenerCategoria);
 
-// Rutas protegidas (solo admin)
 router.post(
   "/",
   proteger,

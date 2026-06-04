@@ -27,7 +27,6 @@ const Catalogo = () => {
     precioMax: "",
   }));
 
-  // Cargar categorías y editoriales
   useEffect(() => {
     const cargarFiltros = async () => {
       try {

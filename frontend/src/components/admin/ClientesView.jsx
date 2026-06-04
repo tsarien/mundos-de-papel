@@ -1,14 +1,6 @@
+import { formatearFecha } from "../../utils/formatters.js";
 import { useState, useEffect } from "react";
 import { obtenerClientes } from "../../services/adminService";
-
-const formatearFecha = (fecha) => {
-  if (!fecha) return "—";
-  return new Date(fecha).toLocaleDateString("es-CO", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-};
 
 const ClientesView = () => {
   const [datos, setDatos] = useState(null);
@@ -33,7 +25,11 @@ const ClientesView = () => {
   }
 
   if (!datos) {
-    return <p className="text-gray-400 text-sm">No se pudieron cargar los clientes.</p>;
+    return (
+      <p className="text-gray-400 text-sm">
+        No se pudieron cargar los clientes.
+      </p>
+    );
   }
 
   const { lista: clientes, total, vip, nuevos, valorPromedio } = datos;
@@ -57,7 +53,9 @@ const ClientesView = () => {
           <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">
             Clientes VIP
           </div>
-          <div className="font-poppins font-bold text-2xl text-white">{vip}</div>
+          <div className="font-poppins font-bold text-2xl text-white">
+            {vip}
+          </div>
           <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-2.5">
             +10 pedidos
           </div>
@@ -122,7 +120,9 @@ const ClientesView = () => {
                 className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors"
               >
                 <td className="py-2.5">
-                  <div className="font-semibold text-white">{cliente.nombre}</div>
+                  <div className="font-semibold text-white">
+                    {cliente.nombre}
+                  </div>
                   <div className="text-[10px] text-gray-400 mt-0.5">
                     {cliente.email}
                   </div>

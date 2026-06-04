@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import Usuario from "../models/Usuario.js";
+import Usuario from "../models/User.js";
 import {
   UnauthorizedError,
   NotFoundError,
@@ -12,8 +12,7 @@ const generarToken = (id) => {
   });
 };
 
-// @desc    Registrar nuevo usuario
-// @route   POST /api/auth/registro
+// Registrar nuevo usuario - POST /api/auth/registro
 export const registro = async (req, res, next) => {
   try {
     const {
@@ -55,8 +54,7 @@ export const registro = async (req, res, next) => {
   }
 };
 
-// @desc    Login de usuario
-// @route   POST /api/auth/login
+// Login de usuario - POST /api/auth/login
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -93,8 +91,7 @@ export const login = async (req, res, next) => {
   }
 };
 
-// @desc    Obtener usuario actual
-// @route   GET /api/auth/me
+// Obtener usuario actual - GET /api/auth/me
 export const obtenerUsuarioActual = async (req, res, next) => {
   try {
     const usuario = await Usuario.findById(req.usuario.id);
@@ -107,8 +104,7 @@ export const obtenerUsuarioActual = async (req, res, next) => {
   }
 };
 
-// @desc    Actualizar perfil de usuario
-// @route   PUT /api/auth/perfil
+// Actualizar perfil de usuario - PUT /api/auth/perfil
 export const actualizarPerfil = async (req, res, next) => {
   try {
     const { nombre, apellido, telefono, direccion } = req.body;
@@ -131,8 +127,7 @@ export const actualizarPerfil = async (req, res, next) => {
   }
 };
 
-// @desc    Cambiar contraseña
-// @route   PUT /api/auth/cambiar-password
+// Cambiar contraseña - PUT /api/auth/cambiar-password
 export const cambiarPassword = async (req, res, next) => {
   try {
     const { passwordActual, passwordNueva } = req.body;

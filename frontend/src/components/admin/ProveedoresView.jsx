@@ -1,14 +1,6 @@
+import { formatearFecha } from "../../utils/formatters.js";
 import { useState, useEffect } from "react";
 import { obtenerProveedores } from "../../services/adminService";
-
-const formatearFecha = (fecha) => {
-  if (!fecha) return "—";
-  return new Date(fecha).toLocaleDateString("es-CO", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-};
 
 const ProveedoresView = () => {
   const [proveedores, setProveedores] = useState([]);

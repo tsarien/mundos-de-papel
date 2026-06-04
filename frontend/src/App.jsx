@@ -2,13 +2,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedAdminRoute from "./components/ui/ProtectedAdminRoute";
-
-// Layout
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import { Toaster } from "sonner";
-
-// Pages
 import Home from "./pages/Home";
 import Catalogo from "./pages/Catalogo";
 import ProductoDetalle from "./pages/ProductoDetalle";

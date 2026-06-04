@@ -1,11 +1,6 @@
+import { formatearMoneda } from "../../utils/formatters.js";
 import { useState, useEffect } from "react";
 import { obtenerResumen } from "../../services/adminService";
-
-const formatearMoneda = (valor) => {
-  if (valor >= 1000000) return `$${(valor / 1000000).toFixed(1)}M`;
-  if (valor >= 1000) return `$${Math.round(valor / 1000)}K`;
-  return `$${valor.toLocaleString()}`;
-};
 
 const ResumenView = () => {
   const [resumen, setResumen] = useState(null);
@@ -30,7 +25,9 @@ const ResumenView = () => {
   }
 
   if (!resumen) {
-    return <p className="text-gray-400 text-sm">No se pudo cargar el resumen.</p>;
+    return (
+      <p className="text-gray-400 text-sm">No se pudo cargar el resumen.</p>
+    );
   }
 
   const maxVentas = Math.max(

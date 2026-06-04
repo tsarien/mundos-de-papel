@@ -1,14 +1,12 @@
-// Helper de Cloudinary (extraído de productoController)
 import { v2 as cloudinary } from "cloudinary";
 
-// Configuración de Cloudinary (debe estar configurada en cloudinary.config)
-const FOLDER = "mundos-de-papel/productos";
+const FOLDER = "productos";
 
 /**
  * Sube un buffer a Cloudinary
- * @param {Buffer} buffer - Buffer de la imagen
- * @param {string} publicId - ID público para la imagen
- * @returns {Promise<object>} Resultado de Cloudinary
+ * @param {Buffer} buffer
+ * @param {string} publicId
+ * @returns {Promise<object>}
  */
 export const subirACloudinary = (buffer, publicId) => {
   return new Promise((resolve, reject) => {
@@ -31,8 +29,8 @@ export const subirACloudinary = (buffer, publicId) => {
 
 /**
  * Renombra una imagen en Cloudinary
- * @param {string} oldPublicId - ID público actual
- * @param {string} newPublicId - Nuevo ID público
+ * @param {string} oldPublicId
+ * @param {string} newPublicId
  * @returns {Promise<void>}
  */
 export const renombrarImagen = async (oldPublicId, newPublicId) => {
@@ -41,14 +39,12 @@ export const renombrarImagen = async (oldPublicId, newPublicId) => {
       overwrite: true,
     });
   } catch (error) {
-    // No crítico, solo log
     console.warn("No se pudo renombrar imagen en Cloudinary:", error.message);
   }
 };
 
 /**
- * Elimina una imagen de Cloudinary
- * @param {string} publicId - ID público de la imagen
+ * @param {string} publicId
  * @returns {Promise<void>}
  */
 export const eliminarImagen = async (publicId) => {

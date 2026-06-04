@@ -1,5 +1,3 @@
-// Formateadores de datos para respuestas consistentes
-
 export const formatearEstadoCliente = (pedidos, fechaRegistro) => {
   const hace30Dias = new Date();
   hace30Dias.setDate(hace30Dias.getDate() - 30);

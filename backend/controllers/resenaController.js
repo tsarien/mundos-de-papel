@@ -1,4 +1,4 @@
-import Producto from "../models/Producto.js";
+import Product from "../models/Product.js";
 import { NotFoundError, BadRequestError } from "../utils/errors.js";
 
 const getInitials = (name) => {
@@ -10,12 +10,11 @@ const getInitials = (name) => {
     .join("");
 };
 
-// @desc    Agregar una valoración a un producto
-// @route   POST /api/productos/:id/valoraciones
+// Agregar una valoración a un producto - POST /api/productos/:id/valoraciones
 export const agregarValoracion = async (req, res, next) => {
   try {
     const { puntuacion, comentario, nombre } = req.body;
-    const producto = await Producto.findById(req.params.id);
+    const producto = await Product.findById(req.params.id);
 
     if (!producto) throw new NotFoundError("Producto");
 
@@ -59,13 +58,12 @@ export const agregarValoracion = async (req, res, next) => {
   }
 };
 
-// @desc    Marcar valoración como útil
-// @route   PUT /api/productos/:id/valoraciones/:valoracionId/util
+// Marcar valoración como útil - PUT /api/productos/:id/valoraciones/:valoracionId/util
 export const marcarValoracionUtil = async (req, res, next) => {
   try {
     const { id, valoracionId } = req.params;
     const usuarioId = req.usuario.id;
-    const producto = await Producto.findById(id);
+    const producto = await Product.findById(id);
 
     if (!producto) throw new NotFoundError("Producto");
 
@@ -94,13 +92,12 @@ export const marcarValoracionUtil = async (req, res, next) => {
   }
 };
 
-// @desc    Obtener valoraciones de un producto
-// @route   GET /api/productos/:id/valoraciones
+// Obtener valoraciones de un producto - GET /api/productos/:id/valoraciones
 export const obtenerValoraciones = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { filtro } = req.query;
-    const producto = await Producto.findById(id);
+    const producto = await Product.findById(id);
 
     if (!producto) throw new NotFoundError("Producto");
 

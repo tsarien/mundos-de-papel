@@ -1,4 +1,4 @@
-import Producto from "../models/Producto.js";
+import Product from "../models/Product.js";
 import {
   subirACloudinary,
   renombrarImagen,
@@ -6,11 +6,10 @@ import {
 import {
   obtenerProductosConFiltros,
   actualizarStockProducto,
-} from "../services/productoService.js";
+} from "../services/productService.js";
 import { NotFoundError } from "../utils/errors.js";
 
-// @desc    Obtener todos los productos
-// @route   GET /api/productos
+// Obtener todos los productos - GET /api/productos
 export const obtenerProductos = async (req, res, next) => {
   try {
     const result = await obtenerProductosConFiltros(req.query);
@@ -20,11 +19,10 @@ export const obtenerProductos = async (req, res, next) => {
   }
 };
 
-// @desc    Obtener producto por ID
-// @route   GET /api/productos/:id
+// Obtener producto por ID - GET /api/productos/:id
 export const obtenerProductoPorId = async (req, res, next) => {
   try {
-    const producto = await Producto.findById(req.params.id)
+    const producto = await Product.findById(req.params.id)
       .populate("categoria", "nombre slug icono")
       .populate("valoraciones.usuario", "nombre apellido");
 
@@ -38,8 +36,7 @@ export const obtenerProductoPorId = async (req, res, next) => {
   }
 };
 
-// @desc    Crear producto (con imagen opcional)
-// @route   POST /api/productos
+// Crear producto (con imagen opcional) - POST /api/productos
 export const crearProducto = async (req, res, next) => {
   try {
     const datos = { ...req.body };
@@ -52,10 +49,9 @@ export const crearProducto = async (req, res, next) => {
       datos.imagen = resultado.secure_url;
     }
 
-    const producto = await Producto.create(datos);
+    const producto = await Product.create(datos);
 
     if (req.file) {
-      // Intento de renombrar (no crítico)
       await renombrarImagen(
         `mundos-de-papel/productos/producto-nuevo-${datos.imagen.split("producto-nuevo-")[1]?.split(".")[0]}`,
         `mundos-de-papel/productos/producto-${producto._id}`,
@@ -69,8 +65,7 @@ export const crearProducto = async (req, res, next) => {
   }
 };
 
-// @desc    Subir o reemplazar imagen de un producto
-// @route   PUT /api/productos/:id/imagen
+// Subir o reemplazar imagen de un producto - PUT /api/productos/:id/imagen
 export const subirImagenProducto = async (req, res, next) => {
   try {
     if (!req.file) {
@@ -79,7 +74,7 @@ export const subirImagenProducto = async (req, res, next) => {
         .json({ success: false, mensaje: "No se proporcionó ninguna imagen" });
     }
 
-    const producto = await Producto.findById(req.params.id);
+    const producto = await Product.findById(req.params.id);
     if (!producto) {
       throw new NotFoundError("Producto");
     }
@@ -103,11 +98,10 @@ export const subirImagenProducto = async (req, res, next) => {
   }
 };
 
-// @desc    Actualizar producto
-// @route   PUT /api/productos/:id
+// Actualizar producto -PUT /api/productos/:id
 export const actualizarProducto = async (req, res, next) => {
   try {
-    const producto = await Producto.findByIdAndUpdate(req.params.id, req.body, {
+    const producto = await Product.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     }).populate("categoria", "nombre slug icono");
@@ -122,11 +116,10 @@ export const actualizarProducto = async (req, res, next) => {
   }
 };
 
-// @desc    Eliminar producto (soft delete)
-// @route   DELETE /api/productos/:id
+// Eliminar producto (soft delete) - DELETE /api/productos/:id
 export const eliminarProducto = async (req, res, next) => {
   try {
-    const producto = await Producto.findByIdAndUpdate(
+    const producto = await Product.findByIdAndUpdate(
       req.params.id,
       { activo: false },
       { new: true },
@@ -142,12 +135,11 @@ export const eliminarProducto = async (req, res, next) => {
   }
 };
 
-// @desc    Actualizar stock del producto
-// @route   PUT /api/productos/:id/stock
+// Actualizar stock del producto - PUT /api/productos/:id/stock
 export const actualizarStock = async (req, res, next) => {
   try {
     const { cantidad } = req.body;
-    const producto = await Producto.findById(req.params.id);
+    const producto = await Product.findById(req.params.id);
 
     if (!producto) {
       throw new NotFoundError("Producto");
@@ -163,11 +155,10 @@ export const actualizarStock = async (req, res, next) => {
   }
 };
 
-// @desc    Obtener resumen de inventario para el panel de administración
-// @route   GET /api/productos/inventario
+// Obtener resumen de inventario para el panel de administración - GET /api/productos/inventario
 export const obtenerInventario = async (req, res, next) => {
   try {
-    const productos = await Producto.find({ activo: true }).populate(
+    const productos = await Product.find({ activo: true }).populate(
       "categoria",
       "_id nombre",
     );

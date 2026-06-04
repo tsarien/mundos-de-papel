@@ -15,11 +15,10 @@ Si no tienes información específica sobre un producto o pedido, invita al clie
 
 export const servicioIA = async (userMessage, history = []) => {
   const model = genAI.getGenerativeModel({
-    model: "gemini-2.5-flash", // Modelo gratuito
+    model: "gemini-2.5-flash",
     systemInstruction: SYSTEM_PROMPT,
   });
 
-  // Gemini usa "model" en vez de "assistant" para los roles
   const historialGemini = history.map(({ role, content }) => ({
     role: role === "assistant" ? "model" : "user",
     parts: [{ text: content }],

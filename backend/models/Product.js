@@ -149,7 +149,6 @@ const productoSchema = new mongoose.Schema(
   },
 );
 
-// Crear slug antes de guardar
 productoSchema.pre("save", function (next) {
   if (this.isModified("nombre")) {
     this.slug = this.nombre
@@ -160,7 +159,6 @@ productoSchema.pre("save", function (next) {
   next();
 });
 
-// Calcular promedio de valoraciones
 productoSchema.methods.calcularPromedioValoracion = function () {
   if (this.valoraciones.length === 0) {
     this.promedioValoracion = 0;
@@ -175,7 +173,6 @@ productoSchema.methods.calcularPromedioValoracion = function () {
   }
 };
 
-// Índices para búsquedas
 productoSchema.index({ nombre: "text", autor: "text", editorial: "text" });
 productoSchema.index({ categoria: 1, precio: 1 });
 productoSchema.index({ enOferta: 1 });

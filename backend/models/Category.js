@@ -30,7 +30,6 @@ const categoriaSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-// Generar slug antes de guardar
 categoriaSchema.pre("save", function (next) {
   if (!this.slug) {
     this.slug = this.nombre.toLowerCase().replace(/\s+/g, "-");

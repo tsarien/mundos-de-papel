@@ -18,7 +18,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      // Verificar token y obtener usuario
       obtenerUsuarioActual();
     } else {
       setLoading(false);

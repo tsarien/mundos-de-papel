@@ -1,14 +1,6 @@
+import { tiempoRelativo } from "../../utils/formatters.js";
 import { useState, useEffect } from "react";
 import { obtenerAlertas } from "../../services/adminService";
-
-const tiempoRelativo = (fecha) => {
-  const diff = Date.now() - new Date(fecha).getTime();
-  const horas = Math.floor(diff / (1000 * 60 * 60));
-  if (horas < 1) return "Hace un momento";
-  if (horas < 24) return `Hace ${horas} hora${horas !== 1 ? "s" : ""}`;
-  const dias = Math.floor(horas / 24);
-  return `Hace ${dias} día${dias !== 1 ? "s" : ""}`;
-};
 
 const AlertasView = () => {
   const [datos, setDatos] = useState(null);
@@ -33,7 +25,11 @@ const AlertasView = () => {
   }
 
   if (!datos) {
-    return <p className="text-gray-400 text-sm">No se pudieron cargar las alertas.</p>;
+    return (
+      <p className="text-gray-400 text-sm">
+        No se pudieron cargar las alertas.
+      </p>
+    );
   }
 
   const { alertas, resumen } = datos;

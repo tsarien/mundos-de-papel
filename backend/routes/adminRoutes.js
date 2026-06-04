@@ -8,7 +8,7 @@ import {
   obtenerProveedores,
   obtenerAlertas,
   obtenerConfiguracion,
-} from "../controllers/admin/adminController.js";
+} from "../controllers/adminController.js";
 import { proteger, autorizar } from "../middleware/auth.js";
 
 const router = express.Router();

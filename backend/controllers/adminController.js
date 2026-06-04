@@ -1,4 +1,4 @@
-import { obtenerConfiguracion as obtenerConfiguracionService } from "../../services/configService.js";
+import { obtenerConfiguracion as obtenerConfiguracionService } from "../services/configService.js";
 import {
   obtenerMetricasDashboard,
   obtenerMetricasVentas as obtenerMetricasVentasService,
@@ -6,8 +6,8 @@ import {
   obtenerDatosClientes,
   obtenerDatosPrecios,
   obtenerAlertasConResumen,
-} from "../../services/adminService.js";
-import Proveedor from "../../models/Proveedor.js";
+} from "../services/adminService.js";
+import Proveedor from "../models/Proveedor.js";
 
 export const obtenerResumen = async (req, res, next) => {
   try {

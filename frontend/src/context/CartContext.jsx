@@ -13,7 +13,6 @@ export const useCart = () => {
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
 
-  // Cargar carrito desde localStorage al iniciar
   useEffect(() => {
     const savedCart = localStorage.getItem("mundos-papel-cart");
     if (savedCart) {
@@ -21,7 +20,6 @@ export const CartProvider = ({ children }) => {
     }
   }, []);
 
-  // Guardar carrito en localStorage cuando cambie
   useEffect(() => {
     localStorage.setItem("mundos-papel-cart", JSON.stringify(cart));
   }, [cart]);

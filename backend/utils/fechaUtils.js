@@ -1,5 +1,3 @@
-// Utilidades de fechas
-
 export const inicioMes = () => {
   const fecha = new Date();
   return new Date(fecha.getFullYear(), fecha.getMonth(), 1);

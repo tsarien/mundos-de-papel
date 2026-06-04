@@ -95,7 +95,6 @@ const Dashboard = () => {
     navigate("/login");
   };
 
-  // Verificar si el usuario es admin
   if (user?.rol !== "admin") {
     navigate("/");
     return null;
