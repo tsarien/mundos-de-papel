@@ -1,18 +1,17 @@
 import "dotenv/config";
 import mongoose from "mongoose";
-import Usuario from "../models/Usuario.js";
-import Producto from "../models/Producto.js";
+import Usuario from "../models/User.js";
+import Producto from "../models/Product.js";
 import Pedido from "../models/Pedido.js";
 import Proveedor from "../models/Proveedor.js";
-import Alerta from "../models/Alerta.js";
+import Alerta from "../models/Alert.js";
 import ReglaPrecio from "../models/ReglaPrecio.js";
-import Configuracion from "../models/Configuracion.js";
-import Categoria from "../models/Categoria.js";
+import Configuracion from "../models/Configuration.js";
+import Categoria from "../models/Category.js";
 import Editorial from "../models/Editorial.js";
 
 const BASE_URL = `https://res.cloudinary.com/dndknc8cp/image/upload`;
 
-// Conectar a MongoDB
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
@@ -23,7 +22,6 @@ const connectDB = async () => {
   }
 };
 
-// Datos de ejemplo para usuarios
 const usuarios = [
   {
     nombre: "Admin",
@@ -46,8 +44,8 @@ const usuarios = [
   },
   {
     nombre: "Ana",
-    apellido: "Torres",
-    email: "ana@example.com",
+    apellido: "Prueba",
+    email: "ana@ejemplo.com",
     password: "cliente123",
     telefono: "300-333-3333",
     direccion: "Calle 10 #20-30",
@@ -55,8 +53,8 @@ const usuarios = [
   },
   {
     nombre: "Carlos",
-    apellido: "Méndez",
-    email: "carlos@example.com",
+    apellido: "Prueba",
+    email: "carlos@ejemplo.com",
     password: "cliente123",
     telefono: "300-444-4444",
     direccion: "Av. Libertador #45",
@@ -64,8 +62,8 @@ const usuarios = [
   },
   {
     nombre: "Laura",
-    apellido: "Jiménez",
-    email: "laura@example.com",
+    apellido: "Prueba",
+    email: "laura@ejemplo.com",
     password: "cliente123",
     telefono: "300-555-5555",
     direccion: "Carrera 7 #80-15",
@@ -73,8 +71,8 @@ const usuarios = [
   },
   {
     nombre: "Roberto",
-    apellido: "Silva",
-    email: "roberto@example.com",
+    apellido: "Prueba",
+    email: "roberto@ejemplo.com",
     password: "cliente123",
     telefono: "300-666-6666",
     direccion: "Transversal 50 #12",
@@ -82,8 +80,8 @@ const usuarios = [
   },
   {
     nombre: "María",
-    apellido: "López",
-    email: "maria@example.com",
+    apellido: "Prueba",
+    email: "maria@ejemplo.com",
     password: "cliente123",
     telefono: "300-777-7777",
     direccion: "Calle 80 #10-05",
@@ -91,8 +89,8 @@ const usuarios = [
   },
   {
     nombre: "Diego",
-    apellido: "Torres",
-    email: "diego@example.com",
+    apellido: "Prueba",
+    email: "diego@ejemplo.com",
     password: "cliente123",
     telefono: "300-888-8888",
     direccion: "Carrera 15 #25-40",
@@ -100,7 +98,6 @@ const usuarios = [
   },
 ];
 
-// Datos de ejemplo para categorías
 const categorias = [
   {
     nombre: "Manga",
@@ -125,7 +122,6 @@ const categorias = [
   },
 ];
 
-// Datos de ejemplo para editoriales
 const editoriales = [
   {
     nombre: "Planeta Comic",
@@ -159,7 +155,6 @@ const editoriales = [
   },
 ];
 
-// Datos de ejemplo para productos
 const productos = [
   {
     nombre: "Dragon Ball",
@@ -731,7 +726,7 @@ const importarDatos = async () => {
         },
       ),
       crearPedidoSeed(
-        buscarUsuario("ana@example.com"),
+        buscarUsuario("ana@ejemplo.com"),
         buscarProducto("Dragon Ball"),
         {
           estado: "entregado",
@@ -740,7 +735,7 @@ const importarDatos = async () => {
         },
       ),
       crearPedidoSeed(
-        buscarUsuario("carlos@example.com"),
+        buscarUsuario("carlos@ejemplo.com"),
         buscarProducto("Batman: Hush"),
         {
           estado: "confirmado",
@@ -750,7 +745,7 @@ const importarDatos = async () => {
         },
       ),
       crearPedidoSeed(
-        buscarUsuario("laura@example.com"),
+        buscarUsuario("laura@ejemplo.com"),
         buscarProducto("One Piece"),
         {
           estado: "enviado",
@@ -758,7 +753,7 @@ const importarDatos = async () => {
         },
       ),
       crearPedidoSeed(
-        buscarUsuario("roberto@example.com"),
+        buscarUsuario("roberto@ejemplo.com"),
         buscarProducto("Inuyasha"),
         {
           estado: "procesando",
@@ -767,7 +762,7 @@ const importarDatos = async () => {
         },
       ),
       crearPedidoSeed(
-        buscarUsuario("maria@example.com"),
+        buscarUsuario("maria@ejemplo.com"),
         buscarProducto("Pokemon Adventures"),
         {
           estado: "entregado",
@@ -775,7 +770,7 @@ const importarDatos = async () => {
         },
       ),
       crearPedidoSeed(
-        buscarUsuario("diego@example.com"),
+        buscarUsuario("diego@ejemplo.com"),
         buscarProducto("Dragon Ball"),
         {
           estado: "procesando",
@@ -785,7 +780,7 @@ const importarDatos = async () => {
       // Pedidos adicionales para clientes frecuentes
       ...Array.from({ length: 11 }, (_, i) =>
         crearPedidoSeed(
-          buscarUsuario("laura@example.com"),
+          buscarUsuario("laura@ejemplo.com"),
           buscarProducto("One Piece"),
           {
             estado: "entregado",
@@ -795,7 +790,7 @@ const importarDatos = async () => {
       ),
       ...Array.from({ length: 14 }, (_, i) =>
         crearPedidoSeed(
-          buscarUsuario("maria@example.com"),
+          buscarUsuario("maria@ejemplo.com"),
           buscarProducto("Pokemon Adventures"),
           {
             estado: "entregado",

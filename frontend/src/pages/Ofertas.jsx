@@ -2,13 +2,27 @@ import { useState, useEffect } from "react";
 import ChatBot from "../components/chatbot/Chatbot";
 import ProductCard from "../components/ui/ProductCard";
 import { obtenerProductos } from "../services/productoService";
+import { obtenerCategorias } from "../services/catalogoService";
 
 const Ofertas = () => {
   const [productos, setProductos] = useState([]);
+  const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filtroCategoria, setFiltroCategoria] = useState("");
   const [filtroDescuento, setFiltroDescuento] = useState("");
+
+  useEffect(() => {
+    const cargarCategorias = async () => {
+      try {
+        const cats = await obtenerCategorias();
+        setCategorias(cats);
+      } catch (err) {
+        console.error("Error al cargar categorías:", err);
+      }
+    };
+    cargarCategorias();
+  }, []);
 
   useEffect(() => {
     cargarOfertas();
@@ -61,7 +75,7 @@ const Ofertas = () => {
       </section>
 
       {/* Filtros superiores */}
-      <form className="flex gap-5 justify-center items-center mb-9 flex-wrap">
+      <div className="flex gap-5 justify-center items-center mb-9 flex-wrap">
         <select
           value={filtroCategoria}
           onChange={(e) => setFiltroCategoria(e.target.value)}
@@ -71,15 +85,15 @@ const Ofertas = () => {
           <option value="" className="bg-[#232632] text-white">
             Categoría
           </option>
-          <option value="Manga" className="bg-[#232632] text-white">
-            Manga
-          </option>
-          <option value="Cómic" className="bg-[#232632] text-white">
-            Cómic
-          </option>
-          <option value="Arte" className="bg-[#232632] text-white">
-            Arte
-          </option>
+          {categorias.map((cat) => (
+            <option
+              key={cat._id}
+              value={cat._id}
+              className="bg-[#232632] text-white"
+            >
+              {cat.nombre}
+            </option>
+          ))}
         </select>
 
         <select
@@ -101,7 +115,7 @@ const Ofertas = () => {
             30% o más
           </option>
         </select>
-      </form>
+      </div>
 
       {/* Productos en oferta */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

@@ -8,6 +8,8 @@ import {
   obtenerProveedores,
   obtenerAlertas,
   obtenerConfiguracion,
+  descargarBackup,
+  restaurarBackup,
 } from "../controllers/adminController.js";
 import { proteger, autorizar } from "../middleware/auth.js";
 
@@ -23,5 +25,7 @@ router.get("/precios", obtenerPrecios);
 router.get("/proveedores", obtenerProveedores);
 router.get("/alertas", obtenerAlertas);
 router.get("/configuracion", obtenerConfiguracion);
+router.get("/backup", descargarBackup);
+router.post("/backup/restaurar", restaurarBackup);
 
 export default router;

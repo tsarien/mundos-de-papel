@@ -4,6 +4,9 @@ import User from "../models/User.js";
 import Alert from "../models/Alert.js";
 import Category from "../models/Category.js";
 import ReglaPrecio from "../models/ReglaPrecio.js";
+import Proveedor from "../models/Proveedor.js";
+import Configuracion from "../models/Configuration.js";
+import Editorial from "../models/Editorial.js";
 import { inicioMes, inicioDia } from "../utils/fechaUtils.js";
 import {
   formatearEstadoCliente,
@@ -317,6 +320,168 @@ export const obtenerAlertasConResumen = async () => {
       advertencias: alertas.filter((a) => a.tipo === "advertencia").length,
       info: alertas.filter((a) => a.tipo === "info").length,
       pendientes: alertas.filter((a) => !a.leida).length,
+    },
+  };
+};
+
+/**
+ * Genera los datos completos de la base de datos para backup
+ * @returns {Promise<object>}
+ */
+export const generarDatosBackup = async () => {
+  const [
+    usuarios,
+    productos,
+    pedidos,
+    proveedores,
+    alertas,
+    reglasPrecio,
+    configuracion,
+    categorias,
+    editoriales,
+  ] = await Promise.all([
+    User.find().select("+password").lean(),
+    Product.find().lean(),
+    Pedido.find().lean(),
+    Proveedor.find().lean(),
+    Alert.find().lean(),
+    ReglaPrecio.find().lean(),
+    Configuracion.find().lean(),
+    Category.find().lean(),
+    Editorial.find().lean(),
+  ]);
+
+  const totalRegistros =
+    usuarios.length +
+    productos.length +
+    pedidos.length +
+    proveedores.length +
+    alertas.length +
+    reglasPrecio.length +
+    configuracion.length +
+    categorias.length +
+    editoriales.length;
+
+  return {
+    metadata: {
+      version: "1.0",
+      proyecto: "Mundos de Papel",
+      fechaBackup: new Date().toISOString(),
+      totalRegistros,
+      colecciones: {
+        usuarios: usuarios.length,
+        productos: productos.length,
+        pedidos: pedidos.length,
+        proveedores: proveedores.length,
+        alertas: alertas.length,
+        reglasPrecio: reglasPrecio.length,
+        configuracion: configuracion.length,
+        categorias: categorias.length,
+        editoriales: editoriales.length,
+      },
+    },
+    datos: {
+      usuarios,
+      productos,
+      pedidos,
+      proveedores,
+      alertas,
+      reglasPrecio,
+      configuracion,
+      categorias,
+      editoriales,
+    },
+  };
+};
+
+/**
+ * Valida la estructura del backup antes de restaurar
+ * @param {object} backup
+ * @throws {Error} si la estructura es inválida
+ */
+const validarEstructuraBackup = (backup) => {
+  if (!backup || typeof backup !== "object") {
+    throw new Error("El archivo no es un backup válido");
+  }
+  if (!backup.metadata || !backup.datos) {
+    throw new Error(
+      "El backup no tiene la estructura esperada (metadata + datos)",
+    );
+  }
+  const coleccionesRequeridas = [
+    "usuarios",
+    "productos",
+    "pedidos",
+    "proveedores",
+    "alertas",
+    "reglasPrecio",
+    "configuracion",
+    "categorias",
+    "editoriales",
+  ];
+  for (const col of coleccionesRequeridas) {
+    if (!Array.isArray(backup.datos[col])) {
+      throw new Error(`El backup no contiene la colección: ${col}`);
+    }
+  }
+};
+
+/**
+ * Restaura la base de datos a partir de un objeto de backup
+ * @param {object} backup
+ * @returns {Promise<object>} resumen de registros restaurados
+ */
+export const restaurarDatosBackup = async (backup) => {
+  validarEstructuraBackup(backup);
+
+  const { datos } = backup;
+
+  // Limpiar todas las colecciones en paralelo
+  await Promise.all([
+    User.deleteMany(),
+    Product.deleteMany(),
+    Pedido.deleteMany(),
+    Proveedor.deleteMany(),
+    Alert.deleteMany(),
+    ReglaPrecio.deleteMany(),
+    Configuracion.deleteMany(),
+    Category.deleteMany(),
+    Editorial.deleteMany(),
+  ]);
+
+  // Restaurar en orden: primero colecciones base (sin referencias), luego las que dependen de ellas
+  if (datos.categorias.length)
+    await Category.insertMany(datos.categorias, { ordered: false });
+  if (datos.editoriales.length)
+    await Editorial.insertMany(datos.editoriales, { ordered: false });
+  if (datos.usuarios.length)
+    await User.insertMany(datos.usuarios, { ordered: false });
+  if (datos.productos.length)
+    await Product.insertMany(datos.productos, { ordered: false });
+  if (datos.pedidos.length)
+    await Pedido.insertMany(datos.pedidos, { ordered: false });
+  if (datos.proveedores.length)
+    await Proveedor.insertMany(datos.proveedores, { ordered: false });
+  if (datos.alertas.length)
+    await Alert.insertMany(datos.alertas, { ordered: false });
+  if (datos.reglasPrecio.length)
+    await ReglaPrecio.insertMany(datos.reglasPrecio, { ordered: false });
+  if (datos.configuracion.length)
+    await Configuracion.insertMany(datos.configuracion, { ordered: false });
+
+  return {
+    fechaBackup: backup.metadata.fechaBackup,
+    totalRestaurados: backup.metadata.totalRegistros,
+    colecciones: {
+      categorias: datos.categorias.length,
+      editoriales: datos.editoriales.length,
+      usuarios: datos.usuarios.length,
+      productos: datos.productos.length,
+      pedidos: datos.pedidos.length,
+      proveedores: datos.proveedores.length,
+      alertas: datos.alertas.length,
+      reglasPrecio: datos.reglasPrecio.length,
+      configuracion: datos.configuracion.length,
     },
   };
 };

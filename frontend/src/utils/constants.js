@@ -1,5 +1,3 @@
-// Constantes de la aplicación (evitar magic strings)
-
 export const ROLES = { ADMIN: "admin", USER: "usuario" };
 
 export const ESTADOS_PEDIDO = {

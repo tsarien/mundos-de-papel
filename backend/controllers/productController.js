@@ -1,8 +1,5 @@
 import Product from "../models/Product.js";
-import {
-  subirACloudinary,
-  renombrarImagen,
-} from "../utils/cloudinaryHelper.js";
+import { subirACloudinary } from "../utils/cloudinaryHelper.js";
 import {
   obtenerProductosConFiltros,
   actualizarStockProducto,
@@ -36,28 +33,10 @@ export const obtenerProductoPorId = async (req, res, next) => {
   }
 };
 
-// Crear producto (con imagen opcional) - POST /api/productos
+// Crear producto - POST /api/productos
 export const crearProducto = async (req, res, next) => {
   try {
-    const datos = { ...req.body };
-
-    if (req.file) {
-      const resultado = await subirACloudinary(
-        req.file.buffer,
-        `producto-nuevo-${Date.now()}`,
-      );
-      datos.imagen = resultado.secure_url;
-    }
-
-    const producto = await Product.create(datos);
-
-    if (req.file) {
-      await renombrarImagen(
-        `mundos-de-papel/productos/producto-nuevo-${datos.imagen.split("producto-nuevo-")[1]?.split(".")[0]}`,
-        `mundos-de-papel/productos/producto-${producto._id}`,
-      ).catch(() => {});
-    }
-
+    const producto = await Product.create(req.body);
     await producto.populate("categoria", "nombre slug icono");
     res.status(201).json({ success: true, producto });
   } catch (error) {

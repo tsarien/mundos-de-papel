@@ -58,16 +58,39 @@ const Catalogo = () => {
   const cargarProductos = async () => {
     try {
       setLoading(true);
-      const filtrosAPI = {
-        busqueda,
-        categoria: filtros.categorias[0],
-        autor: filtros.autor,
-        editorial: filtros.editorial,
-        precioMin: filtros.precioMin,
-        precioMax: filtros.precioMax,
-      };
-      const data = await obtenerProductos(filtrosAPI);
-      setProductos(data.productos);
+
+      // Si hay múltiples categorías, hacemos una petición por cada una y combinamos
+      if (filtros.categorias.length > 1) {
+        const peticiones = filtros.categorias.map((catId) =>
+          obtenerProductos({
+            busqueda,
+            categoria: catId,
+            autor: filtros.autor,
+            editorial: filtros.editorial,
+            precioMin: filtros.precioMin,
+            precioMax: filtros.precioMax,
+          }),
+        );
+        const resultados = await Promise.all(peticiones);
+        // Combinar y deduplicar por _id
+        const todos = resultados.flatMap((r) => r.productos);
+        const unicos = Array.from(
+          new Map(todos.map((p) => [p._id, p])).values(),
+        );
+        setProductos(unicos);
+      } else {
+        const filtrosAPI = {
+          busqueda,
+          categoria: filtros.categorias[0],
+          autor: filtros.autor,
+          editorial: filtros.editorial,
+          precioMin: filtros.precioMin,
+          precioMax: filtros.precioMax,
+        };
+        const data = await obtenerProductos(filtrosAPI);
+        setProductos(data.productos);
+      }
+
       setError(null);
     } catch (err) {
       setError("Error al cargar productos");
@@ -253,7 +276,7 @@ const Catalogo = () => {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {productos.map((producto) => (
-                  <ProductCard key={producto.id} producto={producto} />
+                  <ProductCard key={producto._id} producto={producto} />
                 ))}
               </div>
 

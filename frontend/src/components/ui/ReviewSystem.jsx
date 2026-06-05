@@ -89,6 +89,7 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
       alert("Debes iniciar sesión para marcar reseñas como útiles");
       return;
     }
+    if (!valoracionId) return;
 
     try {
       const data = await marcarResenaUtil(productoId, valoracionId);
@@ -244,7 +245,7 @@ const ReviewSystem = ({ productoId, resenasIniciales = [] }) => {
                   const style = getAvatarStyle(index);
                   return (
                     <div
-                      key={review._id}
+                      key={review._id || index}
                       className="glass-panel rounded-2xl p-5 mb-4 border border-white/5 text-white"
                     >
                       <div className="flex items-center gap-3 mb-3">

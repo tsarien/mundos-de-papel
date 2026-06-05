@@ -6,6 +6,8 @@ import {
   obtenerDatosClientes,
   obtenerDatosPrecios,
   obtenerAlertasConResumen,
+  generarDatosBackup,
+  restaurarDatosBackup,
 } from "../services/adminService.js";
 import Proveedor from "../models/Proveedor.js";
 
@@ -81,6 +83,55 @@ export const obtenerConfiguracion = async (req, res, next) => {
     const configuracion = await obtenerConfiguracionService();
     res.json({ success: true, configuracion });
   } catch (error) {
+    next(error);
+  }
+};
+
+export const descargarBackup = async (req, res, next) => {
+  try {
+    const backup = await generarDatosBackup();
+
+    const timestamp = new Date()
+      .toISOString()
+      .replace(/:/g, "-")
+      .replace(/\..+/, "");
+    const filename = `backup-mundos-de-papel-${timestamp}.json`;
+
+    res.setHeader("Content-Type", "application/json");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+
+    res.send(JSON.stringify(backup, null, 2));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const restaurarBackup = async (req, res, next) => {
+  try {
+    const backup = req.body;
+
+    if (!backup || Object.keys(backup).length === 0) {
+      return res.status(400).json({
+        success: false,
+        mensaje: "No se recibió ningún archivo de backup",
+      });
+    }
+
+    const resumen = await restaurarDatosBackup(backup);
+
+    res.json({
+      success: true,
+      mensaje: "Base de datos restaurada exitosamente",
+      resumen,
+    });
+  } catch (error) {
+    // Errores de validación del backup → 400, resto → next para errorHandler
+    if (
+      error.message.includes("backup") ||
+      error.message.includes("colección")
+    ) {
+      return res.status(400).json({ success: false, mensaje: error.message });
+    }
     next(error);
   }
 };

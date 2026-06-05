@@ -58,10 +58,17 @@ const Carrito = () => {
     try {
       setLoading(true);
       const datosPedido = {
-        items: cart.map((item) => ({
-          producto: item._id,
-          cantidad: item.cantidad,
-        })),
+        items: cart.map((item) => {
+          const precioUnitario = getPrecioProducto(item);
+          return {
+            producto: item._id,
+            nombre: item.nombre,
+            cantidad: item.cantidad,
+            precio: precioUnitario,
+            descuento: item.enOferta ? item.descuento : 0,
+            subtotal: precioUnitario * item.cantidad,
+          };
+        }),
         direccionEnvio: {
           direccion: user.direccion,
           telefono: user.telefono,
