@@ -77,23 +77,6 @@ const Registro = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <Field
-              id="usuario"
-              label="Usuario"
-              icon={TbUser}
-              error={errors.usuario}
-            >
-              <input
-                type="text"
-                id="usuario"
-                placeholder="Ej. jgarcia123"
-                {...register("usuario", {
-                  required: "El usuario es requerido",
-                })}
-                className="py-3 px-4 rounded-lg border border-white/10 text-sm premium-input"
-              />
-            </Field>
-
-            <Field
               id="nombre"
               label="Nombres"
               icon={TbUsers}

@@ -143,7 +143,10 @@ export const cambiarPassword = async (req, res, next) => {
     const passwordCorrecta = await usuario.compararPassword(passwordActual);
 
     if (!passwordCorrecta) {
-      throw new UnauthorizedError("Contraseña actual incorrecta");
+      return res.status(400).json({
+        success: false,
+        mensaje: "Contraseña actual incorrecta",
+      });
     }
 
     usuario.password = passwordNueva;

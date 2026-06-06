@@ -173,3 +173,35 @@ export const obtenerEstadisticas = async (req, res, next) => {
     next(error);
   }
 };
+
+export const actualizarEstadoPago = async (req, res, next) => {
+  try {
+    const { estadoPago } = req.body;
+
+    const estadosValidos = ["pendiente", "pagado", "fallido", "reembolsado"];
+    if (!estadosValidos.includes(estadoPago)) {
+      return res.status(400).json({
+        success: false,
+        mensaje: `Estado de pago inválido. Valores permitidos: ${estadosValidos.join(", ")}`,
+      });
+    }
+
+    const pedido = await Pedido.findById(req.params.id);
+    if (!pedido) throw new NotFoundError("Pedido");
+
+    pedido.estadoPago = estadoPago;
+    pedido.agregarHistorial(
+      pedido.estado,
+      `Estado de pago actualizado a: ${estadoPago}`,
+    );
+    await pedido.save();
+
+    res.json({
+      success: true,
+      mensaje: "Estado de pago actualizado correctamente",
+      pedido,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

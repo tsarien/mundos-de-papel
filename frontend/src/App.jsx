@@ -28,7 +28,7 @@ const PublicLayout = ({ children }) => {
 function App() {
   return (
     <Router>
-      <Toaster />
+      <Toaster richColors position="top-right" />
       <AuthProvider>
         <CartProvider>
           <Routes>

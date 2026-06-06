@@ -25,7 +25,17 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const protectedAuthRoutes = [
+      "/auth/login",
+      "/auth/registro",
+      "/auth/me",
+      "/auth/perfil",
+      "/auth/cambiar-password",
+    ];
+    const isAuthRoute = protectedAuthRoutes.some((route) =>
+      error.config?.url?.includes(route),
+    );
+    if (error.response?.status === 401 && !isAuthRoute) {
       localStorage.removeItem("token");
       localStorage.removeItem("mundos-papel-user");
       window.location.href = "/login";

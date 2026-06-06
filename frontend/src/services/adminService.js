@@ -63,3 +63,12 @@ export const actualizarStock = async (id, cantidad) => {
   const response = await api.put(`/productos/${id}/stock`, { cantidad });
   return response.data;
 };
+
+export const actualizarProducto = async (id, datos) => {
+  try {
+    const response = await api.put(`/productos/${id}`, datos);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};

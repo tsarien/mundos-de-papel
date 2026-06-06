@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../context/AuthContext";
@@ -13,7 +12,6 @@ const Login = () => {
   } = useForm();
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [error, setError] = useState("");
 
   const onSubmit = async (data) => {
     const result = await login(data.email, data.password);
@@ -23,7 +21,11 @@ const Login = () => {
       });
       navigate("/cuenta");
     } else {
-      setError(result.mensaje || "Usuario o contraseña incorrectos");
+      const mensaje = result.mensaje || "Usuario o contraseña incorrectos";
+      toast.error("Error al iniciar sesión", {
+        description: mensaje,
+        duration: 6000,
+      });
     }
   };
 
@@ -37,13 +39,6 @@ const Login = () => {
           <h1 className="font-poppins text-2xl font-bold text-accent-purple mb-2 text-center tracking-wide">
             Iniciar sesión
           </h1>
-
-          {error && (
-            <div className="bg-red-950/50 border border-red-500/30 text-red-200 px-4 py-2.5 rounded-lg text-sm text-center">
-              {error}
-            </div>
-          )}
-
           <div className="flex items-center bg-[#13151b]/80 rounded-xl px-4 py-1.5 gap-3 border border-white/10 focus-within:border-accent-pink transition-all duration-200">
             <TbMail
               size={18}
