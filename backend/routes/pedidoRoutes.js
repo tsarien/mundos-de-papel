@@ -15,7 +15,6 @@ import { validarResultados } from "../middleware/validator.js";
 
 const router = express.Router();
 
-// Validaciones
 const validacionPedido = [
   body("items")
     .isArray({ min: 1 })

@@ -1,89 +1,37 @@
 import { formatearFecha } from "../../utils/formatters.js";
-import { useState, useEffect } from "react";
-import { obtenerClientes } from "../../services/adminService";
+import { useAdminData } from "../../hooks/useAdminData";
+import StatCard from "./StatCard.jsx";
 
 const ClientesView = () => {
-  const [datos, setDatos] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { data, loading } = useAdminData("clientes");
 
-  useEffect(() => {
-    const cargar = async () => {
-      try {
-        const data = await obtenerClientes();
-        setDatos(data.clientes);
-      } catch {
-        setDatos(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    cargar();
-  }, []);
-
-  if (loading) {
+  if (loading)
     return <p className="text-gray-400 text-sm">Cargando clientes...</p>;
-  }
-
-  if (!datos) {
+  if (!data)
     return (
       <p className="text-gray-400 text-sm">
         No se pudieron cargar los clientes.
       </p>
     );
-  }
 
-  const { lista: clientes, total, vip, nuevos, valorPromedio } = datos;
+  const { lista: clientes, total, vip, nuevos, valorPromedio } = data;
 
   return (
     <div className="flex flex-col gap-5 text-white">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="glass-panel rounded-2xl p-5 border border-white/5 hover:border-accent-blue/30 transition-all duration-300 shadow-soft">
-          <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">
-            Total clientes
-          </div>
-          <div className="font-poppins font-bold text-2xl text-white">
-            {total}
-          </div>
-          <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-2.5">
-            Registrados
-          </div>
-        </div>
-
-        <div className="glass-panel rounded-2xl p-5 border border-white/5 hover:border-accent-blue/30 transition-all duration-300 shadow-soft">
-          <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">
-            Clientes VIP
-          </div>
-          <div className="font-poppins font-bold text-2xl text-white">
-            {vip}
-          </div>
-          <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-2.5">
-            +10 pedidos
-          </div>
-        </div>
-
-        <div className="glass-panel rounded-2xl p-5 border border-white/5 hover:border-accent-blue/30 transition-all duration-300 shadow-soft">
-          <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">
-            Nuevos este mes
-          </div>
-          <div className="font-poppins font-bold text-2xl text-white">
-            {nuevos}
-          </div>
-          <div className="text-[10px] text-accent-green font-bold uppercase tracking-wider mt-2.5">
-            Recientes
-          </div>
-        </div>
-
-        <div className="glass-panel rounded-2xl p-5 border border-white/5 hover:border-accent-blue/30 transition-all duration-300 shadow-soft">
-          <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">
-            Valor promedio
-          </div>
-          <div className="font-poppins font-bold text-2xl text-white">
-            ${Math.round(valorPromedio / 1000)}K
-          </div>
-          <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-2.5">
-            Por cliente
-          </div>
-        </div>
+        <StatCard label="Total clientes" valor={total} sub="Registrados" />
+        <StatCard label="Clientes VIP" valor={vip} sub="+10 pedidos" />
+        <StatCard
+          label="Nuevos este mes"
+          valor={nuevos}
+          sub="Recientes"
+          subColor="text-accent-green"
+        />
+        <StatCard
+          label="Valor promedio"
+          valor={`$${Math.round(valorPromedio / 1000)}K`}
+          sub="Por cliente"
+        />
       </div>
 
       <div className="glass-panel rounded-2xl p-6 border border-white/5">

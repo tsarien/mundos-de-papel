@@ -14,7 +14,6 @@ import {
 } from "../utils/formatters.js";
 
 /**
- * Obtiene métricas para el dashboard
  * @param {number} umbralStockBajo
  * @returns {Promise<object>}
  */
@@ -110,7 +109,6 @@ export const obtenerMetricasDashboard = async (umbralStockBajo) => {
 };
 
 /**
- * Obtiene métricas de ventas
  * @returns {Promise<object>}
  */
 export const obtenerMetricasVentas = async () => {
@@ -158,7 +156,6 @@ export const obtenerMetricasVentas = async () => {
 };
 
 /**
- * Obtiene datos de inventario
  * @param {number} umbralBajo
  * @returns {Promise<object>}
  */
@@ -203,7 +200,6 @@ export const obtenerDatosInventario = async (umbralBajo) => {
 };
 
 /**
- * Obtiene datos de clientes con estadísticas
  * @returns {Promise<object>}
  */
 export const obtenerDatosClientes = async () => {
@@ -257,7 +253,6 @@ export const obtenerDatosClientes = async () => {
 };
 
 /**
- * Obtiene datos de precios y reglas
  * @returns {Promise<object>}
  */
 export const obtenerDatosPrecios = async () => {
@@ -307,7 +302,6 @@ export const obtenerDatosPrecios = async () => {
 };
 
 /**
- * Obtiene todas las alertas con resumen
  * @returns {Promise<object>}
  */
 export const obtenerAlertasConResumen = async () => {
@@ -325,7 +319,6 @@ export const obtenerAlertasConResumen = async () => {
 };
 
 /**
- * Genera los datos completos de la base de datos para backup
  * @returns {Promise<object>}
  */
 export const generarDatosBackup = async () => {
@@ -395,7 +388,6 @@ export const generarDatosBackup = async () => {
 };
 
 /**
- * Valida la estructura del backup antes de restaurar
  * @param {object} backup
  * @throws {Error} si la estructura es inválida
  */
@@ -427,16 +419,14 @@ const validarEstructuraBackup = (backup) => {
 };
 
 /**
- * Restaura la base de datos a partir de un objeto de backup
  * @param {object} backup
- * @returns {Promise<object>} resumen de registros restaurados
+ * @returns {Promise<object>}
  */
 export const restaurarDatosBackup = async (backup) => {
   validarEstructuraBackup(backup);
 
   const { datos } = backup;
 
-  // Limpiar todas las colecciones en paralelo
   await Promise.all([
     User.deleteMany(),
     Product.deleteMany(),
@@ -449,7 +439,6 @@ export const restaurarDatosBackup = async (backup) => {
     Editorial.deleteMany(),
   ]);
 
-  // Restaurar en orden: primero colecciones base (sin referencias), luego las que dependen de ellas
   if (datos.categorias.length)
     await Category.insertMany(datos.categorias, { ordered: false });
   if (datos.editoriales.length)

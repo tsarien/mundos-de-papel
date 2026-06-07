@@ -6,7 +6,6 @@ let cacheExpiration = null;
 const CACHE_TTL = 5 * 60 * 1000;
 
 /**
- * Obtiene la configuración general del sistema con caché
  * @param {boolean} forceRefresh
  * @returns {Promise<object>}
  */
@@ -31,7 +30,6 @@ export const limpiarCacheConfig = () => {
 };
 
 /**
- * Obtiene umbrales de stock de la configuración
  * @returns {Promise<object>}
  */
 export const obtenerUmbralesStock = async () => {
@@ -45,7 +43,6 @@ export const obtenerUmbralesStock = async () => {
 };
 
 /**
- * Obtiene configuración de envíos
  * @returns {Promise<object>}
  */
 export const obtenerConfigEnvio = async () => {

@@ -20,7 +20,6 @@ import { validarResultados } from "../middleware/validator.js";
 
 const router = express.Router();
 
-// Validaciones
 const validacionProducto = [
   body("nombre").notEmpty().withMessage("El nombre es requerido"),
   body("descripcion").notEmpty().withMessage("La descripción es requerida"),

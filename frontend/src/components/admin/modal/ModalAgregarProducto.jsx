@@ -5,7 +5,7 @@ import { TbX, TbPhoto, TbDeviceFloppy, TbLoader2 } from "react-icons/tb";
 import {
   crearProducto,
   subirImagenProducto,
-} from "../../services/adminService";
+} from "../../../services/adminService";
 
 const inputCls =
   "py-2 px-3 rounded-lg border border-white/10 bg-[#13151b] text-white text-xs focus:outline-none focus:border-accent-blue transition-colors";

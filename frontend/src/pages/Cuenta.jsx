@@ -16,6 +16,7 @@ import {
   TbX,
   TbEye,
 } from "react-icons/tb";
+import { formatearEstadoPedido, formatearFecha } from "../utils/formatters";
 
 const Cuenta = () => {
   const { user, logout, updateProfile, isAuthenticated } = useAuth();
@@ -53,28 +54,11 @@ const Cuenta = () => {
     cargarPedidos();
   }, [seccionActiva]);
 
-  const formatearEstado = (estado) => {
-    const estados = {
-      entregado: "Entregado",
-      procesando: "En proceso",
-      confirmado: "En proceso",
-      enviado: "Enviado",
-      cancelado: "Cancelado",
-    };
-    return estados[estado] || estado;
-  };
-
-  const formatearFecha = (fecha) =>
-    new Date(fecha).toLocaleDateString("es-CO", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-
-  if (!isAuthenticated) {
-    navigate("/login");
-    return null;
-  }
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+    }
+  }, [isAuthenticated, navigate]);
 
   const onSubmitInfo = async (data) => {
     const result = await updateProfile(data);
@@ -285,7 +269,7 @@ const Cuenta = () => {
                     const item = pedido.items[0];
                     const nombre = item?.nombre || item?.producto?.nombre;
                     const imagen = item?.producto?.imagen;
-                    const estadoLabel = formatearEstado(pedido.estado);
+                    const estadoLabel = formatearEstadoPedido(pedido.estado);
 
                     return (
                       <li

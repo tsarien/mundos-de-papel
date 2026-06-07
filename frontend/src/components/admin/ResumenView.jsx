@@ -1,34 +1,16 @@
 import { formatearMoneda } from "../../utils/formatters.js";
-import { useState, useEffect } from "react";
-import { obtenerResumen } from "../../services/adminService";
+import { useAdminData } from "../../hooks/useAdminData";
+import StatCard from "./StatCard";
 
 const ResumenView = () => {
-  const [resumen, setResumen] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { data: resumen, loading } = useAdminData("resumen");
 
-  useEffect(() => {
-    const cargar = async () => {
-      try {
-        const data = await obtenerResumen();
-        setResumen(data.resumen);
-      } catch {
-        setResumen(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    cargar();
-  }, []);
-
-  if (loading) {
+  if (loading)
     return <p className="text-gray-400 text-sm">Cargando resumen...</p>;
-  }
-
-  if (!resumen) {
+  if (!resumen)
     return (
       <p className="text-gray-400 text-sm">No se pudo cargar el resumen.</p>
     );
-  }
 
   const maxVentas = Math.max(
     ...resumen.productosVendidos.map((p) => p.ventas),
@@ -38,56 +20,34 @@ const ResumenView = () => {
   return (
     <div className="flex flex-col gap-5 text-white">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="glass-panel rounded-2xl p-5 border border-white/5 hover:border-accent-blue/30 transition-all duration-300 shadow-soft">
-          <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">
-            Ventas del mes
-          </div>
-          <div className="font-poppins font-bold text-2xl text-white">
-            {formatearMoneda(resumen.ventasMes)}
-          </div>
-          <div className="text-[10px] text-accent-green font-bold uppercase tracking-wider mt-2.5">
-            Mes actual
-          </div>
-        </div>
-
-        <div className="glass-panel rounded-2xl p-5 border border-white/5 hover:border-accent-blue/30 transition-all duration-300 shadow-soft">
-          <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">
-            Pedidos activos
-          </div>
-          <div className="font-poppins font-bold text-2xl text-white">
-            {resumen.pedidosActivos}
-          </div>
-          <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-2.5">
-            {resumen.pedidosListosEnviar} listos para enviar
-          </div>
-        </div>
-
-        <div className="glass-panel rounded-2xl p-5 border border-white/5 hover:border-red-500/30 transition-all duration-300 shadow-soft">
-          <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">
-            Stock bajo
-          </div>
-          <div className="font-poppins font-bold text-2xl text-red-400">
-            {resumen.stockBajo}
-          </div>
-          <div className="text-[10px] text-red-300 font-bold uppercase tracking-wider mt-2.5">
-            Requieren atención
-          </div>
-        </div>
-
-        <div className="glass-panel rounded-2xl p-5 border border-white/5 hover:border-accent-blue/30 transition-all duration-300 shadow-soft">
-          <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">
-            Clientes nuevos
-          </div>
-          <div className="font-poppins font-bold text-2xl text-white">
-            {resumen.clientesNuevos}
-          </div>
-          <div className="text-[10px] text-accent-green font-bold uppercase tracking-wider mt-2.5">
-            Este mes
-          </div>
-        </div>
+        <StatCard
+          label="Ventas del mes"
+          valor={formatearMoneda(resumen.ventasMes)}
+          sub="Mes actual"
+          subColor="text-accent-green"
+        />
+        <StatCard
+          label="Pedidos activos"
+          valor={resumen.pedidosActivos}
+          sub={`${resumen.pedidosListosEnviar} listos para enviar`}
+        />
+        <StatCard
+          label="Stock bajo"
+          valor={resumen.stockBajo}
+          sub="Requieren atención"
+          subColor="text-red-300"
+          hoverColor="hover:border-red-500/30"
+        />
+        <StatCard
+          label="Clientes nuevos"
+          valor={resumen.clientesNuevos}
+          sub="Este mes"
+          subColor="text-accent-green"
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Pedidos recientes */}
         <div className="glass-panel rounded-2xl p-6 border border-white/5">
           <div className="flex justify-between items-center mb-4 border-b border-white/5 pb-2.5">
             <div className="text-xs font-bold uppercase tracking-wider text-accent-blue">
@@ -97,7 +57,6 @@ const ResumenView = () => {
               Últimos pedidos
             </div>
           </div>
-
           <div className="space-y-3">
             {resumen.pedidosRecientes.length === 0 ? (
               <p className="text-gray-400 text-xs">Sin pedidos recientes.</p>
@@ -135,6 +94,7 @@ const ResumenView = () => {
           </div>
         </div>
 
+        {/* Productos más vendidos */}
         <div className="glass-panel rounded-2xl p-6 border border-white/5">
           <div className="flex justify-between items-center mb-4 border-b border-white/5 pb-2.5">
             <div className="text-xs font-bold uppercase tracking-wider text-accent-purple">
@@ -144,7 +104,6 @@ const ResumenView = () => {
               Histórico
             </div>
           </div>
-
           <div className="space-y-4 mt-2">
             {resumen.productosVendidos.map((producto) => (
               <div key={producto.nombre} className="flex items-center gap-4">
@@ -154,9 +113,7 @@ const ResumenView = () => {
                 <div className="flex-1 h-2 bg-[#13151b] rounded-full overflow-hidden border border-white/5">
                   <div
                     className="h-full bg-accent-purple rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(182,166,230,0.5)]"
-                    style={{
-                      width: `${(producto.ventas / maxVentas) * 100}%`,
-                    }}
+                    style={{ width: `${(producto.ventas / maxVentas) * 100}%` }}
                   />
                 </div>
                 <div className="text-xs font-bold text-gray-400 w-6 text-right flex-shrink-0">
@@ -169,6 +126,7 @@ const ResumenView = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Stock bajo */}
         <div className="glass-panel rounded-2xl p-6 border border-white/5">
           <div className="flex justify-between items-center mb-4 border-b border-white/5 pb-2.5">
             <div className="text-xs font-bold uppercase tracking-wider text-red-400">
@@ -178,7 +136,6 @@ const ResumenView = () => {
               {resumen.stockBajo} en peligro
             </span>
           </div>
-
           <table className="w-full text-xs">
             <thead>
               <tr className="text-[10px] text-gray-400 uppercase border-b border-white/5">
@@ -216,6 +173,7 @@ const ResumenView = () => {
           </table>
         </div>
 
+        {/* Alertas pendientes */}
         <div className="glass-panel rounded-2xl p-6 border border-white/5">
           <div className="flex justify-between items-center mb-4 border-b border-white/5 pb-2.5">
             <div className="text-xs font-bold uppercase tracking-wider text-accent-blue">
@@ -225,41 +183,30 @@ const ResumenView = () => {
               {resumen.alertasPendientes}
             </span>
           </div>
-
           <div className="space-y-3">
             {resumen.alertasPendientes === 0 ? (
               <p className="text-gray-400 text-xs">Sin alertas pendientes.</p>
             ) : (
               <>
                 {resumen.stockBajo > 0 && (
-                  <div className="flex gap-3.5 items-start py-2.5 border-b border-white/5">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
-                      <i className="ti-alert-triangle text-base"></i>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs font-semibold text-white">
-                        Stock bajo
-                      </div>
-                      <div className="text-[10px] text-gray-400 mt-0.5 truncate">
-                        {resumen.stockBajo} productos necesitan reabastecimiento
-                      </div>
-                    </div>
-                  </div>
+                  <AlertaItem
+                    iconBg="bg-yellow-500/10"
+                    iconColor="text-yellow-500"
+                    iconBorder="border-yellow-500/20"
+                    icono="ti-alert-triangle"
+                    titulo="Stock bajo"
+                    desc={`${resumen.stockBajo} productos necesitan reabastecimiento`}
+                  />
                 )}
                 {resumen.pedidosActivos > 0 && (
-                  <div className="flex gap-3.5 items-start py-2.5 border-b border-white/5">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-accent-blue/10 text-accent-blue border border-accent-blue/20">
-                      <i className="ti-clock text-base"></i>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs font-semibold text-white">
-                        Pedidos pendientes
-                      </div>
-                      <div className="text-[10px] text-gray-400 mt-0.5 truncate">
-                        {resumen.pedidosActivos} pedidos en proceso
-                      </div>
-                    </div>
-                  </div>
+                  <AlertaItem
+                    iconBg="bg-accent-blue/10"
+                    iconColor="text-accent-blue"
+                    iconBorder="border-accent-blue/20"
+                    icono="ti-clock"
+                    titulo="Pedidos pendientes"
+                    desc={`${resumen.pedidosActivos} pedidos en proceso`}
+                  />
                 )}
               </>
             )}
@@ -269,5 +216,19 @@ const ResumenView = () => {
     </div>
   );
 };
+
+const AlertaItem = ({ iconBg, iconColor, iconBorder, icono, titulo, desc }) => (
+  <div className="flex gap-3.5 items-start py-2.5 border-b border-white/5 last:border-0">
+    <div
+      className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${iconBg} ${iconColor} border ${iconBorder}`}
+    >
+      <i className={`${icono} text-base`} />
+    </div>
+    <div className="flex-1 min-w-0">
+      <div className="text-xs font-semibold text-white">{titulo}</div>
+      <div className="text-[10px] text-gray-400 mt-0.5 truncate">{desc}</div>
+    </div>
+  </div>
+);
 
 export default ResumenView;

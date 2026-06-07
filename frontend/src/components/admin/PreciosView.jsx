@@ -1,82 +1,43 @@
-import { useState, useEffect } from "react";
-import { obtenerPrecios } from "../../services/adminService";
+import { useAdminData } from "../../hooks/useAdminData";
+import StatCard from "./StatCard";
 
 const PreciosView = () => {
-  const [precios, setPrecios] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { data: precios, loading } = useAdminData("precios");
 
-  useEffect(() => {
-    const cargar = async () => {
-      try {
-        const data = await obtenerPrecios();
-        setPrecios(data.precios);
-      } catch {
-        setPrecios(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    cargar();
-  }, []);
-
-  if (loading) {
+  if (loading)
     return <p className="text-gray-400 text-sm">Cargando precios...</p>;
-  }
+  if (!precios)
+    return (
+      <p className="text-gray-400 text-sm">
+        No se pudieron cargar los precios.
+      </p>
+    );
 
-  if (!precios) {
-    return <p className="text-gray-400 text-sm">No se pudieron cargar los precios.</p>;
-  }
+  const reglasActivas = precios.reglas.filter((r) => r.activo).length;
 
   return (
     <div className="flex flex-col gap-5 text-white">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="glass-panel rounded-2xl p-5 border border-white/5 hover:border-accent-blue/30 transition-all duration-300 shadow-soft">
-          <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">
-            Precio promedio
-          </div>
-          <div className="font-poppins font-bold text-2xl text-white">
-            ${Math.round(precios.precioPromedio / 1000)}K
-          </div>
-          <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-2.5">
-            Por producto
-          </div>
-        </div>
-
-        <div className="glass-panel rounded-2xl p-5 border border-white/5 hover:border-accent-blue/30 transition-all duration-300 shadow-soft">
-          <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">
-            Productos en oferta
-          </div>
-          <div className="font-poppins font-bold text-2xl text-white">
-            {precios.productosEnOferta}
-          </div>
-          <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-2.5">
-            De {precios.totalProductos} totales
-          </div>
-        </div>
-
-        <div className="glass-panel rounded-2xl p-5 border border-white/5 hover:border-accent-blue/30 transition-all duration-300 shadow-soft">
-          <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">
-            Reglas activas
-          </div>
-          <div className="font-poppins font-bold text-2xl text-white">
-            {precios.reglas.filter((r) => r.activo).length}
-          </div>
-          <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-2.5">
-            Políticas de precio
-          </div>
-        </div>
-
-        <div className="glass-panel rounded-2xl p-5 border border-white/5 hover:border-accent-blue/30 transition-all duration-300 shadow-soft">
-          <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">
-            Descuento promedio
-          </div>
-          <div className="font-poppins font-bold text-2xl text-white">
-            {precios.descuentoPromedio}%
-          </div>
-          <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-2.5">
-            En promociones
-          </div>
-        </div>
+        <StatCard
+          label="Precio promedio"
+          valor={`$${Math.round(precios.precioPromedio / 1000)}K`}
+          sub="Por producto"
+        />
+        <StatCard
+          label="Productos en oferta"
+          valor={precios.productosEnOferta}
+          sub={`De ${precios.totalProductos} totales`}
+        />
+        <StatCard
+          label="Reglas activas"
+          valor={reglasActivas}
+          sub="Políticas de precio"
+        />
+        <StatCard
+          label="Descuento promedio"
+          valor={`${precios.descuentoPromedio}%`}
+          sub="En promociones"
+        />
       </div>
 
       <div className="glass-panel rounded-2xl p-6 border border-white/5">
@@ -85,7 +46,6 @@ const PreciosView = () => {
             Reglas de precio activas
           </div>
         </div>
-
         <table className="w-full text-xs">
           <thead>
             <tr className="text-[10px] text-gray-400 uppercase border-b border-white/5">
@@ -108,8 +68,8 @@ const PreciosView = () => {
                 key={regla._id}
                 className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors"
               >
-                <td className="py-2.5">
-                  <div className="font-semibold text-white">{regla.nombre}</div>
+                <td className="py-2.5 font-semibold text-white">
+                  {regla.nombre}
                 </td>
                 <td className="py-2.5 text-gray-300">{regla.tipo}</td>
                 <td className="py-2.5 text-right font-bold text-white">

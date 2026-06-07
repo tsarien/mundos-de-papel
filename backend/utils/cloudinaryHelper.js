@@ -3,7 +3,6 @@ import cloudinary from "../config/cloudinary.js";
 const FOLDER = "productos";
 
 /**
- * Sube un buffer a Cloudinary
  * @param {Buffer} buffer
  * @param {string} publicId
  * @returns {Promise<object>}
@@ -28,7 +27,6 @@ export const subirACloudinary = (buffer, publicId) => {
 };
 
 /**
- * Renombra una imagen en Cloudinary
  * @param {string} oldPublicId
  * @param {string} newPublicId
  * @returns {Promise<void>}

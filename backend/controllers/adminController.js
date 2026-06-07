@@ -125,7 +125,6 @@ export const restaurarBackup = async (req, res, next) => {
       resumen,
     });
   } catch (error) {
-    // Errores de validación del backup → 400, resto → next para errorHandler
     if (
       error.message.includes("backup") ||
       error.message.includes("colección")

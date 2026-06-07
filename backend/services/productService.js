@@ -1,7 +1,6 @@
 import Product from "../models/Product.js";
 
 /**
- * Obtiene productos con filtros y paginación
  * @param {object} queryParams
  * @returns {Promise<object>}
  */
@@ -54,7 +53,6 @@ export const obtenerProductosConFiltros = async (queryParams) => {
 };
 
 /**
- * Actualiza stock de un producto
  * @param {object} producto
  * @param {number} nuevaCantidad
  * @returns {Promise<object>}

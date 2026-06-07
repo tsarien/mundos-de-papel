@@ -65,3 +65,14 @@ export const formatearEstadoPago = (estadoPago) => {
 
 export const formatearNumeroPedido = (id) =>
   id?.toString().slice(-6).toUpperCase() || "";
+
+export const formatearFechaActual = () =>
+  new Date().toLocaleDateString("es-CO", {
+    weekday: "long",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+
+export const formatearNumeroPedidoCorto = (id) =>
+  id ? `#${id.toString().slice(-4).toUpperCase()}` : "";

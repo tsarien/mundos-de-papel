@@ -59,7 +59,6 @@ const Catalogo = () => {
     try {
       setLoading(true);
 
-      // Si hay múltiples categorías, hacemos una petición por cada una y combinamos
       if (filtros.categorias.length > 1) {
         const peticiones = filtros.categorias.map((catId) =>
           obtenerProductos({
@@ -72,7 +71,6 @@ const Catalogo = () => {
           }),
         );
         const resultados = await Promise.all(peticiones);
-        // Combinar y deduplicar por _id
         const todos = resultados.flatMap((r) => r.productos);
         const unicos = Array.from(
           new Map(todos.map((p) => [p._id, p])).values(),

@@ -37,12 +37,11 @@ const Dashboard = () => {
   const [activeView, setActiveView] = useState("resumen");
   const [alertasPendientes, setAlertasPendientes] = useState(0);
 
-  // Backup
   const [descargandoBackup, setDescargandoBackup] = useState(false);
   const [cargandoBackup, setCargandoBackup] = useState(false);
   const [modalRestaurar, setModalRestaurar] = useState(false);
   const [archivoSeleccionado, setArchivoSeleccionado] = useState(null);
-  const [notificacion, setNotificacion] = useState(null); // { tipo: "ok"|"error", mensaje }
+  const [notificacion, setNotificacion] = useState(null);
   const inputArchivoRef = useRef(null);
 
   useEffect(() => {
@@ -57,7 +56,6 @@ const Dashboard = () => {
     if (user?.rol === "admin") cargarAlertas();
   }, [user]);
 
-  // Auto-ocultar notificación tras 4s
   useEffect(() => {
     if (!notificacion) return;
     const t = setTimeout(() => setNotificacion(null), 4000);
@@ -115,7 +113,6 @@ const Dashboard = () => {
     navigate("/login");
   };
 
-  // ── Descargar backup ──────────────────────────────────────────────────────
   const handleDescargarBackup = async () => {
     if (descargandoBackup) return;
     setDescargandoBackup(true);
@@ -150,13 +147,11 @@ const Dashboard = () => {
     }
   };
 
-  // ── Seleccionar archivo → abrir modal de confirmación ────────────────────
   const handleSeleccionarArchivo = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setArchivoSeleccionado(file);
     setModalRestaurar(true);
-    // Reset input para permitir seleccionar el mismo archivo de nuevo
     e.target.value = "";
   };
 
@@ -165,7 +160,6 @@ const Dashboard = () => {
     setArchivoSeleccionado(null);
   };
 
-  // ── Confirmar restauración ────────────────────────────────────────────────
   const handleConfirmarRestaurar = async () => {
     if (!archivoSeleccionado || cargandoBackup) return;
     setCargandoBackup(true);

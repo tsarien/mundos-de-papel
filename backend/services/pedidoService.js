@@ -4,7 +4,6 @@ import { calcularPrecioFinal } from "../utils/formatters.js";
 import { obtenerConfigEnvio } from "./configService.js";
 
 /**
- * Procesa los items de un pedido y verifica stock
  * @param {Array} items
  * @returns {Promise<object>}
  */
@@ -51,7 +50,6 @@ export const procesarItemsPedido = async (items) => {
 };
 
 /**
- * Calcula los totales de un pedido
  * @param {number} subtotal
  * @param {number} descuentoTotal
  * @returns {Promise<object>}
@@ -67,7 +65,6 @@ export const calcularTotalesPedido = async (subtotal, descuentoTotal = 0) => {
 };
 
 /**
- * Crea un nuevo pedido
  * @param {string} usuarioId
  * @param {object} datosPedido
  * @returns {Promise<object>}
@@ -100,7 +97,6 @@ export const crearNuevoPedido = async (usuarioId, datosPedido) => {
 };
 
 /**
- * Cancela un pedido y restaura stock
  * @param {object} pedido
  * @param {string} motivo
  * @returns {Promise<object>}

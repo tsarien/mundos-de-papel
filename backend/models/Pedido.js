@@ -100,8 +100,6 @@ const pedidoSchema = new mongoose.Schema(
   },
 );
 
-// Calcular totales antes de validar (debe correr antes que la validación
-// para que subtotal, iva y total estén disponibles cuando Mongoose los chequee)
 pedidoSchema.pre("validate", function (next) {
   if (this.items && this.items.length > 0) {
     this.subtotal = this.items.reduce(
@@ -118,7 +116,6 @@ pedidoSchema.pre("validate", function (next) {
   next();
 });
 
-// Agregar evento al historial
 pedidoSchema.methods.agregarHistorial = function (estado, comentario = "") {
   this.historial.push({
     estado,
@@ -127,7 +124,6 @@ pedidoSchema.methods.agregarHistorial = function (estado, comentario = "") {
   });
 };
 
-// Índices
 pedidoSchema.index({ usuario: 1, createdAt: -1 });
 pedidoSchema.index({ estado: 1 });
 

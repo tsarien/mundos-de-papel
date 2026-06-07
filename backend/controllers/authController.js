@@ -12,7 +12,6 @@ const generarToken = (id) => {
   });
 };
 
-// Registrar nuevo usuario - POST /api/auth/registro
 export const registro = async (req, res, next) => {
   try {
     const {
@@ -54,7 +53,6 @@ export const registro = async (req, res, next) => {
   }
 };
 
-// Login de usuario - POST /api/auth/login
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;

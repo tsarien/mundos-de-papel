@@ -1,7 +1,6 @@
 import axios from "axios";
 
 /**
- * Sends a message to the chat API along with the conversation history.
  * @param {string} userMessage
  * @param {Array<{role: string, content: string}>} history
  * @returns {Promise<string>}
