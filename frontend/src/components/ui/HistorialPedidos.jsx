@@ -2,13 +2,10 @@ import { useState, useEffect } from "react";
 import { TbEye } from "react-icons/tb";
 import { obtenerMisPedidos } from "../../services/pedidoService";
 import { formatearEstadoPedido, formatearFecha } from "../../utils/formatters";
-import DetallePedidoCliente from "./DetallePedidoCliente";
 
-const HistorialPedidos = () => {
+const HistorialPedidos = ({ onVerDetalle }) => {
   const [pedidos, setPedidos] = useState([]);
   const [cargandoPedidos, setCargandoPedidos] = useState(false);
-  const [modalAbierto, setModalAbierto] = useState(false);
-  const [pedidoSeleccionadoId, setPedidoSeleccionadoId] = useState(null);
 
   useEffect(() => {
     const cargarPedidos = async () => {
@@ -25,16 +22,6 @@ const HistorialPedidos = () => {
 
     cargarPedidos();
   }, []);
-
-  const abrirModal = (pedidoId) => {
-    setPedidoSeleccionadoId(pedidoId);
-    setModalAbierto(true);
-  };
-
-  const cerrarModal = () => {
-    setModalAbierto(false);
-    setPedidoSeleccionadoId(null);
-  };
 
   return (
     <div>
@@ -85,7 +72,7 @@ const HistorialPedidos = () => {
                   </span>
                 </div>
                 <button
-                  onClick={() => abrirModal(pedido._id)}
+                  onClick={() => onVerDetalle(pedido._id)}
                   className="bg-transparent text-accent-blue font-bold py-2 px-4 rounded-lg border border-accent-blue/40 cursor-pointer hover:bg-accent-blue hover:text-bg transition-all"
                 >
                   <span className="flex items-center gap-2">
@@ -97,13 +84,6 @@ const HistorialPedidos = () => {
             );
           })}
         </ul>
-      )}
-
-      {modalAbierto && (
-        <DetallePedidoCliente
-          pedidoId={pedidoSeleccionadoId}
-          onClose={cerrarModal}
-        />
       )}
     </div>
   );

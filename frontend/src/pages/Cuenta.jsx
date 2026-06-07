@@ -1,4 +1,3 @@
-// frontend/src/pages/Cuenta.jsx (refactorizado)
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -17,6 +16,7 @@ import {
 } from "react-icons/tb";
 import InformacionPersonal from "../components/ui/InformacionPersonal";
 import HistorialPedidos from "../components/ui/HistorialPedidos";
+import DetallePedidoCliente from "../components/ui/DetallePedidoCliente";
 
 const Cuenta = () => {
   const { user, logout, updateProfile, isAuthenticated } = useAuth();
@@ -31,6 +31,19 @@ const Cuenta = () => {
   } = useForm();
 
   const [seccionActiva, setSeccionActiva] = useState("info");
+
+  const [pedidoSeleccionadoId, setPedidoSeleccionadoId] = useState(null);
+  const [modalDetalleAbierto, setModalDetalleAbierto] = useState(false);
+
+  const abrirDetallePedido = (pedidoId) => {
+    setPedidoSeleccionadoId(pedidoId);
+    setModalDetalleAbierto(true);
+  };
+
+  const cerrarDetallePedido = () => {
+    setModalDetalleAbierto(false);
+    setPedidoSeleccionadoId(null);
+  };
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -136,7 +149,9 @@ const Cuenta = () => {
           {seccionActiva === "info" && (
             <InformacionPersonal user={user} updateProfile={updateProfile} />
           )}
-          {seccionActiva === "pedidos" && <HistorialPedidos />}
+          {seccionActiva === "pedidos" && (
+            <HistorialPedidos onVerDetalle={abrirDetallePedido} />
+          )}
           {seccionActiva === "password" && (
             <div>
               <h2 className="font-poppins text-2xl font-bold text-accent-pink mb-6 border-b border-white/5 pb-2">
@@ -243,6 +258,15 @@ const Cuenta = () => {
           )}
         </section>
       </div>
+
+      {/* Modal de detalle de pedido */}
+      {modalDetalleAbierto && (
+        <DetallePedidoCliente
+          pedidoId={pedidoSeleccionadoId}
+          onClose={cerrarDetallePedido}
+        />
+      )}
+
       <ChatBot />
     </main>
   );
