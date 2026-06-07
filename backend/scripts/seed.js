@@ -22,6 +22,7 @@ const connectDB = async () => {
   }
 };
 
+// ─── Usuarios ─────────────────────────────────────────────────────────────────
 const usuarios = [
   {
     nombre: "Admin",
@@ -98,6 +99,7 @@ const usuarios = [
   },
 ];
 
+// ─── Categorías ───────────────────────────────────────────────────────────────
 const categorias = [
   {
     nombre: "Manga",
@@ -122,6 +124,7 @@ const categorias = [
   },
 ];
 
+// ─── Editoriales ──────────────────────────────────────────────────────────────
 const editoriales = [
   {
     nombre: "Planeta Comic",
@@ -155,6 +158,7 @@ const editoriales = [
   },
 ];
 
+// ─── Productos ────────────────────────────────────────────────────────────────
 const productos = [
   {
     nombre: "Dragon Ball",
@@ -458,6 +462,7 @@ const productos = [
   },
 ];
 
+// ─── Proveedores ──────────────────────────────────────────────────────────────
 const proveedores = [
   {
     nombre: "Distribuidora Manga Plus",
@@ -493,37 +498,48 @@ const proveedores = [
   },
 ];
 
+// ─── Reglas de precio ─────────────────────────────────────────────────────────
+// IMPORTANTE: `valor` debe ser solo el número (sin % ni $), formato "10", "5000".
+// `condicion` debe coincidir exactamente con CONDICIONES_OFERTA en constants.js.
 const reglasPrecio = [
   {
-    nombre: "Descuento por volumen",
+    nombre: "Promo Manga",
     tipo: "Porcentaje",
-    valor: "10%",
-    condicion: "Compras > $500.000",
+    valor: "10", // 10% de descuento
+    condicion: "Solo Manga", // aplica a productos de categoría Manga
     activo: true,
   },
   {
-    nombre: "Promoción manga",
+    nombre: "Descuento Arte",
     tipo: "Fijo",
-    valor: "$5.000",
-    condicion: "Categoría: Manga",
+    valor: "5000", // $5.000 de descuento fijo
+    condicion: "Solo Arte", // aplica a productos de categoría Arte
     activo: true,
   },
   {
-    nombre: "Cliente frecuente",
+    nombre: "Temporada de Cómics",
     tipo: "Porcentaje",
-    valor: "15%",
-    condicion: "> 10 pedidos",
+    valor: "15", // 15% de descuento
+    condicion: "Solo Cómic", // aplica a productos de categoría Cómic
     activo: true,
   },
   {
     nombre: "Black Friday",
     tipo: "Porcentaje",
-    valor: "30%",
-    condicion: "Fecha específica",
+    valor: "30", // 30% de descuento sobre todos los productos
+    condicion: "Todos los productos",
+    activo: false, // inactiva por defecto; activar cuando corresponda
+  },
+  {
+    nombre: "Mega Oferta General",
+    tipo: "Porcentaje",
+    valor: "20",
+    condicion: "Temporada especial",
     activo: false,
   },
 ];
 
+// ─── Configuración inicial ────────────────────────────────────────────────────
 const configuracionInicial = {
   clave: "general",
   tienda: {
@@ -578,6 +594,7 @@ const configuracionInicial = {
   ],
 };
 
+// ─── Helpers de pedidos ───────────────────────────────────────────────────────
 const calcularTotales = (subtotal, costoEnvio, descuentoTotal = 0) => {
   const iva = subtotal * 0.19;
   const total = subtotal + iva + costoEnvio - descuentoTotal;
@@ -637,7 +654,7 @@ const crearPedidoSeed = (usuario, producto, opciones = {}) => {
   };
 };
 
-// Función para importar datos
+// ─── Importar datos ───────────────────────────────────────────────────────────
 const importarDatos = async () => {
   try {
     await connectDB();
@@ -657,7 +674,7 @@ const importarDatos = async () => {
     const usuariosCreados = await Usuario.create(usuarios);
     console.log(`✅ ${usuariosCreados.length} usuarios creados`);
 
-    console.log("� Creando categorías...");
+    console.log("📂 Creando categorías...");
     const categoriasCreadas = await Categoria.create(categorias);
     console.log(`✅ ${categoriasCreadas.length} categorías creadas`);
 
@@ -665,13 +682,12 @@ const importarDatos = async () => {
     const editorialesCreadas = await Editorial.create(editoriales);
     console.log(`✅ ${editorialesCreadas.length} editoriales creadas`);
 
-    // Crear mapa de categorías para buscar por nombre
+    // Mapa nombre → ObjectId para asignar categoría a cada producto
     const mapaCategorias = {};
     categoriasCreadas.forEach((cat) => {
       mapaCategorias[cat.nombre] = cat._id;
     });
 
-    // Actualizar productos con los IDs de categorías
     const productosActualizados = productos.map((prod) => ({
       ...prod,
       categoria: mapaCategorias[prod.categoria],
@@ -680,12 +696,10 @@ const importarDatos = async () => {
     console.log("📚 Creando productos...");
     const productosCreados = await Producto.create(productosActualizados);
 
-    // Calcular promedio de valoraciones para cada producto
     for (const prod of productosCreados) {
       prod.calcularPromedioValoracion();
       await prod.save();
     }
-
     console.log(
       `✅ ${productosCreados.length} productos creados con sus reseñas`,
     );
@@ -720,10 +734,7 @@ const importarDatos = async () => {
       crearPedidoSeed(
         buscarUsuario("usuario@example.com"),
         buscarProducto("Dragon Ball"),
-        {
-          estado: "procesando",
-          fecha: new Date("2024-03-28"),
-        },
+        { estado: "procesando", fecha: new Date("2024-03-28") },
       ),
       crearPedidoSeed(
         buscarUsuario("ana@ejemplo.com"),
@@ -747,10 +758,7 @@ const importarDatos = async () => {
       crearPedidoSeed(
         buscarUsuario("laura@ejemplo.com"),
         buscarProducto("One Piece"),
-        {
-          estado: "enviado",
-          fecha: new Date("2026-05-17"),
-        },
+        { estado: "enviado", fecha: new Date("2026-05-17") },
       ),
       crearPedidoSeed(
         buscarUsuario("roberto@ejemplo.com"),
@@ -764,38 +772,26 @@ const importarDatos = async () => {
       crearPedidoSeed(
         buscarUsuario("maria@ejemplo.com"),
         buscarProducto("Pokemon Adventures"),
-        {
-          estado: "entregado",
-          fecha: new Date("2026-05-16"),
-        },
+        { estado: "entregado", fecha: new Date("2026-05-16") },
       ),
       crearPedidoSeed(
         buscarUsuario("diego@ejemplo.com"),
         buscarProducto("Dragon Ball"),
-        {
-          estado: "procesando",
-          fecha: new Date("2026-05-12"),
-        },
+        { estado: "procesando", fecha: new Date("2026-05-12") },
       ),
-      // Pedidos adicionales para clientes frecuentes
+      // Pedidos extra para generar clientes frecuentes (Laura → VIP, María → VIP)
       ...Array.from({ length: 11 }, (_, i) =>
         crearPedidoSeed(
           buscarUsuario("laura@ejemplo.com"),
           buscarProducto("One Piece"),
-          {
-            estado: "entregado",
-            fecha: new Date(2026, 0, 5 + i),
-          },
+          { estado: "entregado", fecha: new Date(2026, 0, 5 + i) },
         ),
       ),
       ...Array.from({ length: 14 }, (_, i) =>
         crearPedidoSeed(
           buscarUsuario("maria@ejemplo.com"),
           buscarProducto("Pokemon Adventures"),
-          {
-            estado: "entregado",
-            fecha: new Date(2026, 0, 1 + i),
-          },
+          { estado: "entregado", fecha: new Date(2026, 0, 1 + i) },
         ),
       ),
     ];
@@ -828,8 +824,7 @@ const importarDatos = async () => {
       {
         tipo: "advertencia",
         titulo: "Pedido pendiente de pago",
-        mensaje:
-          "Cliente Carlos Méndez debe segundo pago de un pedido reciente",
+        mensaje: "Carlos Prueba tiene un pago pendiente en su pedido reciente",
         icono: "ti-credit-card",
         accion: "Contactar",
         createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000),
@@ -845,7 +840,7 @@ const importarDatos = async () => {
       {
         tipo: "info",
         titulo: "Nuevo cliente registrado",
-        mensaje: "Diego Torres se registró en la plataforma",
+        mensaje: "Diego Prueba se registró en la plataforma",
         icono: "ti-user-plus",
         accion: "Ver perfil",
         createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
@@ -853,7 +848,7 @@ const importarDatos = async () => {
       {
         tipo: "info",
         titulo: "Pedido completado",
-        mensaje: "Pedido de Ana Torres fue entregado exitosamente",
+        mensaje: "Pedido de Ana Prueba fue entregado exitosamente",
         icono: "ti-check-circle",
         accion: "Ver detalles",
         createdAt: new Date(Date.now() - 26 * 60 * 60 * 1000),
@@ -861,7 +856,7 @@ const importarDatos = async () => {
       {
         tipo: "advertencia",
         titulo: "Retraso en envío",
-        mensaje: "Un pedido de Roberto Silva está retrasado",
+        mensaje: "Un pedido de Roberto Prueba está pendiente de actualización",
         icono: "ti-clock",
         accion: "Actualizar",
         createdAt: new Date(Date.now() - 48 * 60 * 60 * 1000),
@@ -872,12 +867,8 @@ const importarDatos = async () => {
 
     console.log("\n✅ Datos importados exitosamente");
     console.log("\n📋 Credenciales de prueba:");
-    console.log("Admin:");
-    console.log("  Email: admin@mundosdepapel.com");
-    console.log("  Password: admin123");
-    console.log("\nUsuario:");
-    console.log("  Email: usuario@example.com");
-    console.log("  Password: usuario123");
+    console.log("  Admin:   admin@mundosdepapel.com  /  admin123");
+    console.log("  Usuario: usuario@example.com      /  usuario123");
 
     process.exit(0);
   } catch (error) {
@@ -886,7 +877,7 @@ const importarDatos = async () => {
   }
 };
 
-// Función para eliminar datos
+// ─── Eliminar datos ───────────────────────────────────────────────────────────
 const eliminarDatos = async () => {
   try {
     await connectDB();
@@ -910,7 +901,7 @@ const eliminarDatos = async () => {
   }
 };
 
-// Ejecutar según el argumento
+// ─── Punto de entrada ─────────────────────────────────────────────────────────
 if (process.argv[2] === "-i" || process.argv[2] === "--import") {
   importarDatos();
 } else if (process.argv[2] === "-d" || process.argv[2] === "--delete") {

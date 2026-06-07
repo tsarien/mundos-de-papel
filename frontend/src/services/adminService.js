@@ -72,3 +72,53 @@ export const actualizarProducto = async (id, datos) => {
     throw error.response?.data || error;
   }
 };
+
+// Soft-delete: sets activo: false via DELETE /api/productos/:id
+export const eliminarProducto = async (id) => {
+  const response = await api.delete(`/productos/${id}`);
+  return response.data;
+};
+
+// ─── Reglas de Precio (Ofertas) ───────────────────────────────────────────────
+
+export const crearReglaPrecio = async (datos) => {
+  const response = await api.post("/admin/precios", datos);
+  return response.data;
+};
+
+export const actualizarReglaPrecio = async (id, datos) => {
+  const response = await api.put(`/admin/precios/${id}`, datos);
+  return response.data;
+};
+
+export const actualizarEstadoRegla = async (id, activo) => {
+  const response = await api.patch(`/admin/precios/${id}/estado`, { activo });
+  return response.data;
+};
+
+export const eliminarReglaPrecio = async (id) => {
+  const response = await api.delete(`/admin/precios/${id}`);
+  return response.data;
+};
+
+// ─── Clientes (Admin) ─────────────────────────────────────────────────────────
+
+export const obtenerDetalleCliente = async (id) => {
+  const response = await api.get(`/admin/clientes/${id}`);
+  return response.data;
+};
+
+export const actualizarCliente = async (id, datos) => {
+  const response = await api.put(`/admin/clientes/${id}`, datos);
+  return response.data;
+};
+
+export const actualizarEstadoCliente = async (id, estado) => {
+  const response = await api.patch(`/admin/clientes/${id}/estado`, { estado });
+  return response.data;
+};
+
+export const eliminarCliente = async (id) => {
+  const response = await api.delete(`/admin/clientes/${id}`);
+  return response.data;
+};

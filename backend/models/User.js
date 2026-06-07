@@ -59,6 +59,11 @@ const usuarioSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    estadoManual: {
+      type: String,
+      enum: ["VIP", "Activo", "Nuevo", null],
+      default: null,
+    },
   },
   {
     timestamps: true,

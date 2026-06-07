@@ -10,6 +10,9 @@ import {
   restaurarDatosBackup,
 } from "../services/adminService.js";
 import Proveedor from "../models/Proveedor.js";
+import ReglaPrecio from "../models/ReglaPrecio.js";
+import Usuario from "../models/User.js";
+import Pedido from "../models/Pedido.js";
 
 export const obtenerResumen = async (req, res, next) => {
   try {
@@ -53,8 +56,8 @@ export const obtenerClientes = async (req, res, next) => {
 
 export const obtenerPrecios = async (req, res, next) => {
   try {
-    const precios = await obtenerDatosPrecios();
-    res.json({ success: true, precios });
+    const reglas = await ReglaPrecio.find().sort({ createdAt: -1 });
+    res.json({ success: true, precios: { reglas } });
   } catch (error) {
     next(error);
   }
@@ -131,6 +134,159 @@ export const restaurarBackup = async (req, res, next) => {
     ) {
       return res.status(400).json({ success: false, mensaje: error.message });
     }
+    next(error);
+  }
+};
+
+export const crearReglaPrecio = async (req, res, next) => {
+  try {
+    const regla = await ReglaPrecio.create(req.body);
+    res.status(201).json({ success: true, regla });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const actualizarReglaPrecio = async (req, res, next) => {
+  try {
+    const regla = await ReglaPrecio.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!regla) {
+      return res
+        .status(404)
+        .json({ success: false, mensaje: "Regla no encontrada" });
+    }
+    res.json({ success: true, regla });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const actualizarEstadoRegla = async (req, res, next) => {
+  try {
+    const { activo } = req.body;
+    const regla = await ReglaPrecio.findByIdAndUpdate(
+      req.params.id,
+      { activo },
+      { new: true },
+    );
+    if (!regla) {
+      return res
+        .status(404)
+        .json({ success: false, mensaje: "Regla no encontrada" });
+    }
+    res.json({ success: true, regla });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const obtenerDetalleCliente = async (req, res, next) => {
+  try {
+    const usuario = await Usuario.findById(req.params.id).select("-password");
+    if (!usuario) {
+      return res
+        .status(404)
+        .json({ success: false, mensaje: "Cliente no encontrado" });
+    }
+
+    // Fetch last 5 orders for this user
+    const pedidosRecientes = await Pedido.find({ usuario: req.params.id })
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .select("_id total createdAt estado");
+
+    res.json({
+      success: true,
+      cliente: {
+        ...usuario.toObject(),
+        pedidosRecientes,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const actualizarCliente = async (req, res, next) => {
+  try {
+    const { nombre, apellido, email, telefono, direccion } = req.body;
+
+    const usuario = await Usuario.findByIdAndUpdate(
+      req.params.id,
+      { nombre, apellido, email, telefono, direccion },
+      { new: true, runValidators: true },
+    ).select("-password");
+
+    if (!usuario) {
+      return res
+        .status(404)
+        .json({ success: false, mensaje: "Cliente no encontrado" });
+    }
+
+    res.json({ success: true, usuario });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const actualizarEstadoCliente = async (req, res, next) => {
+  try {
+    const { estado } = req.body;
+
+    const usuario = await Usuario.findByIdAndUpdate(
+      req.params.id,
+      { estadoManual: estado },
+      { new: true },
+    ).select("-password");
+
+    if (!usuario) {
+      return res
+        .status(404)
+        .json({ success: false, mensaje: "Cliente no encontrado" });
+    }
+
+    res.json({ success: true, usuario });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const eliminarCliente = async (req, res, next) => {
+  try {
+    // Prevent deleting admin accounts
+    const usuario = await Usuario.findById(req.params.id);
+    if (!usuario) {
+      return res
+        .status(404)
+        .json({ success: false, mensaje: "Cliente no encontrado" });
+    }
+    if (usuario.rol === "admin") {
+      return res.status(403).json({
+        success: false,
+        mensaje: "No se puede eliminar una cuenta de administrador",
+      });
+    }
+
+    await Usuario.findByIdAndDelete(req.params.id);
+    res.json({ success: true, mensaje: "Cuenta eliminada exitosamente" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const eliminarReglaPrecio = async (req, res, next) => {
+  try {
+    const regla = await ReglaPrecio.findByIdAndDelete(req.params.id);
+    if (!regla) {
+      return res
+        .status(404)
+        .json({ success: false, mensaje: "Regla no encontrada" });
+    }
+    res.json({ success: true, mensaje: "Regla de precio eliminada" });
+  } catch (error) {
     next(error);
   }
 };

@@ -1,5 +1,6 @@
 import Pedido from "../models/Pedido.js";
 import Product from "../models/Product.js";
+import { aplicarReglasAProducto } from "../utils/aplicarReglasPrecios.js";
 import { calcularPrecioFinal } from "../utils/formatters.js";
 import { obtenerConfigEnvio } from "./configService.js";
 
@@ -12,17 +13,16 @@ export const procesarItemsPedido = async (items) => {
   let descuentoTotal = 0;
 
   for (const item of items) {
-    const producto = await Product.findById(item.producto);
-
-    if (!producto) {
+    const productoRaw = await Product.findById(item.producto);
+    if (!productoRaw)
       throw new Error(`Producto ${item.producto} no encontrado`);
+    if (productoRaw.stock < item.cantidad) {
+      throw new Error(`Stock insuficiente para ${productoRaw.nombre}`);
     }
 
-    if (producto.stock < item.cantidad) {
-      throw new Error(`Stock insuficiente para ${producto.nombre}`);
-    }
-
+    const producto = await aplicarReglasAProducto(productoRaw);
     let precioFinal = producto.precio;
+
     let descuentoProducto = 0;
 
     if (producto.enOferta && producto.descuento > 0) {

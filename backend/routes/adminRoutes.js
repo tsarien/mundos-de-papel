@@ -10,6 +10,14 @@ import {
   obtenerConfiguracion,
   descargarBackup,
   restaurarBackup,
+  crearReglaPrecio,
+  actualizarReglaPrecio,
+  actualizarEstadoRegla,
+  obtenerDetalleCliente,
+  actualizarCliente,
+  actualizarEstadoCliente,
+  eliminarCliente,
+  eliminarReglaPrecio,
 } from "../controllers/adminController.js";
 import { proteger, autorizar } from "../middleware/auth.js";
 
@@ -27,5 +35,28 @@ router.get("/alertas", obtenerAlertas);
 router.get("/configuracion", obtenerConfiguracion);
 router.get("/backup", descargarBackup);
 router.post("/backup/restaurar", restaurarBackup);
+router.post("/precios", proteger, autorizar("admin"), crearReglaPrecio);
+router.put("/precios/:id", proteger, autorizar("admin"), actualizarReglaPrecio);
+router.patch(
+  "/precios/:id/estado",
+  proteger,
+  autorizar("admin"),
+  actualizarEstadoRegla,
+);
+router.get(
+  "/clientes/:id",
+  proteger,
+  autorizar("admin"),
+  obtenerDetalleCliente,
+);
+router.put("/clientes/:id", proteger, autorizar("admin"), actualizarCliente);
+router.patch(
+  "/clientes/:id/estado",
+  proteger,
+  autorizar("admin"),
+  actualizarEstadoCliente,
+);
+router.delete("/clientes/:id", proteger, autorizar("admin"), eliminarCliente);
+router.delete("/precios/:id", eliminarReglaPrecio);
 
 export default router;

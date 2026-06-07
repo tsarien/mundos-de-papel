@@ -1,16 +1,25 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { TbX, TbPhoto, TbDeviceFloppy, TbLoader2 } from "react-icons/tb";
+import {
+  TbX,
+  TbPhoto,
+  TbDeviceFloppy,
+  TbLoader2,
+  TbTrash,
+  TbAlertTriangle,
+} from "react-icons/tb";
 import {
   subirImagenProducto,
   actualizarProducto,
+  eliminarProducto,
 } from "../../../services/adminService";
 import { obtenerProductoPorId } from "../../../services/productoService";
 
 const inputCls =
   "py-2 px-3 rounded-lg border border-white/10 bg-[#13151b] text-white text-xs focus:outline-none focus:border-accent-blue transition-colors";
 
+// Defined at module scope — prevents remount on re-render
 const FieldModal = ({ label, error, children, full = false }) => (
   <div className={`flex flex-col gap-1.5 ${full ? "col-span-full" : ""}`}>
     <span className="text-[10px] font-bold text-accent-purple uppercase tracking-wider">
@@ -30,9 +39,12 @@ const ModalDetalleProducto = ({
   listaCategorias,
 }) => {
   const [loadingDetalle, setLoadingDetalle] = useState(true);
+  const [nombreProducto, setNombreProducto] = useState("");
   const [imagenFile, setImagenFile] = useState(null);
   const [imagenPreview, setImagenPreview] = useState(null);
   const [enviando, setEnviando] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [eliminando, setEliminando] = useState(false);
 
   const {
     register,
@@ -51,6 +63,7 @@ const ModalDetalleProducto = ({
         setLoadingDetalle(true);
         const data = await obtenerProductoPorId(productoId);
         const p = data.producto;
+        setNombreProducto(p.nombre || "");
         reset({
           nombre: p.nombre || "",
           autor: p.autor || "",
@@ -118,6 +131,24 @@ const ModalDetalleProducto = ({
     }
   };
 
+  const handleEliminar = async () => {
+    setEliminando(true);
+    try {
+      await eliminarProducto(productoId);
+      toast.success("Producto eliminado", {
+        description: `"${nombreProducto}" fue desactivado del catálogo.`,
+      });
+      onSuccess();
+      onClose();
+    } catch (error) {
+      toast.error("Error al eliminar", {
+        description: error.response?.data?.mensaje || "Inténtalo de nuevo.",
+      });
+    } finally {
+      setEliminando(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="glass-panel rounded-2xl w-full max-w-2xl border border-white/10 text-white shadow-2xl flex flex-col max-h-[90vh]">
@@ -140,7 +171,8 @@ const ModalDetalleProducto = ({
           </div>
         ) : (
           <>
-            <div className="overflow-y-auto flex-1 px-6 py-5">
+            <div className="overflow-y-auto flex-1 px-6 py-5 flex flex-col gap-5">
+              {/* ── Edit form ── */}
               <form
                 id="form-editar-producto"
                 onSubmit={handleSubmit(onSubmit)}
@@ -336,6 +368,73 @@ const ModalDetalleProducto = ({
                   </FieldModal>
                 )}
               </form>
+
+              {/* ── Danger zone ── */}
+              {!confirmDelete ? (
+                <div className="rounded-xl border border-red-500/10 bg-red-500/5 p-4">
+                  <div className="text-[10px] font-bold text-red-400 uppercase tracking-wider mb-1.5">
+                    Zona de peligro
+                  </div>
+                  <p className="text-[11px] text-gray-400 mb-3 leading-relaxed">
+                    Eliminar el producto lo desactivará del catálogo. No
+                    aparecerá en la tienda ni en las búsquedas.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDelete(true)}
+                    className="flex items-center gap-2 text-[11px] font-bold px-4 py-2 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition-all cursor-pointer"
+                  >
+                    <TbTrash size={13} />
+                    Eliminar producto
+                  </button>
+                </div>
+              ) : (
+                <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4">
+                  <div className="flex items-center gap-2 mb-2.5">
+                    <TbAlertTriangle
+                      size={15}
+                      className="text-red-400 shrink-0"
+                    />
+                    <div className="text-[11px] font-bold text-red-300">
+                      ¿Confirmar eliminación?
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-gray-300 mb-3 leading-relaxed">
+                    El producto{" "}
+                    <strong className="text-white">"{nombreProducto}"</strong>{" "}
+                    será desactivado del catálogo. Los pedidos existentes no se
+                    verán afectados.
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setConfirmDelete(false)}
+                      disabled={eliminando}
+                      className="text-xs font-bold px-4 py-2 rounded-lg border border-white/10 text-gray-400 hover:text-white hover:border-white/30 transition-all cursor-pointer bg-transparent"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleEliminar}
+                      disabled={eliminando}
+                      className="flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500 hover:text-white transition-all cursor-pointer"
+                    >
+                      {eliminando ? (
+                        <>
+                          <TbLoader2 size={13} className="animate-spin" />
+                          Eliminando...
+                        </>
+                      ) : (
+                        <>
+                          <TbTrash size={13} />
+                          Sí, eliminar
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Footer */}

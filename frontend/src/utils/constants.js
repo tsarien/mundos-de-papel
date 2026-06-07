@@ -42,6 +42,20 @@ export const METODOS_PAGO = {
 
 export const METODOS_PAGO_KEYS = Object.keys(METODOS_PAGO);
 
+// ─── Condiciones estándar para reglas de precio ────────────────────────────────
+// Estos valores son la fuente de verdad tanto para el frontend (dropdowns)
+// como para el backend (evaluación de reglas en productService / pedidoService).
+export const CONDICIONES_OFERTA = [
+  "Todos los productos",
+  "Solo Manga",
+  "Solo Cómic",
+  "Solo Arte",
+  "Compras superiores a $100.000",
+  "Compras superiores a $200.000",
+  "Clientes VIP",
+  "Temporada especial",
+];
+
 export const labelEstado = (v) =>
   ESTADOS_PEDIDO.find((e) => e.valor === v || e.label === v)?.label ?? v ?? "—";
 

@@ -1,3 +1,4 @@
+import { aplicarReglasAProductos } from "../utils/aplicarReglasPrecios.js";
 import Product from "../models/Product.js";
 
 /**
@@ -43,8 +44,10 @@ export const obtenerProductosConFiltros = async (queryParams) => {
     .limit(Number(limite))
     .skip(skip);
 
+  const productosConReglas = await aplicarReglasAProductos(productos);
+
   return {
-    productos,
+    productos: productosConReglas,
     total,
     paginas: Math.ceil(total / Number(limite)),
     paginaActual: Number(pagina),
