@@ -6,6 +6,7 @@ import ChatBot from "../components/chatbot/Chatbot";
 import { obtenerCategorias } from "../services/catalogoService";
 import { crearPedido } from "../services/pedidoService";
 import { toast } from "sonner";
+import { TbShoppingCart } from "react-icons/tb";
 
 const Carrito = () => {
   const navigate = useNavigate();
@@ -96,7 +97,8 @@ const Carrito = () => {
   if (cart.length === 0) {
     return (
       <main className="mb-10 container mx-auto px-4 max-w-7xl pt-10">
-        <h1 className="font-poppins text-4xl font-bold text-accent-purple mb-9 text-center">
+        <h1 className="font-poppins text-4xl font-bold text-accent-purple mb-9 text-center flex items-center justify-center gap-3">
+          <TbShoppingCart size={38} className="text-accent-purple" />
           Tu Carrito
         </h1>
         <div className="glass-panel rounded-2xl p-10 text-center max-w-2xl mx-auto border border-white/5 shadow-soft">
@@ -187,14 +189,8 @@ const Carrito = () => {
 
   return (
     <main className="mb-10 container mx-auto px-4 max-w-7xl pt-10">
-      <h1 className="font-poppins text-4xl font-bold text-accent-purple mb-9 text-center flex items-center justify-center gap-4">
-        <div className="h-11 w-11 rounded-full overflow-hidden border-2 border-accent-blue bg-white flex-shrink-0">
-          <img
-            src="/logo.jpg"
-            alt="Mundos de Papel"
-            className="w-full h-full object-cover"
-          />
-        </div>
+      <h1 className="font-poppins text-4xl font-bold text-accent-purple mb-9 text-center flex items-center justify-center gap-3">
+        <TbShoppingCart size={38} className="text-accent-purple" />
         Tu Carrito
       </h1>
 

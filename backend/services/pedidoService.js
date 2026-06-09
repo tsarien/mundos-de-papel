@@ -1,28 +1,30 @@
 import Pedido from "../models/Pedido.js";
 import Product from "../models/Product.js";
 import { aplicarReglasAProducto } from "../utils/aplicarReglasPrecios.js";
-import { calcularPrecioFinal } from "../utils/formatters.js";
 import { obtenerConfigEnvio } from "./configService.js";
 
 /**
+ *
  * @param {Array} items
- * @returns {Promise<object>}
+ * @returns {Promise<{ itemsProcesados: Array, descuentoTotal: number }>}
  */
 export const procesarItemsPedido = async (items) => {
   const itemsProcesados = [];
   let descuentoTotal = 0;
 
   for (const item of items) {
+    // 1. Obtener el documento Mongoose original (necesario para .save())
     const productoRaw = await Product.findById(item.producto);
-    if (!productoRaw)
+    if (!productoRaw) {
       throw new Error(`Producto ${item.producto} no encontrado`);
+    }
     if (productoRaw.stock < item.cantidad) {
       throw new Error(`Stock insuficiente para ${productoRaw.nombre}`);
     }
 
     const producto = await aplicarReglasAProducto(productoRaw);
-    let precioFinal = producto.precio;
 
+    let precioFinal = producto.precio;
     let descuentoProducto = 0;
 
     if (producto.enOferta && producto.descuento > 0) {
@@ -42,8 +44,8 @@ export const procesarItemsPedido = async (items) => {
       subtotal,
     });
 
-    producto.stock -= item.cantidad;
-    await producto.save();
+    productoRaw.stock -= item.cantidad;
+    await productoRaw.save();
   }
 
   return { itemsProcesados, descuentoTotal };
@@ -65,6 +67,7 @@ export const calcularTotalesPedido = async (subtotal, descuentoTotal = 0) => {
 };
 
 /**
+ *
  * @param {string} usuarioId
  * @param {object} datosPedido
  * @returns {Promise<object>}
@@ -97,6 +100,7 @@ export const crearNuevoPedido = async (usuarioId, datosPedido) => {
 };
 
 /**
+ *
  * @param {object} pedido
  * @param {string} motivo
  * @returns {Promise<object>}
