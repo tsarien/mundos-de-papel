@@ -10,25 +10,14 @@ import {
   TbX,
   TbFileDownload,
 } from "react-icons/tb";
-import { formatearFecha } from "../../utils/formatters.js";
+import { formatearFecha, claseEstadoCliente } from "../../utils/formatters.js";
+import { ESTADOS_CLIENTE } from "../../utils/constants.js";
 import {
   obtenerClientes,
   actualizarEstadoCliente,
 } from "../../services/adminService";
 import StatCard from "./StatCard.jsx";
 import ModalDetalleCliente from "./modal/ModalDetalleCliente";
-
-// ─── Constants ────────────────────────────────────────────────────────────────
-const ESTADOS_CLIENTE = ["VIP", "Activo", "Nuevo"];
-
-// ─── Helpers at module scope (no remount) ─────────────────────────────────────
-const claseEstadoCliente = (estado) => {
-  if (estado === "VIP")
-    return "bg-accent-blue/10 text-accent-blue border-accent-blue/20";
-  if (estado === "Nuevo")
-    return "bg-accent-green/10 text-accent-green border-accent-green/20";
-  return "bg-white/5 text-gray-300 border-white/10";
-};
 
 const CLS_INLINE_SELECT =
   "bg-[#0d0d1a] border border-accent-blue/50 rounded text-[9px] text-white px-2 py-0.5 focus:outline-none cursor-pointer";
@@ -41,7 +30,6 @@ const SortIcon = ({ orden }) => {
   return <TbSelector size={11} className="text-gray-600 shrink-0" />;
 };
 
-// ─── CSV / Excel export ───────────────────────────────────────────────────────
 const descargarCSV = (clientes) => {
   if (!clientes.length) {
     toast.warning("No hay datos para exportar");
@@ -82,9 +70,7 @@ const descargarCSV = (clientes) => {
   URL.revokeObjectURL(url);
 };
 
-// ─── Main component ───────────────────────────────────────────────────────────
 const ClientesView = () => {
-  // ── Data ──
   const [clientes, setClientes] = useState([]);
   const [resumen, setResumen] = useState({
     total: 0,
@@ -94,21 +80,17 @@ const ClientesView = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  // ── Filters & sort ──
   const [busqueda, setBusqueda] = useState("");
   const [ordenPedidos, setOrdenPedidos] = useState(null);
   const [ordenTotal, setOrdenTotal] = useState(null);
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
 
-  // ── Inline editing ──
   const [editandoEstado, setEditandoEstado] = useState(null);
   const [actualizando, setActualizando] = useState(null);
 
-  // ── Modal ──
   const [clienteDetalle, setClienteDetalle] = useState(null);
 
-  // ── Fetch ──────────────────────────────────────────────────────────────────
   const cargar = useCallback(async () => {
     setLoading(true);
     try {
@@ -132,7 +114,6 @@ const ClientesView = () => {
     cargar();
   }, [cargar]);
 
-  // ── Filtered + sorted list ─────────────────────────────────────────────────
   const clientesFiltrados = useMemo(() => {
     let lista = [...clientes];
 
@@ -162,7 +143,6 @@ const ClientesView = () => {
     return lista;
   }, [clientes, busqueda, fechaInicio, fechaFin, ordenPedidos, ordenTotal]);
 
-  // ── Sort toggle ────────────────────────────────────────────────────────────
   const toggleOrden = (campo) => {
     if (campo === "pedidos") {
       setOrdenTotal(null);
@@ -177,7 +157,6 @@ const ClientesView = () => {
     }
   };
 
-  // ── Status change ──────────────────────────────────────────────────────────
   const cambiarEstadoCliente = async (clienteId, nuevoEstado) => {
     setEditandoEstado(null);
     setActualizando(clienteId);

@@ -40,6 +40,11 @@ export const obtenerConfiguracion = async () => {
   return response.data;
 };
 
+export const actualizarConfiguracion = async (datos) => {
+  const response = await api.put("/admin/configuracion", datos);
+  return response.data;
+};
+
 export const obtenerCategorias = async () => {
   const response = await api.get("/categorias");
   return response.data;
@@ -73,13 +78,10 @@ export const actualizarProducto = async (id, datos) => {
   }
 };
 
-// Soft-delete: sets activo: false via DELETE /api/productos/:id
 export const eliminarProducto = async (id) => {
   const response = await api.delete(`/productos/${id}`);
   return response.data;
 };
-
-// ─── Reglas de Precio (Ofertas) ───────────────────────────────────────────────
 
 export const crearReglaPrecio = async (datos) => {
   const response = await api.post("/admin/precios", datos);
@@ -101,8 +103,6 @@ export const eliminarReglaPrecio = async (id) => {
   return response.data;
 };
 
-// ─── Clientes (Admin) ─────────────────────────────────────────────────────────
-
 export const obtenerDetalleCliente = async (id) => {
   const response = await api.get(`/admin/clientes/${id}`);
   return response.data;
@@ -120,5 +120,78 @@ export const actualizarEstadoCliente = async (id, estado) => {
 
 export const eliminarCliente = async (id) => {
   const response = await api.delete(`/admin/clientes/${id}`);
+  return response.data;
+};
+
+export const obtenerDetalleProveedor = async (id) => {
+  const response = await api.get(`/admin/proveedores/${id}`);
+  return response.data;
+};
+
+export const crearProveedor = async (datos) => {
+  const response = await api.post("/admin/proveedores", datos);
+  return response.data;
+};
+
+export const actualizarProveedor = async (id, datos) => {
+  const response = await api.put(`/admin/proveedores/${id}`, datos);
+  return response.data;
+};
+
+export const actualizarEstadoProveedor = async (id, estado) => {
+  const response = await api.patch(`/admin/proveedores/${id}/estado`, {
+    estado,
+  });
+  return response.data;
+};
+
+export const eliminarProveedor = async (id) => {
+  const response = await api.delete(`/admin/proveedores/${id}`);
+  return response.data;
+};
+
+export const obtenerPedidosProveedor = async (proveedorId) => {
+  const response = await api.get(`/admin/proveedores/${proveedorId}/pedidos`);
+  return response.data;
+};
+
+export const crearPedidoProveedor = async (proveedorId, datos) => {
+  const response = await api.post(
+    `/admin/proveedores/${proveedorId}/pedidos`,
+    datos,
+  );
+  return response.data;
+};
+
+export const actualizarPedidoProveedor = async (pedidoId, datos) => {
+  const response = await api.put(`/admin/pedidos-proveedor/${pedidoId}`, datos);
+  return response.data;
+};
+
+export const actualizarEstadoPedidoProveedor = async (pedidoId, estado) => {
+  const response = await api.patch(
+    `/admin/pedidos-proveedor/${pedidoId}/estado`,
+    { estado },
+  );
+  return response.data;
+};
+
+export const eliminarPedidoProveedor = async (pedidoId) => {
+  const response = await api.delete(`/admin/pedidos-proveedor/${pedidoId}`);
+  return response.data;
+};
+
+export const marcarAlertaLeida = async (id) => {
+  const response = await api.patch(`/admin/alertas/${id}/leer`);
+  return response.data;
+};
+
+export const marcarTodasAlertasLeidas = async () => {
+  const response = await api.patch("/admin/alertas/leer-todas");
+  return response.data;
+};
+
+export const eliminarAlerta = async (id) => {
+  const response = await api.delete(`/admin/alertas/${id}`);
   return response.data;
 };

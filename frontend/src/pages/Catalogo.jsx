@@ -113,7 +113,14 @@ const Catalogo = () => {
 
   return (
     <main className="mb-10 container mx-auto px-4 max-w-7xl pt-10">
-      <h1 className="font-poppins text-4xl font-bold text-accent-purple mb-9 text-center">
+      <h1 className="font-poppins text-4xl font-bold text-accent-purple mb-9 text-center flex items-center justify-center gap-4">
+        <div className="h-11 w-11 rounded-full overflow-hidden border-2 border-accent-blue bg-white flex-shrink-0">
+          <img
+            src="/logo.jpg"
+            alt="Mundos de Papel"
+            className="w-full h-full object-cover"
+          />
+        </div>
         Catálogo de Libros
       </h1>
 

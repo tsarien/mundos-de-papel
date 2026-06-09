@@ -22,7 +22,6 @@ const connectDB = async () => {
   }
 };
 
-// ─── Usuarios ─────────────────────────────────────────────────────────────────
 const usuarios = [
   {
     nombre: "Admin",
@@ -99,7 +98,6 @@ const usuarios = [
   },
 ];
 
-// ─── Categorías ───────────────────────────────────────────────────────────────
 const categorias = [
   {
     nombre: "Manga",
@@ -124,7 +122,6 @@ const categorias = [
   },
 ];
 
-// ─── Editoriales ──────────────────────────────────────────────────────────────
 const editoriales = [
   {
     nombre: "Planeta Comic",
@@ -158,7 +155,6 @@ const editoriales = [
   },
 ];
 
-// ─── Productos ────────────────────────────────────────────────────────────────
 const productos = [
   {
     nombre: "Dragon Ball",
@@ -462,7 +458,6 @@ const productos = [
   },
 ];
 
-// ─── Proveedores ──────────────────────────────────────────────────────────────
 const proveedores = [
   {
     nombre: "Distribuidora Manga Plus",
@@ -498,37 +493,34 @@ const proveedores = [
   },
 ];
 
-// ─── Reglas de precio ─────────────────────────────────────────────────────────
-// IMPORTANTE: `valor` debe ser solo el número (sin % ni $), formato "10", "5000".
-// `condicion` debe coincidir exactamente con CONDICIONES_OFERTA en constants.js.
 const reglasPrecio = [
   {
     nombre: "Promo Manga",
     tipo: "Porcentaje",
-    valor: "10", // 10% de descuento
-    condicion: "Solo Manga", // aplica a productos de categoría Manga
+    valor: "10",
+    condicion: "Solo Manga",
     activo: true,
   },
   {
     nombre: "Descuento Arte",
     tipo: "Fijo",
-    valor: "5000", // $5.000 de descuento fijo
-    condicion: "Solo Arte", // aplica a productos de categoría Arte
+    valor: "5000",
+    condicion: "Solo Arte",
     activo: true,
   },
   {
     nombre: "Temporada de Cómics",
     tipo: "Porcentaje",
-    valor: "15", // 15% de descuento
-    condicion: "Solo Cómic", // aplica a productos de categoría Cómic
+    valor: "15",
+    condicion: "Solo Cómic",
     activo: true,
   },
   {
     nombre: "Black Friday",
     tipo: "Porcentaje",
-    valor: "30", // 30% de descuento sobre todos los productos
+    valor: "30",
     condicion: "Todos los productos",
-    activo: false, // inactiva por defecto; activar cuando corresponda
+    activo: false,
   },
   {
     nombre: "Mega Oferta General",
@@ -539,7 +531,6 @@ const reglasPrecio = [
   },
 ];
 
-// ─── Configuración inicial ────────────────────────────────────────────────────
 const configuracionInicial = {
   clave: "general",
   tienda: {
@@ -594,7 +585,6 @@ const configuracionInicial = {
   ],
 };
 
-// ─── Helpers de pedidos ───────────────────────────────────────────────────────
 const calcularTotales = (subtotal, costoEnvio, descuentoTotal = 0) => {
   const iva = subtotal * 0.19;
   const total = subtotal + iva + costoEnvio - descuentoTotal;
@@ -654,7 +644,6 @@ const crearPedidoSeed = (usuario, producto, opciones = {}) => {
   };
 };
 
-// ─── Importar datos ───────────────────────────────────────────────────────────
 const importarDatos = async () => {
   try {
     await connectDB();
@@ -682,7 +671,6 @@ const importarDatos = async () => {
     const editorialesCreadas = await Editorial.create(editoriales);
     console.log(`✅ ${editorialesCreadas.length} editoriales creadas`);
 
-    // Mapa nombre → ObjectId para asignar categoría a cada producto
     const mapaCategorias = {};
     categoriasCreadas.forEach((cat) => {
       mapaCategorias[cat.nombre] = cat._id;
@@ -779,7 +767,6 @@ const importarDatos = async () => {
         buscarProducto("Dragon Ball"),
         { estado: "procesando", fecha: new Date("2026-05-12") },
       ),
-      // Pedidos extra para generar clientes frecuentes (Laura → VIP, María → VIP)
       ...Array.from({ length: 11 }, (_, i) =>
         crearPedidoSeed(
           buscarUsuario("laura@ejemplo.com"),
@@ -877,7 +864,6 @@ const importarDatos = async () => {
   }
 };
 
-// ─── Eliminar datos ───────────────────────────────────────────────────────────
 const eliminarDatos = async () => {
   try {
     await connectDB();
@@ -901,7 +887,6 @@ const eliminarDatos = async () => {
   }
 };
 
-// ─── Punto de entrada ─────────────────────────────────────────────────────────
 if (process.argv[2] === "-i" || process.argv[2] === "--import") {
   importarDatos();
 } else if (process.argv[2] === "-d" || process.argv[2] === "--delete") {

@@ -9,7 +9,6 @@ import {
   TbSettings,
   TbLogout,
   TbHome,
-  TbPlus,
   TbDatabaseExport,
   TbDatabaseImport,
   TbAlertTriangle,
@@ -44,16 +43,18 @@ const Dashboard = () => {
   const [notificacion, setNotificacion] = useState(null);
   const inputArchivoRef = useRef(null);
 
+  const cargarContadorAlertas = async () => {
+    try {
+      const data = await obtenerAlertas();
+      const pendientes = (data.alertas || []).filter((a) => !a.leida).length;
+      setAlertasPendientes(pendientes);
+    } catch {
+      setAlertasPendientes(0);
+    }
+  };
+
   useEffect(() => {
-    const cargarAlertas = async () => {
-      try {
-        const data = await obtenerAlertas();
-        setAlertasPendientes(data.resumen?.pendientes || 0);
-      } catch {
-        setAlertasPendientes(0);
-      }
-    };
-    if (user?.rol === "admin") cargarAlertas();
+    if (user?.rol === "admin") cargarContadorAlertas();
   }, [user]);
 
   useEffect(() => {
@@ -212,11 +213,10 @@ const Dashboard = () => {
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#0c0e12] text-gray-100 font-poppins">
-      {/* ── Modal de confirmación de restauración ─────────────────────────── */}
+      {/* Modal restaurar */}
       {modalRestaurar && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
           <div className="bg-[#13151b] border border-white/10 rounded-2xl w-full max-w-md mx-4 shadow-2xl">
-            {/* Header */}
             <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-white/5">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-amber-500/10 flex items-center justify-center">
@@ -238,20 +238,14 @@ const Dashboard = () => {
                 <TbX size={18} />
               </button>
             </div>
-
-            {/* Body */}
             <div className="px-6 py-5 space-y-4">
               <p className="text-xs text-gray-300 leading-relaxed">
                 Estás a punto de reemplazar{" "}
                 <span className="text-white font-semibold">
                   todos los datos actuales
                 </span>{" "}
-                con el contenido del archivo seleccionado. Usuarios, productos,
-                pedidos y toda la información existente serán eliminados y
-                reemplazados.
+                con el contenido del archivo seleccionado.
               </p>
-
-              {/* Info del archivo */}
               <div className="bg-white/5 rounded-xl px-4 py-3 flex items-center gap-3 border border-white/5">
                 <TbDatabaseImport
                   size={18}
@@ -268,14 +262,11 @@ const Dashboard = () => {
                   </p>
                 </div>
               </div>
-
               <p className="text-[11px] text-amber-400/80 leading-relaxed">
                 ⚠️ Se recomienda descargar un backup de los datos actuales antes
                 de continuar.
               </p>
             </div>
-
-            {/* Footer */}
             <div className="px-6 pb-6 flex gap-3">
               <button
                 onClick={handleCancelarRestaurar}
@@ -287,7 +278,7 @@ const Dashboard = () => {
               <button
                 onClick={handleConfirmarRestaurar}
                 disabled={cargandoBackup}
-                className="flex-1 px-4 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs font-semibold text-amber-400 hover:bg-amber-500/20 hover:border-amber-500/50 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs font-semibold text-amber-400 hover:bg-amber-500/20 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {cargandoBackup ? (
                   <>
@@ -303,7 +294,7 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* ── Notificación toast ─────────────────────────────────────────────── */}
+      {/* Toast */}
       {notificacion && (
         <div
           className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl border shadow-xl text-xs font-semibold transition-all ${
@@ -327,7 +318,6 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* ── Input file oculto ─────────────────────────────────────────────── */}
       <input
         ref={inputArchivoRef}
         type="file"
@@ -338,7 +328,6 @@ const Dashboard = () => {
 
       {/* Sidebar */}
       <aside className="w-[220px] bg-[#13151b] border-r border-white/5 flex flex-col flex-shrink-0">
-        {/* Logo */}
         <div className="px-5 py-5 border-b border-white/5">
           <div className="font-poppins font-bold text-sm text-accent-blue leading-tight uppercase tracking-wider">
             Mundos de Papel
@@ -348,118 +337,67 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Navigation */}
         <nav className="flex-grow overflow-y-auto py-4">
-          {/* Principal */}
           <div className="px-5 pt-3 pb-1.5 text-[9px] uppercase tracking-wider text-gray-500 font-bold">
             Principal
           </div>
-          <div
-            onClick={() => navigateToView("resumen")}
-            className={`flex items-center gap-2.5 px-5 py-2.5 text-xs cursor-pointer transition-all border-l-2 ${
-              activeView === "resumen"
-                ? "text-white bg-accent-blue/10 border-accent-blue font-semibold"
-                : "text-gray-400 border-transparent hover:text-white hover:bg-white/5"
-            }`}
-          >
-            {pages.resumen.icon}
-            Resumen
-          </div>
-          <div
-            onClick={() => navigateToView("ventas")}
-            className={`flex items-center gap-2.5 px-5 py-2.5 text-xs cursor-pointer transition-all border-l-2 ${
-              activeView === "ventas"
-                ? "text-white bg-accent-blue/10 border-accent-blue font-semibold"
-                : "text-gray-400 border-transparent hover:text-white hover:bg-white/5"
-            }`}
-          >
-            {pages.ventas.icon}
-            Ventas
-          </div>
+          {["resumen", "ventas"].map((view) => (
+            <div
+              key={view}
+              onClick={() => navigateToView(view)}
+              className={`flex items-center gap-2.5 px-5 py-2.5 text-xs cursor-pointer transition-all border-l-2 ${
+                activeView === view
+                  ? "text-white bg-accent-blue/10 border-accent-blue font-semibold"
+                  : "text-gray-400 border-transparent hover:text-white hover:bg-white/5"
+              }`}
+            >
+              {pages[view].icon}
+              {pages[view].title}
+            </div>
+          ))}
 
-          {/* Gestión */}
           <div className="px-5 pt-4 pb-1.5 text-[9px] uppercase tracking-wider text-gray-500 font-bold mt-2">
             Gestión
           </div>
-          <div
-            onClick={() => navigateToView("inventario")}
-            className={`flex items-center gap-2.5 px-5 py-2.5 text-xs cursor-pointer transition-all border-l-2 ${
-              activeView === "inventario"
-                ? "text-white bg-accent-blue/10 border-accent-blue font-semibold"
-                : "text-gray-400 border-transparent hover:text-white hover:bg-white/5"
-            }`}
-          >
-            {pages.inventario.icon}
-            Inventario
-          </div>
-          <div
-            onClick={() => navigateToView("precios")}
-            className={`flex items-center gap-2.5 px-5 py-2.5 text-xs cursor-pointer transition-all border-l-2 ${
-              activeView === "precios"
-                ? "text-white bg-accent-blue/10 border-accent-blue font-semibold"
-                : "text-gray-400 border-transparent hover:text-white hover:bg-white/5"
-            }`}
-          >
-            {pages.precios.icon}
-            Precios
-          </div>
-          <div
-            onClick={() => navigateToView("clientes")}
-            className={`flex items-center gap-2.5 px-5 py-2.5 text-xs cursor-pointer transition-all border-l-2 ${
-              activeView === "clientes"
-                ? "text-white bg-accent-blue/10 border-accent-blue font-semibold"
-                : "text-gray-400 border-transparent hover:text-white hover:bg-white/5"
-            }`}
-          >
-            {pages.clientes.icon}
-            Clientes
-          </div>
-          <div
-            onClick={() => navigateToView("proveedores")}
-            className={`flex items-center gap-2.5 px-5 py-2.5 text-xs cursor-pointer transition-all border-l-2 ${
-              activeView === "proveedores"
-                ? "text-white bg-accent-blue/10 border-accent-blue font-semibold"
-                : "text-gray-400 border-transparent hover:text-white hover:bg-white/5"
-            }`}
-          >
-            {pages.proveedores.icon}
-            Proveedores
-          </div>
+          {["inventario", "precios", "clientes", "proveedores"].map((view) => (
+            <div
+              key={view}
+              onClick={() => navigateToView(view)}
+              className={`flex items-center gap-2.5 px-5 py-2.5 text-xs cursor-pointer transition-all border-l-2 ${
+                activeView === view
+                  ? "text-white bg-accent-blue/10 border-accent-blue font-semibold"
+                  : "text-gray-400 border-transparent hover:text-white hover:bg-white/5"
+              }`}
+            >
+              {pages[view].icon}
+              {pages[view].title}
+            </div>
+          ))}
 
-          {/* Sistema */}
           <div className="px-5 pt-4 pb-1.5 text-[9px] uppercase tracking-wider text-gray-500 font-bold mt-2">
             Sistema
           </div>
-          <div
-            onClick={() => navigateToView("alertas")}
-            className={`flex items-center gap-2.5 px-5 py-2.5 text-xs cursor-pointer transition-all border-l-2 ${
-              activeView === "alertas"
-                ? "text-white bg-accent-blue/10 border-accent-blue font-semibold"
-                : "text-gray-400 border-transparent hover:text-white hover:bg-white/5"
-            }`}
-          >
-            {pages.alertas.icon}
-            Alertas
-            {pages.alertas.badge > 0 && (
-              <span className="ml-auto text-[9px] font-bold bg-accent-pink text-white rounded-full px-1.5 py-0.5">
-                {pages.alertas.badge}
-              </span>
-            )}
-          </div>
-          <div
-            onClick={() => navigateToView("configuracion")}
-            className={`flex items-center gap-2.5 px-5 py-2.5 text-xs cursor-pointer transition-all border-l-2 ${
-              activeView === "configuracion"
-                ? "text-white bg-accent-blue/10 border-accent-blue font-semibold"
-                : "text-gray-400 border-transparent hover:text-white hover:bg-white/5"
-            }`}
-          >
-            {pages.configuracion.icon}
-            Configuración
-          </div>
+          {["alertas", "configuracion"].map((view) => (
+            <div
+              key={view}
+              onClick={() => navigateToView(view)}
+              className={`flex items-center gap-2.5 px-5 py-2.5 text-xs cursor-pointer transition-all border-l-2 ${
+                activeView === view
+                  ? "text-white bg-accent-blue/10 border-accent-blue font-semibold"
+                  : "text-gray-400 border-transparent hover:text-white hover:bg-white/5"
+              }`}
+            >
+              {pages[view].icon}
+              {pages[view].title}
+              {view === "alertas" && pages.alertas.badge > 0 && (
+                <span className="ml-auto text-[9px] font-bold bg-accent-pink text-white rounded-full px-1.5 py-0.5">
+                  {pages.alertas.badge}
+                </span>
+              )}
+            </div>
+          ))}
         </nav>
 
-        {/* Footer */}
         <div className="px-4 py-3.5 border-t border-white/5 flex items-center gap-2.5 text-xs text-gray-400">
           <div className="w-8 h-8 rounded-full bg-accent-blue/20 flex items-center justify-center text-[10px] font-bold text-accent-blue flex-shrink-0">
             {user?.nombre?.[0]}
@@ -480,9 +418,8 @@ const Dashboard = () => {
         </div>
       </aside>
 
-      {/* Main Content */}
+      {/* Main */}
       <main className="flex-1 flex flex-col overflow-hidden">
-        {/* Topbar */}
         <header className="bg-[#13151b] border-b border-white/5 px-7 py-3.5 flex items-center justify-between flex-shrink-0 text-white">
           <div className="flex flex-col gap-0.5">
             <h1 className="font-poppins font-bold text-lg text-white">
@@ -494,8 +431,6 @@ const Dashboard = () => {
             <div className="text-[10px] font-bold bg-white/5 rounded-lg px-3 py-2 text-gray-300 border border-white/5">
               {currentDate}
             </div>
-
-            {/* Descargar data */}
             <button
               onClick={handleDescargarBackup}
               disabled={descargandoBackup}
@@ -512,8 +447,6 @@ const Dashboard = () => {
               />
               {descargandoBackup ? "Generando..." : "Descargar data"}
             </button>
-
-            {/* Cargar data */}
             <button
               onClick={() => inputArchivoRef.current?.click()}
               disabled={cargandoBackup}
@@ -523,7 +456,6 @@ const Dashboard = () => {
               <TbDatabaseImport size={16} />
               Cargar data
             </button>
-
             <button
               onClick={() => navigate("/")}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-white/10 bg-transparent text-gray-200 text-xs hover:bg-white/5 transition-all font-semibold"
@@ -534,7 +466,6 @@ const Dashboard = () => {
           </div>
         </header>
 
-        {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-6 bg-[#0c0e12]">
           {activeView === "resumen" && <ResumenView />}
           {activeView === "ventas" && <VentasView />}
@@ -542,7 +473,12 @@ const Dashboard = () => {
           {activeView === "precios" && <PreciosView />}
           {activeView === "clientes" && <ClientesView />}
           {activeView === "proveedores" && <ProveedoresView />}
-          {activeView === "alertas" && <AlertasView />}
+          {activeView === "alertas" && (
+            <AlertasView
+              onNavigate={navigateToView}
+              onAlertasChange={cargarContadorAlertas}
+            />
+          )}
           {activeView === "configuracion" && <ConfiguracionView />}
         </div>
       </main>

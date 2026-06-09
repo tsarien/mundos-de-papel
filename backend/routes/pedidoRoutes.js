@@ -34,13 +34,11 @@ const validacionPedido = [
   validarResultados,
 ];
 
-// Rutas protegidas - Usuario
 router.post("/", proteger, validacionPedido, crearPedido);
 router.get("/mis-pedidos", proteger, obtenerMisPedidos);
 router.get("/:id", proteger, obtenerPedidoPorId);
 router.put("/:id/cancelar", proteger, cancelarPedido);
 
-// Rutas protegidas - Admin
 router.get("/", proteger, autorizar("admin"), obtenerTodosPedidos);
 router.put("/:id/estado", proteger, autorizar("admin"), actualizarEstadoPedido);
 router.get(

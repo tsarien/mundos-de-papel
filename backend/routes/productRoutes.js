@@ -48,12 +48,9 @@ const validacionValoracion = [
   validarResultados,
 ];
 
-// Rutas públicas
 router.get("/", obtenerProductos);
 router.get("/:id", obtenerProductoPorId);
 router.get("/:id/valoraciones", obtenerValoraciones);
-
-// Rutas protegidas - Usuario
 router.post(
   "/:id/valoraciones",
   proteger,
@@ -65,8 +62,6 @@ router.put(
   proteger,
   marcarValoracionUtil,
 );
-
-// Rutas protegidas - Admin
 router.post(
   "/",
   proteger,

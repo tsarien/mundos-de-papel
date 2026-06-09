@@ -19,7 +19,6 @@ import { obtenerProductoPorId } from "../../../services/productoService";
 const inputCls =
   "py-2 px-3 rounded-lg border border-white/10 bg-[#13151b] text-white text-xs focus:outline-none focus:border-accent-blue transition-colors";
 
-// Defined at module scope — prevents remount on re-render
 const FieldModal = ({ label, error, children, full = false }) => (
   <div className={`flex flex-col gap-1.5 ${full ? "col-span-full" : ""}`}>
     <span className="text-[10px] font-bold text-accent-purple uppercase tracking-wider">

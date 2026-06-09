@@ -7,6 +7,7 @@ import ReglaPrecio from "../models/ReglaPrecio.js";
 import Proveedor from "../models/Proveedor.js";
 import Configuracion from "../models/Configuration.js";
 import Editorial from "../models/Editorial.js";
+import PedidoProveedor from "../models/PedidoProveedor.js";
 import { inicioMes, inicioDia } from "../utils/fechaUtils.js";
 import {
   formatearEstadoCliente,
@@ -304,18 +305,17 @@ export const obtenerDatosPrecios = async () => {
 /**
  * @returns {Promise<object>}
  */
+
 export const obtenerAlertasConResumen = async () => {
-  const alertas = await Alert.find().sort("-createdAt");
-  return {
-    alertas,
-    resumen: {
-      total: alertas.length,
-      criticas: alertas.filter((a) => a.tipo === "critico").length,
-      advertencias: alertas.filter((a) => a.tipo === "advertencia").length,
-      info: alertas.filter((a) => a.tipo === "info").length,
-      pendientes: alertas.filter((a) => !a.leida).length,
-    },
+  const alertas = await Alert.find().sort({ createdAt: -1 });
+  const resumen = {
+    total: alertas.length,
+    criticas: alertas.filter((a) => a.tipo === "critico").length,
+    advertencias: alertas.filter((a) => a.tipo === "advertencia").length,
+    info: alertas.filter((a) => a.tipo === "info").length,
+    pendientes: alertas.filter((a) => !a.leida).length, // ← NUEVO
   };
+  return { alertas, resumen };
 };
 
 /**
@@ -384,6 +384,7 @@ export const generarDatosBackup = async () => {
       categorias,
       editoriales,
     },
+    pedidosProveedor: await PedidoProveedor.find().lean(),
   };
 };
 
@@ -458,6 +459,13 @@ export const restaurarDatosBackup = async (backup) => {
   if (datos.configuracion.length)
     await Configuracion.insertMany(datos.configuracion, { ordered: false });
 
+  // Restaurar pedidos de proveedor si existen en el backup
+  const pedidosProveedorData = backup.pedidosProveedor || [];
+  if (pedidosProveedorData.length) {
+    await PedidoProveedor.deleteMany();
+    await PedidoProveedor.insertMany(pedidosProveedorData, { ordered: false });
+  }
+
   return {
     fechaBackup: backup.metadata.fechaBackup,
     totalRestaurados: backup.metadata.totalRegistros,
@@ -471,6 +479,7 @@ export const restaurarDatosBackup = async (backup) => {
       alertas: datos.alertas.length,
       reglasPrecio: datos.reglasPrecio.length,
       configuracion: datos.configuracion.length,
+      pedidosProveedor: pedidosProveedorData.length,
     },
   };
 };

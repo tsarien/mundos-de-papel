@@ -17,7 +17,6 @@ import StatCard from "./StatCard";
 import ModalAgregarOferta from "./modal/ModalAgregarOferta";
 import ModalEditarOferta from "./modal/ModalEditarOferta";
 
-// ─── Inline status styles ────────────────────────────────────────────────────
 const claseActivo = (activo) =>
   activo
     ? "bg-accent-green/10 text-accent-green border-accent-green/20"
@@ -26,7 +25,6 @@ const claseActivo = (activo) =>
 const CLS_INLINE_SELECT =
   "bg-[#0d0d1a] border border-accent-blue/50 rounded text-[9px] text-white px-2 py-0.5 focus:outline-none cursor-pointer";
 
-// ─── Type badge ──────────────────────────────────────────────────────────────
 const TipoBadge = ({ tipo }) =>
   tipo === "Porcentaje" ? (
     <span className="inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full border bg-accent-purple/10 text-accent-purple border-accent-purple/20 uppercase tracking-wider">
@@ -39,7 +37,6 @@ const TipoBadge = ({ tipo }) =>
     </span>
   );
 
-// ─── Main component ──────────────────────────────────────────────────────────
 const PreciosView = () => {
   const [reglas, setReglas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -50,13 +47,10 @@ const PreciosView = () => {
   const [modalAgregar, setModalAgregar] = useState(false);
   const [reglaEditar, setReglaEditar] = useState(null);
 
-  // ── Fetch ──────────────────────────────────────────────────────────────────
   const cargar = useCallback(async () => {
     setLoading(true);
     try {
       const data = await obtenerPrecios();
-      // Handle both possible backend shapes:
-      //   { precios: { reglas: [...] } }  OR  { precios: [...] }
       const lista = Array.isArray(data.precios)
         ? data.precios
         : Array.isArray(data.precios?.reglas)
@@ -74,12 +68,10 @@ const PreciosView = () => {
     cargar();
   }, [cargar]);
 
-  // ── Stats ──────────────────────────────────────────────────────────────────
   const totalReglas = reglas.length;
   const reglasActivas = reglas.filter((r) => r.activo).length;
   const reglasInactivas = totalReglas - reglasActivas;
 
-  // ── Inline status toggle ───────────────────────────────────────────────────
   const cambiarEstado = async (reglaId, nuevoActivo) => {
     setEditandoEstado(null);
     setActualizando(reglaId);
@@ -103,7 +95,6 @@ const PreciosView = () => {
     setReglaEditar(null);
   }, []);
 
-  // ── Render ─────────────────────────────────────────────────────────────────
   if (loading)
     return (
       <div className="flex items-center gap-2 text-gray-400 text-sm">

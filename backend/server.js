@@ -7,6 +7,7 @@ import compression from "compression";
 import rateLimit from "express-rate-limit";
 import connectDB from "./config/database.js";
 import errorHandler from "./middleware/errorHandler.js";
+import "./models/PedidoProveedor.js";
 import authRoutes from "./routes/authRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import pedidoRoutes from "./routes/pedidoRoutes.js";

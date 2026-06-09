@@ -12,7 +12,6 @@ import { validarResultados } from "../middleware/validator.js";
 
 const router = express.Router();
 
-// Validaciones
 const validacionEditorial = [
   body("nombre").notEmpty().withMessage("El nombre es requerido"),
   body("sitioWeb").optional().isURL().withMessage("URL inválida"),
@@ -24,11 +23,8 @@ const validacionEditorial = [
   validarResultados,
 ];
 
-// Rutas públicas
 router.get("/", obtenerEditoriales);
 router.get("/:id", obtenerEditorial);
-
-// Rutas protegidas (solo admin)
 router.post(
   "/",
   proteger,

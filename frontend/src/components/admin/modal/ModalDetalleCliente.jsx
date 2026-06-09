@@ -17,7 +17,6 @@ import {
   eliminarCliente,
 } from "../../../services/adminService";
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
 const inputCls =
   "py-2 px-3 rounded-lg border border-white/10 bg-[#13151b] text-white text-xs focus:outline-none focus:border-accent-blue transition-colors w-full";
 
@@ -29,7 +28,6 @@ const claseEstadoCliente = (estado) => {
   return "bg-white/5 text-gray-300 border-white/10";
 };
 
-// Defined at module scope — no remount on re-render
 const FieldModal = ({ label, error, children }) => (
   <div className="flex flex-col gap-1.5">
     <span className="text-[10px] font-bold text-accent-purple uppercase tracking-wider">
@@ -77,7 +75,6 @@ const Section = ({ title, icon, children }) => (
   </section>
 );
 
-// ─── Modal ────────────────────────────────────────────────────────────────────
 const ModalDetalleCliente = ({ clienteResumen, onClose, onSuccess }) => {
   const [loadingDetalle, setLoadingDetalle] = useState(true);
   const [detalleCliente, setDetalleCliente] = useState(null);
@@ -94,14 +91,12 @@ const ModalDetalleCliente = ({ clienteResumen, onClose, onSuccess }) => {
     formState: { errors },
   } = useForm();
 
-  // Close on Escape
   useEffect(() => {
     const fn = (e) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", fn);
     return () => window.removeEventListener("keydown", fn);
   }, [onClose]);
 
-  // Lock body scroll
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -109,7 +104,6 @@ const ModalDetalleCliente = ({ clienteResumen, onClose, onSuccess }) => {
     };
   }, []);
 
-  // Fetch full client details
   useEffect(() => {
     const cargar = async () => {
       try {

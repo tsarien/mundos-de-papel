@@ -25,7 +25,7 @@ const proveedorSchema = new mongoose.Schema(
     ultimoPedido: Date,
     estado: {
       type: String,
-      enum: ["activo", "pendiente"],
+      enum: ["activo", "pendiente", "inactivo"],
       default: "activo",
     },
   },

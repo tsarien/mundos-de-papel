@@ -76,3 +76,11 @@ export const formatearFechaActual = () =>
 
 export const formatearNumeroPedidoCorto = (id) =>
   id ? `#${id.toString().slice(-4).toUpperCase()}` : "";
+
+export const claseEstadoCliente = (estado) => {
+  if (estado === "VIP")
+    return "bg-accent-blue/10 text-accent-blue border-accent-blue/20";
+  if (estado === "Nuevo")
+    return "bg-accent-green/10 text-accent-green border-accent-green/20";
+  return "bg-white/5 text-gray-300 border-white/10";
+};
