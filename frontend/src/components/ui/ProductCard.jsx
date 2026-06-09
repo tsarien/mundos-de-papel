@@ -6,9 +6,12 @@ import { toast } from "sonner";
 const ProductCard = ({ producto, showAddButton = true }) => {
   const { addToCart } = useCart();
 
-  const precioFinal = producto.enOferta
-    ? producto.precio - (producto.precio * producto.descuento) / 100
-    : producto.precio;
+  const descuento = Math.round(producto.descuento || 0);
+
+  const precioFinal =
+    producto.enOferta && descuento > 0
+      ? Math.round(producto.precio - (producto.precio * descuento) / 100)
+      : producto.precio;
 
   const handleAddToCart = (e) => {
     e.preventDefault();
@@ -28,9 +31,9 @@ const ProductCard = ({ producto, showAddButton = true }) => {
             alt={producto.nombre}
             className="w-full h-full object-cover transition-all duration-300 group-hover:scale-[1.05]"
           />
-          {producto.enOferta && (
+          {producto.enOferta && descuento > 0 && (
             <div className="absolute top-3 left-3 bg-gradient-to-r from-accent-pink to-accent-purple text-white text-xs font-bold px-3 py-1 rounded-lg shadow-md z-10">
-              -{producto.descuento}%
+              -{descuento}%
             </div>
           )}
         </div>
@@ -49,7 +52,7 @@ const ProductCard = ({ producto, showAddButton = true }) => {
         </span>
 
         <div className="flex items-center gap-2 mt-1">
-          {producto.enOferta && (
+          {producto.enOferta && descuento > 0 && (
             <span className="text-sm text-gray-500 line-through">
               ${producto.precio.toLocaleString()}
             </span>
@@ -57,6 +60,11 @@ const ProductCard = ({ producto, showAddButton = true }) => {
           <span className="text-base text-white font-bold">
             ${precioFinal.toLocaleString()}
           </span>
+          {producto.enOferta && descuento > 0 && (
+            <span className="text-xs font-bold text-accent-green">
+              -{descuento}%
+            </span>
+          )}
         </div>
 
         {showAddButton && (

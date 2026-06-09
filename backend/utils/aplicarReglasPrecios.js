@@ -30,19 +30,23 @@ const condicionAplica = (condicion, producto) => {
 };
 
 /**
- * @param {Array} productos  - Array de Product documents o plain objects
- * @returns {Promise<Array>} - Plain objects con precios ajustados
+ * @param {Array} productos
+ * @returns {Promise<Array>}
  */
 export const aplicarReglasAProductos = async (productos) => {
   if (!productos || productos.length === 0) return productos;
 
   const reglas = await ReglaPrecio.find({ activo: true }).lean();
-  if (!reglas.length) {
-    return productos.map((p) => (p.toObject ? p.toObject() : p));
-  }
 
   return productos.map((p) => {
     const prod = p.toObject ? p.toObject() : { ...p };
+
+    prod.enOferta = false;
+    prod.descuento = 0;
+    delete prod._descuentoDeRegla;
+    delete prod._reglaId;
+
+    if (!reglas.length) return prod;
 
     for (const regla of reglas) {
       if (!condicionAplica(regla.condicion, prod)) continue;
@@ -53,13 +57,13 @@ export const aplicarReglasAProductos = async (productos) => {
       let descuentoRegla;
 
       if (regla.tipo === "Porcentaje") {
-        descuentoRegla = Math.min(valorNum, 100); // cap at 100%
+        descuentoRegla = Math.min(valorNum, 100);
       } else {
         descuentoRegla =
           prod.precio > 0 ? Math.round((valorNum / prod.precio) * 100) : 0;
       }
 
-      if (!prod.enOferta || descuentoRegla > (prod.descuento || 0)) {
+      if (!prod.enOferta || descuentoRegla > prod.descuento) {
         prod.enOferta = true;
         prod.descuento = descuentoRegla;
         prod._descuentoDeRegla = true;
@@ -74,8 +78,9 @@ export const aplicarReglasAProductos = async (productos) => {
 };
 
 /**
- * @param {Object} producto - Mongoose document o plain object
- * @returns {Promise<Object>} - Plain object con precio ajustado
+ *
+ * @param {Object} producto
+ * @returns {Promise<Object>}
  */
 export const aplicarReglasAProducto = async (producto) => {
   const [resultado] = await aplicarReglasAProductos([producto]);

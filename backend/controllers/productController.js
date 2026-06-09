@@ -4,6 +4,7 @@ import {
   obtenerProductosConFiltros,
   actualizarStockProducto,
 } from "../services/productService.js";
+import { aplicarReglasAProducto } from "../utils/aplicarReglasPrecios.js";
 import { NotFoundError } from "../utils/errors.js";
 
 // Obtener todos los productos - GET /api/productos
@@ -19,13 +20,15 @@ export const obtenerProductos = async (req, res, next) => {
 // Obtener producto por ID - GET /api/productos/:id
 export const obtenerProductoPorId = async (req, res, next) => {
   try {
-    const producto = await Product.findById(req.params.id)
+    const productoDoc = await Product.findById(req.params.id)
       .populate("categoria", "nombre slug icono")
       .populate("valoraciones.usuario", "nombre apellido");
 
-    if (!producto) {
+    if (!productoDoc) {
       throw new NotFoundError("Producto");
     }
+
+    const producto = await aplicarReglasAProducto(productoDoc);
 
     res.json({ success: true, producto });
   } catch (error) {
@@ -77,7 +80,7 @@ export const subirImagenProducto = async (req, res, next) => {
   }
 };
 
-// Actualizar producto -PUT /api/productos/:id
+// Actualizar producto - PUT /api/productos/:id
 export const actualizarProducto = async (req, res, next) => {
   try {
     const producto = await Product.findByIdAndUpdate(req.params.id, req.body, {
@@ -134,7 +137,7 @@ export const actualizarStock = async (req, res, next) => {
   }
 };
 
-// Obtener resumen de inventario para el panel de administración - GET /api/productos/inventario
+// Obtener resumen de inventario - GET /api/productos/inventario
 export const obtenerInventario = async (req, res, next) => {
   try {
     const productos = await Product.find({ activo: true }).populate(
